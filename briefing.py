@@ -36,11 +36,12 @@ for r in items:
 wind = {"west": avg(br["WEST"]), "south": avg(br["SOUTH"]), "coastal": avg(br["COASTAL"]), "pan": avg(br["PANHANDLE"])}
 wind["total"] = wind["west"] + wind["south"] + wind["coastal"] + wind["pan"]
 sol = solar_data.get("_embedded", {}).get("spp_hrly_avrg_actl_fcast", solar_data.get("data", []))
-sv = [float(r.get("hourlySystemGenForecast") or 0) for r in sol if float(r.get("hourlySystemGenForecast") or 0) > 0]
+sv = [float(r.get("hourlySystemGenForecast") or 0) for r in sol if isinstance(r, dict) and float(r.get("hourlySystemGenForecast") or 0) > 0]
 wind["solar"] = max(sv)/1000 if sv else 0
 li = load_data.get("_embedded", {}).get("lf_by_model_weather_zone", load_data.get("data", []))
 bz = {"WEST": [], "SOUTH": [], "NORTH": [], "HOUSTON": []}
 for r in li:
+    if not isinstance(r, dict): continue
     z = (r.get("weatherZone") or r.get("zone") or "").upper().replace("LZ_", "")
     v = float(r.get("systemTotal") or r.get("loadForecast") or r.get("totalLoad") or 0)
     if z in bz and v > 0: bz[z].append(v)
@@ -49,6 +50,7 @@ load["total"] = load["west"] + load["south"] + load["north"] + load["houston"]
 si = shadow_data.get("_embedded", {}).get("dam_shadow_prices", shadow_data.get("data", []))
 sc = {}
 for r in si:
+    if not isinstance(r, dict): continue
     nm = r.get("constraintName") or r.get("name") or "Unknown"
     sp = abs(float(r.get("shadowPrice") or 0))
     he = int(r.get("deliveryHour") or 0)
@@ -160,6 +162,8 @@ html += "<span style=" + Q + "font-size:10px;font-weight:700;padding:3px 9px;bor
 html += "<div style=" + Q + "max-width:900px;margin:0 auto;padding:1.5rem" + Q + ">" + body + "</div></body></html>"
 with open("results.html", "w") as f: f.write(html)
 print("Done. Mode:" + MODE + " Risk:" + risk + " High:" + str(len(high)) + " Watch:" + str(len(watch_list)))
+
+
 
 
 
