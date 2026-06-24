@@ -140,9 +140,20 @@ cr=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type"
 raw=cr.json()["content"][0]["text"]
 clean=re.sub(r"[\x00-\x1f\x7f]"," ",raw)
 chunk=clean[clean.index("{"):clean.rindex("}")+1]
-# Fix unescaped quotes inside string values - replace " that follow non-structural chars
-chunk=re.sub(r'(?<=[a-zA-Z0-9\s])"(?=[a-zA-Z])',"'",chunk)
-result=json.loads(chunk)
+# Try direct parse first
+try:
+    result=json.loads(chunk)
+except json.JSONDecodeError:
+    # Try with json5-style repair - replace single quotes used as string delimiters
+    import ast
+    try:
+        result=ast.literal_eval(chunk)
+    except:
+        # Last resort - ask Claude again with stricter instruction
+        cr2=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":2000,"system":"Return ONLY valid JSON. No markdown. No explanation. No special characters. Use only ASCII.","messages":[{"role":"user","content":"Fix this broken JSON and return only valid JSON: "+chunk[:3000]}]},timeout=60)
+        raw2=cr2.json()["content"][0]["text"]
+        clean2=re.sub(r"[\x00-\x1f\x7f]"," ",raw2)
+        result=json.loads(clean2[clean2.index("{"):clean2.rindex("}")+1])
 overall_risk=result.get("overallRisk","MODERATE")
 summary=result.get("summary","")
 op_note=result.get("operatorNote","")
