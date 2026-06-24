@@ -139,7 +139,10 @@ print("Calling Claude...")
 cr=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":2000,"system":sys_msg,"messages":[{"role":"user","content":user_msg}]},timeout=90)
 raw=cr.json()["content"][0]["text"]
 clean=re.sub(r"[\x00-\x1f\x7f]"," ",raw)
-result=json.loads(clean[clean.index("{"):clean.rindex("}")+1])
+chunk=clean[clean.index("{"):clean.rindex("}")+1]
+# Fix unescaped quotes inside string values - replace " that follow non-structural chars
+chunk=re.sub(r'(?<=[a-zA-Z0-9\s])"(?=[a-zA-Z])',"'",chunk)
+result=json.loads(chunk)
 overall_risk=result.get("overallRisk","MODERATE")
 summary=result.get("summary","")
 op_note=result.get("operatorNote","")
