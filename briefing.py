@@ -104,7 +104,10 @@ cr = requests.post("https://api.anthropic.com/v1/messages",
     json={"model": "claude-sonnet-4-6", "max_tokens": 1500, "system": sys_msg, "messages": [{"role": "user", "content": user_msg}]},
     timeout=60)
 raw = cr.json()["content"][0]["text"]
-result = json.loads(raw[raw.index("{"):raw.rindex("}")+1])
+import re
+clean = raw[raw.index("{"):raw.rindex("}")+1]
+clean = re.sub(r'[\x00-\x1f\x7f]', ' ', clean)
+result = json.loads(clean)
 high = result.get("highConfidence", [])
 watch_list = result.get("watchList", [])
 unlikely = result.get("unlikely", [])
