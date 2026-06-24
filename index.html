@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HEN — Congestion Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #043D70;
+  --navy-dark: #022a4e;
+  --navy-mid: #0a5494;
+  --teal: #4BACC6;
+  --teal-dim: #2d8ba8;
+  --teal-bg: rgba(75,172,198,0.08);
+  --teal-border: rgba(75,172,198,0.25);
+  --bg: #070f1a;
+  --surface: #0d1825;
+  --surface2: #111f30;
+  --surface3: #172539;
+  --border: rgba(75,172,198,0.12);
+  --border2: rgba(255,255,255,0.06);
+  --text: #e8f4f8;
+  --text2: #7ea8bc;
+  --text3: #3d6478;
+  --red: #e05252; --red-bg: rgba(224,82,82,0.10); --red-border: rgba(224,82,82,0.25);
+  --amber: #d4872a; --amber-bg: rgba(212,135,42,0.10); --amber-border: rgba(212,135,42,0.25);
+  --green: #3dba7a; --green-bg: rgba(61,186,122,0.10); --green-border: rgba(61,186,122,0.25);
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Inter', -apple-system, sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 13px; line-height: 1.5; }
+
+/* ── Top bar ── */
+.topbar { background: var(--navy-dark); border-bottom: 1px solid var(--teal-border); padding: 0 1.5rem; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.topbar-logo { width: 28px; height: 28px; background: var(--teal); border-radius: 5px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.topbar-logo svg { fill: white; width: 16px; height: 16px; }
+.topbar-title { font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+.topbar-sub { font-size: 11px; color: var(--text3); margin-left: 2px; }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.date-badge { font-family: var(--mono); font-size: 11px; color: var(--teal); background: var(--teal-bg); border: 1px solid var(--teal-border); padding: 3px 10px; border-radius: 4px; }
+.season-badge { font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 4px; letter-spacing: 0.04em; text-transform: uppercase; }
+
+/* ── Layout ── */
+.body-wrap { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 52px); }
+
+/* ── Sidebar ── */
+.sidebar { background: var(--surface); border-right: 1px solid var(--border); padding: 1.25rem 1rem; display: flex; flex-direction: column; gap: 1.5rem; }
+.sidebar-section { display: flex; flex-direction: column; gap: 6px; }
+.sidebar-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin-bottom: 2px; padding-bottom: 6px; border-bottom: 1px solid var(--border2); }
+.field { display: flex; flex-direction: column; gap: 3px; }
+.field label { font-size: 11px; color: var(--text2); }
+.field input, .field textarea { font-size: 12px; padding: 6px 9px; border: 1px solid var(--border); border-radius: 5px; background: var(--surface2); color: var(--text); outline: none; font-family: var(--sans); transition: border-color .15s; }
+.field input:focus, .field textarea:focus { border-color: var(--teal); }
+.field input[type=password] { font-family: var(--mono); font-size: 11px; }
+.field textarea { resize: vertical; font-size: 12px; }
+.cred-save { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+/* Run button */
+.run-btn { width: 100%; padding: 10px; font-size: 13px; font-weight: 600; background: var(--teal); color: white; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; transition: background .15s, transform .08s; letter-spacing: -0.01em; }
+.run-btn:hover { background: var(--teal-dim); }
+.run-btn:active { transform: scale(0.98); }
+.run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.run-btn svg { width: 14px; height: 14px; }
+
+.run-mode { display: flex; gap: 6px; margin-bottom: 2px; }
+.mode-btn { flex: 1; padding: 6px 4px; font-size: 11px; font-weight: 500; border: 1px solid var(--border); border-radius: 5px; background: transparent; color: var(--text2); cursor: pointer; transition: all .12s; text-align: center; }
+.mode-btn.active { background: var(--navy-mid); border-color: var(--teal); color: var(--teal); }
+
+.conn-status { font-size: 11px; padding: 5px 8px; border-radius: 4px; display: flex; align-items: center; gap: 6px; }
+.conn-status.ok { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.conn-status.err { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+.conn-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+/* ── Main ── */
+.main { padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1.25rem; }
+
+/* ── Section headers ── */
+.section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: .875rem; }
+.section-title { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--teal); display: flex; align-items: center; gap: 7px; }
+.section-title::before { content: ''; display: block; width: 3px; height: 14px; background: var(--teal); border-radius: 2px; }
+.live-tag { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 3px; }
+.live-tag.live { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.live-tag.stale { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+.live-tag.off { background: var(--surface3); color: var(--text3); border: 1px solid var(--border2); }
+
+/* ── ERCOT data grid ── */
+.data-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem 1.25rem; }
+.data-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: var(--border2); border-radius: 5px; overflow: hidden; }
+.data-cell { background: var(--surface2); padding: 11px 12px; }
+.data-cell.warn { background: rgba(212,135,42,0.07); }
+.data-cell.alert { background: rgba(224,82,82,0.07); }
+.dc-label { font-size: 9px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); margin-bottom: 5px; }
+.dc-val { font-family: var(--mono); font-size: 18px; font-weight: 500; color: var(--text); line-height: 1; }
+.dc-val.loading { background: var(--surface3); border-radius: 3px; color: transparent; width: 48px; height: 22px; animation: pulse 1.4s ease-in-out infinite; }
+.dc-val.warn { color: var(--amber); }
+.dc-val.alert { color: var(--red); }
+.dc-unit { font-size: 10px; color: var(--text3); margin-top: 3px; font-family: var(--mono); }
+@keyframes pulse { 0%,100%{opacity:.3} 50%{opacity:.7} }
+
+.load-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: var(--border2); border-radius: 5px; overflow: hidden; margin-top: 1px; }
+
+/* ── Risk banner ── */
+.risk-banner { border-radius: 8px; padding: 14px 18px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; border: 1px solid; }
+.risk-banner.HIGH { background: var(--red-bg); border-color: var(--red-border); }
+.risk-banner.MODERATE { background: var(--amber-bg); border-color: var(--amber-border); }
+.risk-banner.LOW { background: var(--green-bg); border-color: var(--green-border); }
+.risk-banner.NONE { background: var(--surface); border-color: var(--border); }
+.rb-left { flex: 1; }
+.rb-date { font-size: 11px; color: var(--text3); font-family: var(--mono); margin-bottom: 4px; }
+.rb-summary { font-size: 13px; color: var(--text); line-height: 1.5; }
+.rb-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.risk-pill { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 4px; letter-spacing: 0.06em; flex-shrink: 0; }
+.risk-pill.HIGH { background: var(--red); color: white; }
+.risk-pill.MODERATE { background: var(--amber); color: white; }
+.risk-pill.LOW { background: var(--green); color: white; }
+.stat-chips { display: flex; gap: 6px; }
+.stat-chip { font-size: 11px; padding: 3px 8px; border-radius: 4px; background: var(--surface3); color: var(--text2); font-family: var(--mono); }
+
+/* ── Constraint cards ── */
+.constraints-grid { display: flex; flex-direction: column; gap: 6px; }
+.c-card { background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 11px 14px; border-left: 3px solid; }
+.c-card.high { border-left-color: var(--red); }
+.c-card.medium { border-left-color: var(--amber); }
+.c-card.watch { border-left-color: var(--teal); }
+.c-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+.c-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.c-badges { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
+.c-badge { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; }
+.c-badge.HIGH { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+.c-badge.MEDIUM { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+.c-badge.ACTIVE { background: var(--teal-bg); color: var(--teal); border: 1px solid var(--teal-border); }
+.c-badge.WATCH { background: var(--surface3); color: var(--text3); border: 1px solid var(--border2); }
+.c-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 5px; }
+.c-meta-item { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+.c-meta-item span { color: var(--teal); }
+.c-driver { font-size: 12px; color: var(--text2); line-height: 1.45; margin-bottom: 6px; }
+.c-nodes { display: flex; flex-wrap: wrap; gap: 4px; }
+.node-tag { font-family: var(--mono); font-size: 10px; padding: 2px 6px; border-radius: 3px; border: 1px solid; }
+.node-tag.pos { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+.node-tag.neg { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+.node-tag.neu { background: var(--surface3); color: var(--text3); border-color: var(--border2); }
+
+/* ── DA section ── */
+.da-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.da-spread-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.da-spread-table th { text-align: left; font-size: 9px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); padding: 0 10px 8px; border-bottom: 1px solid var(--border2); }
+.da-spread-table td { padding: 7px 10px; border-bottom: 1px solid var(--border2); vertical-align: middle; }
+.da-spread-table tr:last-child td { border-bottom: none; }
+.spread-val { font-family: var(--mono); font-size: 12px; font-weight: 500; }
+.spread-pos { color: var(--green); }
+.spread-neg { color: var(--red); }
+.spread-bar { height: 3px; border-radius: 2px; margin-top: 3px; min-width: 2px; }
+
+/* ── Shadow price table ── */
+.sp-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.sp-table th { text-align: left; font-size: 9px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); padding: 0 10px 8px; border-bottom: 1px solid var(--border2); }
+.sp-table td { padding: 7px 10px; border-bottom: 1px solid var(--border2); }
+.sp-table tr:last-child td { border-bottom: none; }
+.sp-val { font-family: var(--mono); font-weight: 600; }
+.sp-val.hi { color: var(--red); }
+.sp-val.md { color: var(--amber); }
+.sp-val.lo { color: var(--green); }
+.sp-bar { height: 4px; border-radius: 2px; display: block; margin-top: 3px; }
+.playbook-match { font-size: 9px; color: var(--teal); margin-left: 4px; }
+
+/* ── Op note ── */
+.op-note { padding: 11px 14px; background: rgba(212,135,42,0.07); border: 1px solid var(--amber-border); border-radius: 6px; font-size: 12px; color: var(--text); line-height: 1.55; }
+.op-note-label { font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); margin-bottom: 4px; }
+
+/* ── Img insight ── */
+.img-insight { padding: 10px 13px; background: var(--teal-bg); border: 1px solid var(--teal-border); border-radius: 6px; font-size: 12px; color: var(--text2); line-height: 1.5; }
+.img-insight strong { color: var(--teal); }
+
+/* ── Unlikely ── */
+.unlikely-wrap { padding: 10px 13px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; }
+.unlikely-label { font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin-bottom: 5px; }
+.unlikely-list { font-size: 11px; color: var(--text3); line-height: 1.9; font-family: var(--mono); }
+
+/* ── Upload ── */
+.upload-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.uz { border: 1px dashed var(--border); border-radius: 5px; padding: 8px; text-align: center; cursor: pointer; background: var(--surface2); transition: border-color .12s; position: relative; }
+.uz:hover { border-color: var(--teal); }
+.uz.filled { border-style: solid; border-color: var(--green); background: var(--green-bg); }
+.uz input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.uz-label { font-size: 10px; color: var(--text3); margin-top: 3px; }
+.uz-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; margin-top: 4px; }
+.uz-chip { font-size: 9px; padding: 1px 5px; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; color: var(--text3); }
+
+/* ── Progress ── */
+.progress-wrap { display: none; }
+.progress-bar { height: 2px; background: var(--surface3); border-radius: 1px; overflow: hidden; margin-bottom: 6px; }
+.progress-fill { height: 100%; background: var(--teal); border-radius: 1px; transition: width .3s; }
+.progress-label { font-size: 10px; color: var(--text3); font-family: var(--mono); text-align: center; }
+
+/* ── Error ── */
+.err-box { display: none; padding: 9px 12px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 5px; font-size: 12px; color: var(--red); }
+
+/* ── Empty states ── */
+.empty-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2.5rem 1rem; color: var(--text3); gap: 8px; }
+.empty-panel svg { width: 28px; height: 28px; opacity: 0.3; }
+.empty-panel p { font-size: 12px; }
+
+/* Spinner */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.2); border-top-color: white; border-radius: 50%; animation: spin .65s linear infinite; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 2px; }
+
+@media (max-width: 900px) { .body-wrap { grid-template-columns: 1fr; } .sidebar { border-right: none; border-bottom: 1px solid var(--border); } .data-grid, .load-grid { grid-template-columns: repeat(3,1fr); } }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+    <div>
+      <div class="topbar-title">HEN Congestion Dashboard</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="date-badge" id="top-date">—</div>
+    <div class="season-badge" id="top-season" style="background:var(--surface3);color:var(--text3);border:1px solid var(--border2)">—</div>
+  </div>
+</div>
+
+<div class="body-wrap">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Mode</div>
+    <div class="run-mode">
+      <button class="mode-btn active" id="mode-morning" onclick="setMode('morning')">Morning</button>
+      <button class="mode-btn" id="mode-da" onclick="setMode('da')">DA (12:45+)</button>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">ERCOT credentials</div>
+    <div class="field"><label>Username</label><input type="text" id="eu" placeholder="you@email.com" oninput="saveCreds()"></div>
+    <div class="field"><label>Password</label><input type="password" id="ep" placeholder="••••••••" oninput="saveCreds()"></div>
+    <div class="field"><label>Subscription key</label><input type="password" id="esk" placeholder="4ce1f2…" oninput="saveCreds()"></div>
+    <div class="cred-save">Saved to this browser only</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Anthropic key</div>
+    <div class="field"><input type="password" id="ak" placeholder="sk-ant-…" oninput="saveCreds()"></div>
+  </div>
+
+  <div class="sidebar-section" id="morning-inputs">
+    <div class="sidebar-label">Morning inputs</div>
+    <div class="field"><label>High temp (°F)</label><input type="number" id="inp-temp" placeholder="e.g. 98"></div>
+    <div class="field"><label>Outages / conditions</label><textarea id="inp-notes" rows="3" placeholder="e.g. 6630_A_LN outage…"></textarea></div>
+    <div class="sidebar-label" style="margin-top:6px;">Wind screenshot (optional)</div>
+    <div class="uz" id="wz"><input type="file" accept="image/*" multiple id="wf" onchange="handleUp('w')">
+      <svg style="width:16px;height:16px;opacity:.3;display:block;margin:0 auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/></svg>
+      <div class="uz-label" id="wl">Wind pattern map</div>
+      <div class="uz-chips" id="wch"></div>
+    </div>
+  </div>
+
+  <div class="sidebar-section" id="da-inputs" style="display:none">
+    <div class="sidebar-label">DA site LMPs ($/MWh)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+      <div class="field"><label>Russek</label><input type="number" id="da-russek" placeholder="—" step=".01"></div>
+      <div class="field"><label>Catarina</label><input type="number" id="da-catarina" placeholder="—" step=".01"></div>
+      <div class="field"><label>Holcomb</label><input type="number" id="da-holcomb" placeholder="—" step=".01"></div>
+      <div class="field"><label>Hamilton</label><input type="number" id="da-hamilton" placeholder="—" step=".01"></div>
+      <div class="field"><label>Ft Duncan</label><input type="number" id="da-fortduncan" placeholder="—" step=".01"></div>
+      <div class="field"><label>Junction</label><input type="number" id="da-junction" placeholder="—" step=".01"></div>
+      <div class="field"><label>Judkins</label><input type="number" id="da-judkins" placeholder="—" step=".01"></div>
+      <div class="field"><label>Saddleback</label><input type="number" id="da-saddleback" placeholder="—" step=".01"></div>
+      <div class="field"><label>Val Verde</label><input type="number" id="da-valverde" placeholder="—" step=".01"></div>
+      <div class="field"><label>Mainland</label><input type="number" id="da-mainland" placeholder="—" step=".01"></div>
+      <div class="field"><label>Cisco</label><input type="number" id="da-cisco" placeholder="—" step=".01"></div>
+      <div class="field"><label>Diboll</label><input type="number" id="da-diboll" placeholder="—" step=".01"></div>
+      <div class="field"><label>Olney</label><input type="number" id="da-olney" placeholder="—" step=".01"></div>
+      <div class="field"><label>Hub (ref)</label><input type="number" id="da-hub" placeholder="—" step=".01"></div>
+    </div>
+    <div class="sidebar-label" style="margin-top:6px;">DA screenshots (optional)</div>
+    <div class="upload-row">
+      <div class="uz" id="dz1"><input type="file" accept="image/*" multiple id="df1" onchange="handleUp('d1')">
+        <div class="uz-label" id="dl1">Price map</div><div class="uz-chips" id="dch1"></div>
+      </div>
+      <div class="uz" id="dz2"><input type="file" accept="image/*" multiple id="df2" onchange="handleUp('d2')">
+        <div class="uz-label" id="dl2">Hourly curve</div><div class="uz-chips" id="dch2"></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:auto;display:flex;flex-direction:column;gap:8px;">
+    <div class="progress-wrap" id="prog-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+      <div class="progress-label" id="prog-lbl">Loading…</div>
+    </div>
+    <button class="run-btn" id="run-btn" onclick="runAnalysis()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Run analysis
+    </button>
+    <div class="err-box" id="err-box"></div>
+  </div>
+
+</div>
+
+<!-- MAIN -->
+<div class="main" id="main-content">
+
+  <!-- ERCOT live data -->
+  <div class="data-panel">
+    <div class="section-hdr">
+      <div class="section-title">Wind generation forecast</div>
+      <span class="live-tag off" id="wind-tag">not loaded</span>
+    </div>
+    <div class="data-grid">
+      <div class="lc-wrap" id="cell-ww"><div class="data-cell"><div class="dc-label">West wind</div><div class="dc-val loading" id="dv-ww">—</div><div class="dc-unit">GW fcst</div></div></div>
+      <div class="lc-wrap" id="cell-sw"><div class="data-cell"><div class="dc-label">South wind</div><div class="dc-val loading" id="dv-sw">—</div><div class="dc-unit">GW fcst</div></div></div>
+      <div class="lc-wrap" id="cell-cw"><div class="data-cell"><div class="dc-label">Coastal wind</div><div class="dc-val loading" id="dv-cw">—</div><div class="dc-unit">GW fcst</div></div></div>
+      <div class="lc-wrap" id="cell-pw"><div class="data-cell"><div class="dc-label">Panhandle</div><div class="dc-val loading" id="dv-pw">—</div><div class="dc-unit">GW fcst</div></div></div>
+      <div class="lc-wrap" id="cell-tw"><div class="data-cell"><div class="dc-label">Total wind</div><div class="dc-val loading" id="dv-tw">—</div><div class="dc-unit">GW fcst</div></div></div>
+      <div class="lc-wrap" id="cell-sol"><div class="data-cell"><div class="dc-label">Solar</div><div class="dc-val loading" id="dv-sol">—</div><div class="dc-unit">GW fcst</div></div></div>
+    </div>
+    <div class="section-hdr" style="margin-top:1rem;margin-bottom:.875rem;">
+      <div class="section-title">Load forecast by zone</div>
+      <span class="live-tag off" id="load-tag">not loaded</span>
+    </div>
+    <div class="load-grid">
+      <div class="lc-wrap" id="cell-wl"><div class="data-cell"><div class="dc-label">West zone</div><div class="dc-val loading" id="dv-wl">—</div><div class="dc-unit">GW peak</div></div></div>
+      <div class="lc-wrap" id="cell-sl"><div class="data-cell"><div class="dc-label">South zone</div><div class="dc-val loading" id="dv-sl">—</div><div class="dc-unit">GW peak</div></div></div>
+      <div class="lc-wrap" id="cell-nl"><div class="data-cell"><div class="dc-label">North zone</div><div class="dc-val loading" id="dv-nl">—</div><div class="dc-unit">GW peak</div></div></div>
+      <div class="lc-wrap" id="cell-hl"><div class="data-cell"><div class="dc-label">Houston zone</div><div class="dc-val loading" id="dv-hl">—</div><div class="dc-unit">GW peak</div></div></div>
+      <div class="lc-wrap" id="cell-tot"><div class="data-cell"><div class="dc-label">ERCOT total</div><div class="dc-val loading" id="dv-tot">—</div><div class="dc-unit">GW peak</div></div></div>
+      <div class="lc-wrap" id="cell-ph"><div class="data-cell"><div class="dc-label">Peak hour</div><div class="dc-val loading" id="dv-ph">—</div><div class="dc-unit">HE expected</div></div></div>
+    </div>
+  </div>
+
+  <!-- Results panel -->
+  <div id="results-panel">
+    <div class="empty-panel">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <p>Select a mode and click Run analysis to get today's constraint briefing.</p>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// PLAYBOOK
+// ═══════════════════════════════════════════════════════
+const PB=[
+  {n:'TWINBU-HARGROVE 138KV',p:'ACTIVE',s:'Summer+Winter',h:'HE 5,6,4',d:'West wind sub 5 GW. Also triggers up to sub 8 GW.',nodes:{Russek:.317,Hamilton:.068,'Fort Duncan':.044,Judkins:.018,Saddleback:.025},m:158.3},
+  {n:'LARDVNTH-LASCRUCE 138KV',p:'ACTIVE',s:'Summer',h:'HE 20,21,22',d:'South wind 2GW+ AND coastal wind 2GW+.',nodes:{Holcomb:.297,Catarina:.179,'Val Verde':-.079,Hamilton:.062},m:148.7},
+  {n:'FORTMA-YELWJCKT 138KV',p:'ACTIVE',s:'All seasons',h:'HE 21,20,23',d:'West wind below 3 GW, mostly overnight.',nodes:{Junction:.5,Russek:.032},m:250},
+  {n:'STP-ELMCREEK 345KV',p:'ACTIVE',s:'Nov–Jan',h:'HE 22,21,23',d:'Low renewable gen overnight, sub 8 GW total wind.',nodes:{Catarina:.08,Holcomb:.079,'Fort Duncan':.075,Hamilton:.067,Mainland:-.09},m:40},
+  {n:'TREADWEL-YELWJCKT 138KV',p:'ACTIVE',s:'Summer',h:'HE 17,18,19',d:'West load 9 GW+.',nodes:{Junction:.468},m:233.8},
+  {n:'LASCRUCE-MILO 138KV',p:'ACTIVE',s:'Winter',h:'HE 20,19,21',d:'South AND coastal wind both 2GW+.',nodes:{Holcomb:.28,Catarina:.173,'Fort Duncan':.096,'Val Verde':-.08},m:140.1},
+  {n:'WESTEX',p:'ACTIVE',s:'All seasons',h:'HE 20,19,12',d:'High renewable gen, solar ramps, or west gen above 15GW overnight.',nodes:{Diboll:.194,Judkins:-.718,Saddleback:-.716,Russek:-.66,Olney:-.558},m:97},
+  {n:'LNGSW-PRLSW 345KV',p:'ACTIVE',s:'All seasons',h:'HE 1,2,24',d:'West wind above 10GW, mostly overnight.',nodes:{Judkins:.213,Saddleback:.204,Russek:.07},m:106.6},
+  {n:'E_PASP',p:'ACTIVE',s:'All seasons',h:'HE 20,19,18',d:'South load 18GW+, during down ramps.',nodes:{Junction:.04,'Val Verde':-.196,Holcomb:-.138,Catarina:-.086},m:20},
+  {n:'NLARSW-PILONCIL 138KV',p:'ACTIVE',s:'All (Nov 2025+)',h:'HE 24,1,2',d:'Coastal wind 2.5GW+ or south wind 2.5GW+.',nodes:{Catarina:.26,'Fort Duncan':.12,Holcomb:-.09,Hamilton:.086},m:130},
+  {n:'MGSW-CATSW 345KV',p:'ACTIVE',s:'All (Nov 2025+)',h:'HE 23,19,20',d:'West load 9GW+ with wind sub 8GW.',nodes:{Judkins:.3,Saddleback:.27,Russek:.1,Cisco:-.08,Olney:-.07},m:150},
+  {n:'LOBO-LARDVNTH 138KV',p:'ACTIVE',s:'Feb–Mar',h:'HE 22,19,21',d:'South wind 2.5GW+ or coastal wind 2.8GW+.',nodes:{Holcomb:.324,Catarina:.218,Hamilton:.07,'Fort Duncan':.07},m:161.9},
+  {n:'ESCONDID-GANSO 138KV',p:'ACTIVE',s:'All seasons',h:'HE 8,9,1',d:'West wind sub 3GW + west load 9GW+. Morning hours.',nodes:{Hamilton:.404,'Fort Duncan':-.261,Catarina:-.094,Russek:.05},m:201.8},
+  {n:'BCESW-SNDSW 345KV',p:'ACTIVE',s:'Fall/Spring',h:'HE 17,18,16',d:'South wind sub 1GW, south load 15GW+.',nodes:{Holcomb:.11,'Val Verde':.11,Catarina:.1,'Fort Duncan':.09,Diboll:-.074},m:55},
+  {n:'LNGSW-CONSW 345KV',p:'ACTIVE',s:'Summer',h:'HE 1,2,24',d:'West wind 10GW+, west load 9GW+ overnight.',nodes:{Judkins:.213,Saddleback:.2,Russek:.08},m:106.5},
+  {n:'YELWJCKT-FORTMA 138KV',p:'ACTIVE',s:'Spring/Summer',h:'HE 7,6,5',d:'West winds 13GW+ offpeak, 10GW+ onpeak.',nodes:{Junction:-.5},m:null},
+  {n:'ASHERTON-CATARINA 138KV',p:'WATCH',s:'Summer',h:'HE 13,12,14',d:'Very low coastal AND south wind during solar window.',nodes:{Catarina:.77,Holcomb:.172,'Fort Duncan':-.116,Hamilton:-.09},m:384.9},
+  {n:'MRVLY-ESTLD 69KV',p:'WATCH',s:'Not seasonal',h:'HE 20,19,21',d:'North load above 15 GW.',nodes:{Cisco:.173},m:86.7},
+  {n:'STP-WAP 345KV',p:'WATCH',s:'Summer',h:'HE 17,16,13',d:'Houston load 18GW+.',nodes:{Mainland:.096,'Val Verde':-.113,Holcomb:-.095},m:47.9},
+  {n:'PALOUSE-WOLFCAMP 138KV',p:'WATCH',s:'All (strong summer)',h:'HE 18,17,16',d:'West load 9GW+ during solar ramp-down.',nodes:{Russek:.306},m:152.8},
+  {n:'CRDCW-OLNEY 69KV',p:'WATCH',s:'Spring/Summer',h:'HE 17,18,16',d:'North load 22GW+, 90F+ DFW, 6630_A_LN outage.',nodes:{Olney:.787},m:393.4},
+  {n:'KLNSW-HHSTH 138KV',p:'WATCH',s:'Spring',h:'HE 22,23,2',d:'ERCOT total wind 24GW+, mostly overnight.',nodes:{Russek:-.05,Judkins:-.048,Saddleback:-.048},m:null},
+  {n:'LAKENASW-SAMATHIS 69KV',p:'WATCH',s:'Spring',h:'HE 1,4,24',d:'West wind sub 6GW (strongest sub 3GW).',nodes:{Russek:.073},m:36.3},
+  {n:'CARVER-TINSLEY 138KV',p:'WATCH',s:'All seasons',h:'HE 21,20,22',d:'West wind 10GW+ with coastal wind sub 2GW.',nodes:{Hamilton:.323,'Fort Duncan':.21,Catarina:.09},m:161.6},
+  {n:'MASN-KATEMCY 69KV',p:'WATCH',s:'Winter',h:'HE 19,18,23',d:'Low west wind, low north wind.',nodes:{Junction:.251},m:125.5},
+  {n:'PRSLW-CONSW 345KV',p:'WATCH',s:'Winter/Spring',h:'HE 2,4,1',d:'Mild temps, lower loads, west wind 8GW+.',nodes:{Judkins:.29,Saddleback:.234,Russek:.111},m:145.2},
+  {n:'MAXWELL-HAMILTON 138KV',p:'WATCH',s:'Summer/Fall',h:'HE 2,24,1',d:'West wind 13GW+.',nodes:{Hamilton:.23,'Fort Duncan':.143,Russek:-.05},m:114.9},
+  {n:'SONR-ATSO 69KV',p:'WATCH',s:'All seasons',h:'HE 1,3,2',d:'West load 9GW+ overnight.',nodes:{Russek:.05,Hamilton:.014},m:25},
+];
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let mode='morning';
+let upl={w:[],d1:[],d2:[]};
+let LD={wind:{west:null,south:null,coastal:null,pan:null,total:null,solar:null,at:null},load:{west:null,south:null,north:null,hou:null,total:null,peakHE:null,at:null},shadow:{items:[],at:null}};
+let tok=null,tokExp=null;
+const AUTH='https://ercotb2c.b2clogin.com/ercotb2c.onmicrosoft.com/B2C_1_PUBAPI-ROPC-FLOW/oauth2/v2.0/token';
+const BASE='https://api.ercot.com/api/public-reports';
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded',()=>{
+  const s=JSON.parse(localStorage.getItem('hen_c')||'{}');
+  if(s.u)$('eu').value=s.u;if(s.p)$('ep').value=s.p;if(s.k)$('esk').value=s.k;if(s.a)$('ak').value=s.a;
+  updateDateBadge();
+  setInterval(updateDateBadge,60000);
+});
+
+function $(id){return document.getElementById(id)}
+function saveCreds(){localStorage.setItem('hen_c',JSON.stringify({u:$('eu').value,p:$('ep').value,k:$('esk').value,a:$('ak').value}))}
+
+function updateDateBadge(){
+  const now=new Date();
+  $('top-date').textContent=now.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+  const m=now.getMonth()+1;
+  const s=m>=3&&m<=5?'Spring':m>=6&&m<=8?'Summer':m>=9&&m<=11?'Fall':'Winter';
+  const colors={Spring:['#2d8ba8','#0a5494'],Summer:['#d4872a','#3d1e00'],Fall:['#c0392b','#2d0a0a'],Winter:['#7da8e8','#0a1e38']};
+  const [fg,bg]=colors[s];
+  $('top-season').textContent=s;$('top-season').style.background=bg+'33';$('top-season').style.color=fg;$('top-season').style.border=`1px solid ${fg}44`;
+}
+
+function setMode(m){
+  mode=m;
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  $('mode-'+m).classList.add('active');
+  $('morning-inputs').style.display=m==='morning'?'flex':'none';
+  $('da-inputs').style.display=m==='da'?'flex':'none';
+  if(m==='morning'){$('morning-inputs').style.flexDirection='column';$('morning-inputs').style.gap='6px'}
+  if(m==='da'){$('da-inputs').style.flexDirection='column';$('da-inputs').style.gap='6px'}
+}
+
+// ═══════════════════════════════════════════════════════
+// ERCOT AUTH
+// ═══════════════════════════════════════════════════════
+async function getToken(){
+  if(tok&&tokExp&&Date.now()<tokExp-60000)return tok;
+  const u=$('eu').value.trim(),p=$('ep').value.trim();
+  if(!u||!p)throw new Error('ERCOT username and password required');
+  const body=new URLSearchParams({username:u,password:p,grant_type:'password',scope:'openid fec253ea-0d06-4272-a5e6-b478baeecd70 offline_access',client_id:'fec253ea-0d06-4272-a5e6-b478baeecd70',response_type:'id_token'});
+  const r=await fetch('https://floral-pine-b364hen-proxy.wkight.workers.dev?target=ercot-auth',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body});
+  if(!r.ok)throw new Error('ERCOT auth failed ('+r.status+') — check username/password');
+  const d=await r.json();if(!d.id_token)throw new Error('No token returned — check credentials');
+  tok=d.id_token;tokExp=Date.now()+3500000;return tok;
+}
+function hdrs(){const k=$('esk').value.trim();if(!k)throw new Error('Subscription key required');return{'Authorization':'Bearer '+tok,'Ocp-Apim-Subscription-Key':k}}
+
+// ═══════════════════════════════════════════════════════
+// FETCH ERCOT DATA
+// ═══════════════════════════════════════════════════════
+async function fetchERCOT(){
+  updProg(20,'Authenticating with ERCOT…');
+  await getToken();
+  const h=hdrs();
+  const today=new Date().toISOString().split('T')[0];
+  updProg(35,'Fetching wind & load forecasts…');
+  const [wr,lr,sr]=await Promise.all([
+    fetch(`https://floral-pine-b364hen-proxy.wkight.workers.dev?target=ercot&url=${encodeURIComponent(BASE+'/np4-742-cd/wpp_hrly_actual_fcast_geo?deliveryDateFrom='+today+'&deliveryDateTo='+today+'&size=500')}`,{headers:h}),
+    fetch(`https://floral-pine-b364hen-proxy.wkight.workers.dev?target=ercot&url=${encodeURIComponent(BASE+'/np3-565-cd/lf_by_model_weather_zone?deliveryDateFrom='+today+'&deliveryDateTo='+today+'&size=500')}`,{headers:h}),
+    fetch(`https://floral-pine-b364hen-proxy.wkight.workers.dev?target=ercot&url=${encodeURIComponent(BASE+'/np4-737-cd/spp_hrly_avrg_actl_fcast?deliveryDateFrom='+today+'&deliveryDateTo='+today+'&size=300')}`,{headers:h})
+  ]);
+  if(wr.ok){const d=await wr.json();parseWind(d)}
+  if(lr.ok){const d=await lr.json();parseLoad(d)}
+  if(sr.ok){const d=await sr.json();parseSolar(d)}
+  if(mode==='da'){
+    updProg(55,'Fetching DAM shadow prices…');
+    const spr=await fetch(`https://floral-pine-b364hen-proxy.wkight.workers.dev?target=ercot&url=${encodeURIComponent(BASE+'/np4-191-cd/dam_shadow_prices?deliveryDateFrom='+today+'&deliveryDateTo='+today+'&size=500')}`,{headers:h});
+    if(spr.ok){const d=await spr.json();parseShadow(d)}
+  }
+  LD.wind.at=LD.load.at=new Date();
+  updateCells();
+}
+
+function parseWind(data){
+  const items=data?._embedded?.wpp_hrly_actual_fcast_geo||data?.data||[];
+  const m={WEST:[],SOUTH:[],COASTAL:[],PANHANDLE:[]};
+  for(const r of items){const rg=(r.genRegion||r.region||'').toUpperCase();const v=parseFloat(r.hourlyWindGenForecast||r.genForecast||0);if(m[rg]&&v>0)m[rg].push(v)}
+  const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
+  LD.wind.west=avg(m.WEST)/1000;LD.wind.south=avg(m.SOUTH)/1000;LD.wind.coastal=avg(m.COASTAL)/1000;LD.wind.pan=avg(m.PANHANDLE)/1000;
+  LD.wind.total=(LD.wind.west||0)+(LD.wind.south||0)+(LD.wind.coastal||0)+(LD.wind.pan||0);
+}
+function parseSolar(data){
+  const items=data?._embedded?.spp_hrly_avrg_actl_fcast||data?.data||[];
+  const vals=items.map(r=>parseFloat(r.hourlySystemGenForecast||r.genForecast||0)).filter(v=>v>0);
+  if(vals.length)LD.wind.solar=Math.max(...vals)/1000;
+}
+function parseLoad(data){
+  const items=data?._embedded?.lf_by_model_weather_zone||data?.data||[];
+  const m={WEST:[],SOUTH:[],NORTH:[],HOUSTON:[]};
+  for(const r of items){const z=(r.weatherZone||r.zone||'').toUpperCase().replace('LZ_','');const v=parseFloat(r.systemTotal||r.loadForecast||r.totalLoad||0);if(m[z]&&v>0)m[z].push(v)}
+  const mx=a=>a.length?Math.max(...a):null;
+  LD.load.west=mx(m.WEST)/1000;LD.load.south=mx(m.SOUTH)/1000;LD.load.north=mx(m.NORTH)/1000;LD.load.hou=mx(m.HOUSTON)/1000;
+  LD.load.total=(LD.load.west||0)+(LD.load.south||0)+(LD.load.north||0)+(LD.load.hou||0);
+}
+function parseShadow(data){
+  const items=data?._embedded?.dam_shadow_prices||data?.data||[];
+  const byC={};
+  for(const r of items){const nm=r.constraintName||r.name||'Unknown';const sp=parseFloat(r.shadowPrice||r.price||0);const he=parseInt(r.deliveryHour||r.hour||0);if(!byC[nm])byC[nm]={name:nm,sps:[],hrs:[]};if(Math.abs(sp)>.01){byC[nm].sps.push(sp);byC[nm].hrs.push(he)}}
+  LD.shadow.items=Object.values(byC).filter(c=>c.sps.length>0).map(c=>({name:c.name,maxSP:Math.max(...c.sps.map(Math.abs)),hrs:[...new Set(c.hrs)].sort((a,b)=>a-b),cnt:c.sps.length})).sort((a,b)=>b.maxSP-a.maxSP).slice(0,20);
+  LD.shadow.at=new Date();
+}
+
+function fmt(v,dec=1){return v!=null?v.toFixed(dec):'—'}
+function updateCells(){
+  const set=(id,v,warnFn,alertFn)=>{
+    const el=$(id);if(!el)return;el.classList.remove('loading');el.textContent=fmt(v);
+    const cell=el.closest('.data-cell');
+    if(cell){cell.classList.remove('warn','alert');if(alertFn&&alertFn(v))cell.classList.add('alert');else if(warnFn&&warnFn(v))cell.classList.add('warn')}
+    if(alertFn&&alertFn(v))el.classList.add('alert');else if(warnFn&&warnFn(v))el.classList.add('warn');
+  };
+  set('dv-ww',LD.wind.west,v=>v!=null&&v<5,v=>v!=null&&v<2);
+  set('dv-sw',LD.wind.south,v=>v!=null&&v>1.5,v=>v!=null&&v>2.5);
+  set('dv-cw',LD.wind.coastal,v=>v!=null&&v>1.5,v=>v!=null&&v>2.5);
+  set('dv-pw',LD.wind.pan);
+  set('dv-tw',LD.wind.total,v=>v!=null&&(v<5||v>12),v=>v!=null&&v<2);
+  set('dv-sol',LD.wind.solar);
+  set('dv-wl',LD.load.west,v=>v!=null&&v>=8.5,v=>v!=null&&v>=9.5);
+  set('dv-sl',LD.load.south,v=>v!=null&&v>=16,v=>v!=null&&v>=18);
+  set('dv-nl',LD.load.north,v=>v!=null&&v>=20,v=>v!=null&&v>=22);
+  set('dv-hl',LD.load.hou,v=>v!=null&&v>=16,v=>v!=null&&v>=18);
+  set('dv-tot',LD.load.total);
+  if(LD.load.peakHE){$('dv-ph').classList.remove('loading');$('dv-ph').textContent='HE '+LD.load.peakHE}else{$('dv-ph').classList.remove('loading');$('dv-ph').textContent='—'}
+  const t=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  ['wind-tag','load-tag'].forEach(id=>{$(id).className='live-tag live';$(id).textContent='live · '+t});
+}
+
+// ═══════════════════════════════════════════════════════
+// MAIN RUN
+// ═══════════════════════════════════════════════════════
+async function runAnalysis(){
+  const ak=$('ak').value.trim();
+  if(!ak){showErr('Enter your Anthropic API key in the sidebar.');return}
+  const btn=$('run-btn');btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Running…';
+  $('err-box').style.display='none';
+  showProg('Connecting…');
+  try{
+    await fetchERCOT();
+    updProg(65,'Analyzing constraints…');
+    const imgs=[];
+    const files=mode==='morning'?upl.w:[...upl.d1,...upl.d2];
+    for(const f of files){const{data,type}=await toB64(f);imgs.push({type:'image',source:{type:'base64',media_type:type,data}})}
+    const sys=mode==='morning'?buildMSys():buildDASys();
+    const ut=mode==='morning'?buildMUser():buildDAUser();
+    const r=await fetch('https://floral-pine-b364hen-proxy.wkight.workers.dev',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':ak,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1200,system:sys,messages:[{role:'user',content:[...imgs,{type:'text',text:ut}]}]})});
+    updProg(90,'Rendering results…');
+    const data=await r.json();
+    if(data.error)throw new Error(data.error.message);
+    let raw=data.content.filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json|```/g,'').trim();
+    let res=null;
+    // Extract JSON - find first { and last } to handle extra text
+    const jsonStart=raw.indexOf('{');
+    const jsonEnd=raw.lastIndexOf('}');
+    if(jsonStart>=0&&jsonEnd>jsonStart){
+      try{res=JSON.parse(raw.slice(jsonStart,jsonEnd+1))}catch(e){}
+    }
+    hideProg();
+    if(mode==='morning')renderMorning(res,raw);else renderDA(res,raw);
+  }catch(e){hideProg();showErr(e.message)}
+  btn.disabled=false;btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Run analysis';
+}
+
+// ═══════════════════════════════════════════════════════
+// SYSTEM PROMPTS
+// ═══════════════════════════════════════════════════════
+function buildMSys(){
+  const lines=PB.map(c=>{const ns=Object.entries(c.nodes).map(([k,v])=>`${k}(${v>0?'+':''}${(v*100).toFixed(1)}%)`).join(', ');return`- ${c.n} [${c.p}] Season:${c.s} PeakHE:${c.h} Driver:${c.d} Nodes:${ns}`}).join('\n');
+  return`You are the NOC Constraint Analyst for Hunt Energy Network (HEN), expert in ERCOT congestion.\n\nHEN PLAYBOOK:\n${lines}\n\nReturn ONLY valid JSON:\n{"summary":"one sentence risk","riskLevel":"HIGH|MODERATE|LOW","highConfidence":[{"name":"...","priority":"ACTIVE|WATCH","likelyHours":"...","driver":"specific reason today triggers this","nodes":["Russek +31.7%"],"season":"...","confidence":"HIGH|MEDIUM"}],"watchList":[same structure],"unlikely":["name1","name2"],"imageInsights":"what you observed in images or No images provided","operatorNote":"one key tactical note for the shift"}`;
+}
+function buildDASystem(){return buildDASys()}
+function buildDASys(){
+  const ns=PB.map(c=>{const s=Object.entries(c.nodes).map(([k,v])=>`${k}(${v>0?'+':''}${(v*100).toFixed(1)}%)`).join(', ');return`- ${c.n}: ${s}`}).join('\n');
+  return`You are the NOC Constraint Analyst for HEN, expert in ERCOT DA price interpretation.\nPRINCIPLE: Load-side nodes = premium to hub. Gen-side nodes = discount. Spread / SF ≈ implied shadow price.\nNODE MAP: Russek premium → TWINBU-HARGROVE, ESCONDID-GANSO, PALOUSE-WOLFCAMP. Hamilton/FtDuncan → E_PASP, LARDVNTH-LASCRUCE, NLARSW-PILONCIL. Judkins/Saddleback → LNGSW-PRLSW, MGSW-CATSW. Junction → FORTMA-YELWJCKT, TREADWEL. ValVerde neg → E_PASP, LARDVNTH. Catarina very high → ASHERTON-CATARINA. Olney → CRDCW-OLNEY.\nSF DATA:\n${ns}\nReturn ONLY valid JSON:\n{"headline":"one sentence DA summary","signals":[{"constraint":"...","confidence":"HIGH|MEDIUM|LOW","impliedShadowPrice":null,"evidence":"...","likelyHours":"..."}],"spreadTable":[{"site":"...","vsHub":0.0,"signal":"bullish|bearish|neutral"}],"damConfirmed":["names"],"imageInsights":"...","tradingNote":"key dispatch implication"}`;
+}
+
+function buildMUser(){
+  const w=LD.wind,l=LD.load,src=w.at?'LIVE ('+w.at.toLocaleTimeString()+')':'NOT LOADED';
+  return`Morning briefing — ${new Date().toDateString()}\n\nGEN FORECAST [${src}]:\nWest wind: ${fmt(w.west)} GW | South: ${fmt(w.south)} GW | Coastal: ${fmt(w.coastal)} GW | Panhandle: ${fmt(w.pan)} GW | Total: ${fmt(w.total)} GW | Solar: ${fmt(w.solar)} GW\n\nLOAD [${src}]:\nWest: ${fmt(l.west)} GW | South: ${fmt(l.south)} GW | North: ${fmt(l.north)} GW | Houston: ${fmt(l.hou)} GW | Total: ${fmt(l.total)} GW\nHigh temp: ${$('inp-temp').value||'not provided'} F\n\nOUTAGES:\n${$('inp-notes').value||'None'}\n\nAnalyze which playbook constraints are most likely today.`;
+}
+function buildDAUser(){
+  const sids=['russek','catarina','holcomb','hamilton','fortduncan','junction','judkins','saddleback','valverde','mainland','cisco','diboll','olney'];
+  const snms=['Russek','Catarina','Holcomb','Hamilton','Fort Duncan','Junction','Judkins','Saddleback','Val Verde','Mainland','Cisco','Diboll','Olney'];
+  const prices={};sids.forEach((id,i)=>{const v=$('da-'+id).value;if(v)prices[snms[i]]=parseFloat(v)});
+  const hub=$('da-hub').value;
+  const spSum=LD.shadow.items.length?'ERCOT DAM SHADOW PRICES (LIVE):\n'+LD.shadow.items.slice(0,12).map(c=>`  ${c.name}: $${c.maxSP.toFixed(0)}/MWh max, HE ${c.hrs.slice(0,3).join(',')}, ${c.cnt} hrs`).join('\n'):'DAM shadow prices: not available';
+  const pStr=Object.entries(prices).map(([k,v])=>`${k}: $${v.toFixed(2)}`).join(' | ')||'No site LMPs entered';
+  return`DA analysis — ${new Date().toDateString()}\n\n${spSum}\n\nSITE LMPs: ${pStr}\nHub: ${hub?'$'+parseFloat(hub).toFixed(2):'not provided'}\n\nIdentify binding constraints from shadow prices and spreads. Which hours are highest risk? What is HEN's congestion exposure?`;
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER MORNING
+// ═══════════════════════════════════════════════════════
+function renderMorning(res,raw){
+  const el=$('results-panel');
+  if(!res){el.innerHTML=`<div style="padding:1rem"><pre style="font-size:11px;white-space:pre-wrap;color:var(--text2)">${raw}</pre></div>`;return}
+  const hi=res.highConfidence||[],wa=res.watchList||[],un=res.unlikely||[];
+  el.innerHTML=`
+    <div class="risk-banner ${res.riskLevel||'NONE'}">
+      <div class="rb-left">
+        <div class="rb-date">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div>
+        <div class="rb-summary">${res.summary||''}</div>
+      </div>
+      <div class="rb-right">
+        <span class="risk-pill ${res.riskLevel||'LOW'}">${res.riskLevel||'—'}</span>
+        <div class="stat-chips">
+          <span class="stat-chip" style="color:var(--red)">${hi.length} high</span>
+          <span class="stat-chip" style="color:var(--amber)">${wa.length} watch</span>
+          <span class="stat-chip">${un.length} unlikely</span>
+        </div>
+      </div>
+    </div>
+    ${res.imageInsights&&res.imageInsights!=='No images provided'?`<div class="img-insight"><strong>From wind screenshot:</strong> ${res.imageInsights}</div>`:''}
+    ${hi.length?`<div><div class="section-hdr"><div class="section-title">High-probability constraints</div></div><div class="constraints-grid">${hi.map(c=>cCard(c,'high')).join('')}</div></div>`:''}
+    ${wa.length?`<div style="margin-top:1rem"><div class="section-hdr"><div class="section-title">Watch list</div></div><div class="constraints-grid">${wa.map(c=>cCard(c,'watch')).join('')}</div></div>`:''}
+    ${res.operatorNote?`<div class="op-note"><div class="op-note-label">Operator note</div>${res.operatorNote}</div>`:''}
+    ${un.length?`<div class="unlikely-wrap"><div class="unlikely-label">Low probability today</div><div class="unlikely-list">${un.join('  ·  ')}</div></div>`:''}
+  `;
+}
+
+function cCard(c,tier){
+  const nh=(c.nodes||[]).map(n=>{const pos=n.includes('+');const neg=n.includes('-')&&!n.startsWith('- ');return`<span class="node-tag ${pos?'pos':neg?'neg':'neu'}">${n}</span>`}).join('');
+  const lbdr=tier==='high'?'high':tier==='watch'?'watch':'medium';
+  return`<div class="c-card ${lbdr}">
+    <div class="c-top">
+      <div class="c-name">${c.priority==='ACTIVE'?'🟢':'🟡'} ${c.name}</div>
+      <div class="c-badges"><span class="c-badge ${c.confidence}">${c.confidence}</span><span class="c-badge ${c.priority}">${c.priority}</span></div>
+    </div>
+    <div class="c-meta">
+      <div class="c-meta-item"><span>hours</span> ${c.likelyHours||'—'}</div>
+      <div class="c-meta-item"><span>season</span> ${c.season||'—'}</div>
+    </div>
+    <div class="c-driver">${c.driver||''}</div>
+    <div class="c-nodes">${nh}</div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER DA
+// ═══════════════════════════════════════════════════════
+function renderDA(res,raw){
+  const el=$('results-panel');
+  if(!res){el.innerHTML=`<div style="padding:1rem"><pre style="font-size:11px;white-space:pre-wrap;color:var(--text2)">${raw}</pre></div>`;return}
+  const sig=res.signals||[],sp=res.spreadTable||[],conf=res.damConfirmed||[];
+  const spRows=sp.sort((a,b)=>Math.abs(b.vsHub)-Math.abs(a.vsHub)).map(s=>{
+    const mx=Math.max(...sp.map(x=>Math.abs(x.vsHub)));
+    const bw=Math.round(Math.abs(s.vsHub)/mx*60);
+    const bc=s.vsHub>0?'var(--green)':'var(--red)';
+    return`<tr><td style="font-size:12px;color:var(--text)">${s.site}</td><td><div class="spread-val ${s.vsHub>0?'spread-pos':'spread-neg'}">${s.vsHub>=0?'+':''}$${s.vsHub.toFixed(2)}</div><div class="spread-bar" style="width:${bw}px;background:${bc}"></div></td><td><span style="font-size:10px;color:var(--text3)">${s.signal}</span></td></tr>`;
+  }).join('');
+
+  // Shadow prices
+  const mx=LD.shadow.items.length?Math.max(...LD.shadow.items.map(c=>c.maxSP)):1;
+  const spTableRows=LD.shadow.items.slice(0,12).map(c=>{
+    const bw=Math.round(c.maxSP/mx*70);
+    const cls=c.maxSP>200?'hi':c.maxSP>50?'md':'lo';
+    const bc=c.maxSP>200?'var(--red)':c.maxSP>50?'var(--amber)':'var(--green)';
+    const match=PB.find(p=>c.name.toUpperCase().includes(p.n.split(' ')[0].toUpperCase()));
+    return`<tr><td style="font-size:11px;color:var(--text)">${c.name}${match?'<span class="playbook-match">✓ HEN</span>':''}</td><td><span class="sp-val ${cls}">$${c.maxSP.toFixed(0)}</span></td><td style="font-family:var(--mono);font-size:10px;color:var(--text3)">HE ${c.hrs.slice(0,3).join(',')}</td><td><div class="sp-bar" style="width:${bw}px;background:${bc}"></div></td></tr>`;
+  }).join('');
+
+  el.innerHTML=`
+    <div class="risk-banner ${conf.length?'HIGH':'NONE'}">
+      <div class="rb-left">
+        <div class="rb-date">DA Settlement — ${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div>
+        <div class="rb-summary">${res.headline||''}</div>
+        ${conf.length?`<div style="margin-top:6px;font-size:11px;color:var(--green);font-family:var(--mono)">✓ DAM confirmed: ${conf.join(', ')}</div>`:''}
+      </div>
+      <div class="rb-right"><span class="stat-chip" style="color:var(--teal)">${sig.length} signals</span></div>
+    </div>
+    ${res.imageInsights&&res.imageInsights!=='No images provided'?`<div class="img-insight"><strong>From screenshots:</strong> ${res.imageInsights}</div>`:''}
+    <div class="da-grid">
+      <div class="data-panel">
+        <div class="section-hdr"><div class="section-title">ERCOT DAM shadow prices</div><span class="live-tag ${LD.shadow.at?'live':'off'}">${LD.shadow.at?'live · '+LD.shadow.at.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'not loaded'}</span></div>
+        ${LD.shadow.items.length?`<table class="sp-table"><thead><tr><th>Constraint</th><th>Max SP</th><th>Peak hrs</th><th>Magnitude</th></tr></thead><tbody>${spTableRows}</tbody></table>`:'<div class="empty-panel"><p>No DAM shadow prices available — may not have cleared yet.</p></div>'}
+      </div>
+      <div class="data-panel">
+        <div class="section-hdr"><div class="section-title">Site spreads vs hub</div></div>
+        ${sp.length?`<table class="da-spread-table"><thead><tr><th>Site</th><th>vs Hub</th><th>Signal</th></tr></thead><tbody>${spRows}</tbody></table>`:'<div class="empty-panel"><p>Enter site LMPs in the sidebar.</p></div>'}
+      </div>
+    </div>
+    ${sig.length?`<div><div class="section-hdr" style="margin-top:1rem"><div class="section-title">Constraint signals</div></div><div class="constraints-grid">${sig.map(s=>`<div class="c-card ${s.confidence==='HIGH'?'high':'medium'}"><div class="c-top"><div class="c-name">${s.constraint}</div><div class="c-badges"><span class="c-badge ${s.confidence}">${s.confidence}</span></div></div><div class="c-meta"><div class="c-meta-item"><span>hours</span> ${s.likelyHours||'—'}</div>${s.impliedShadowPrice?`<div class="c-meta-item"><span>impl. SP</span> ~$${Math.round(s.impliedShadowPrice)}/MWh</div>`:''}</div><div class="c-driver">${s.evidence}</div></div>`).join('')}</div></div>`:''}
+    ${res.tradingNote?`<div class="op-note"><div class="op-note-label">Dispatch / bidding note</div>${res.tradingNote}</div>`:''}
+  `;
+}
+
+// ═══════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════
+function handleUp(k){
+  const ids={w:'wf',d1:'df1',d2:'df2'};const zids={w:'wz',d1:'dz1',d2:'dz2'};const lids={w:'wl',d1:'dl1',d2:'dl2'};const cids={w:'wch',d1:'dch1',d2:'dch2'};
+  const inp=$(ids[k]);const files=Array.from(inp.files);upl[k]=files;
+  if(files.length){$(zids[k]).classList.add('filled');$(lids[k]).textContent=files.length+' ready';$(cids[k]).innerHTML=files.map(f=>`<span class="uz-chip">${f.name.slice(0,12)}</span>`).join('')}
+}
+async function toB64(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res({data:r.result.split(',')[1],type:f.type||'image/png'});r.onerror=rej;r.readAsDataURL(f)})}
+function showProg(lbl){$('prog-wrap').style.display='block';$('prog-fill').style.width='5%';$('prog-lbl').textContent=lbl}
+function updProg(pct,lbl){$('prog-fill').style.width=pct+'%';$('prog-lbl').textContent=lbl}
+function hideProg(){$('prog-fill').style.width='100%';setTimeout(()=>{$('prog-wrap').style.display='none';$('prog-fill').style.width='0%'},400)}
+function showErr(msg){const e=$('err-box');e.style.display='block';e.textContent='✗ '+msg}
+</script>
+</body>
+</html>
