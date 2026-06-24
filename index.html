@@ -553,12 +553,10 @@ async function runAnalysis(){
     const jsonStart=raw.indexOf('{');
     const jsonEnd=raw.lastIndexOf('}');
     if(jsonStart>=0&&jsonEnd>jsonStart){
-      const jsonStr=raw.slice(jsonStart,jsonEnd+1)
-        .replace(/\u2013|\u2014/g,'-')
-        .replace(/\u2026/g,'...')
-        .replace(/[\u2018\u2019]/g,"'")
-        .replace(/[\u201C\u201D]/g,'"');
-      try{res=JSON.parse(jsonStr)}catch(e){console.error('JSON parse error:',e.message)}
+      let jsonStr=raw.slice(jsonStart,jsonEnd+1);
+      // Replace unicode punctuation with ASCII equivalents
+      jsonStr=jsonStr.split('–').join('-').split('—').join('-').split('…').join('...').split('‘').join("'").split('’').join("'").split('“').join('"').split('”').join('"');
+      try{res=JSON.parse(jsonStr)}catch(e){console.error('JSON parse error:',e.message);}
     }
     hideProg();
     if(res){if(mode==='morning')renderMorning(res,raw);else renderDA(res,raw);}
