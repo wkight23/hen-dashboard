@@ -29,6 +29,7 @@ def mx(lst): return max(lst)/1000 if lst else 0
 items = wind_data.get("_embedded", {}).get("wpp_hrly_actual_fcast_geo", wind_data.get("data", []))
 br = {"WEST": [], "SOUTH": [], "COASTAL": [], "PANHANDLE": []}
 for r in items:
+    if not isinstance(r, dict): continue
     rg = (r.get("genRegion") or r.get("region") or "").upper()
     v = float(r.get("hourlyWindGenForecast") or r.get("genForecast") or 0)
     if rg in br and v > 0: br[rg].append(v)
