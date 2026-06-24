@@ -6,9 +6,9 @@
 <title>HEN — Congestion Dashboard</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
+ 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+ 
 :root {
   --navy: #043D70;
   --navy-dark: #022a4e;
@@ -32,9 +32,9 @@
   --mono: 'JetBrains Mono', monospace;
   --sans: 'Inter', -apple-system, sans-serif;
 }
-
+ 
 body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 13px; line-height: 1.5; }
-
+ 
 /* ── Top bar ── */
 .topbar { background: var(--navy-dark); border-bottom: 1px solid var(--teal-border); padding: 0 1.5rem; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
 .topbar-left { display: flex; align-items: center; gap: 12px; }
@@ -45,10 +45,10 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 .topbar-right { display: flex; align-items: center; gap: 10px; }
 .date-badge { font-family: var(--mono); font-size: 11px; color: var(--teal); background: var(--teal-bg); border: 1px solid var(--teal-border); padding: 3px 10px; border-radius: 4px; }
 .season-badge { font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 4px; letter-spacing: 0.04em; text-transform: uppercase; }
-
+ 
 /* ── Layout ── */
 .body-wrap { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 52px); }
-
+ 
 /* ── Sidebar ── */
 .sidebar { background: var(--surface); border-right: 1px solid var(--border); padding: 1.25rem 1rem; display: flex; flex-direction: column; gap: 1.5rem; }
 .sidebar-section { display: flex; flex-direction: column; gap: 6px; }
@@ -60,26 +60,26 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 .field input[type=password] { font-family: var(--mono); font-size: 11px; }
 .field textarea { resize: vertical; font-size: 12px; }
 .cred-save { font-size: 10px; color: var(--text3); margin-top: 2px; }
-
+ 
 /* Run button */
 .run-btn { width: 100%; padding: 10px; font-size: 13px; font-weight: 600; background: var(--teal); color: white; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; transition: background .15s, transform .08s; letter-spacing: -0.01em; }
 .run-btn:hover { background: var(--teal-dim); }
 .run-btn:active { transform: scale(0.98); }
 .run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .run-btn svg { width: 14px; height: 14px; }
-
+ 
 .run-mode { display: flex; gap: 6px; margin-bottom: 2px; }
 .mode-btn { flex: 1; padding: 6px 4px; font-size: 11px; font-weight: 500; border: 1px solid var(--border); border-radius: 5px; background: transparent; color: var(--text2); cursor: pointer; transition: all .12s; text-align: center; }
 .mode-btn.active { background: var(--navy-mid); border-color: var(--teal); color: var(--teal); }
-
+ 
 .conn-status { font-size: 11px; padding: 5px 8px; border-radius: 4px; display: flex; align-items: center; gap: 6px; }
 .conn-status.ok { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
 .conn-status.err { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
 .conn-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
-
+ 
 /* ── Main ── */
 .main { padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1.25rem; }
-
+ 
 /* ── Section headers ── */
 .section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: .875rem; }
 .section-title { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--teal); display: flex; align-items: center; gap: 7px; }
@@ -88,7 +88,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 .live-tag.live { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
 .live-tag.stale { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
 .live-tag.off { background: var(--surface3); color: var(--text3); border: 1px solid var(--border2); }
-
+ 
 /* ── ERCOT data grid ── */
 .data-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem 1.25rem; }
 .data-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: var(--border2); border-radius: 5px; overflow: hidden; }
@@ -102,9 +102,9 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 .dc-val.alert { color: var(--red); }
 .dc-unit { font-size: 10px; color: var(--text3); margin-top: 3px; font-family: var(--mono); }
 @keyframes pulse { 0%,100%{opacity:.3} 50%{opacity:.7} }
-
+ 
 .load-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: var(--border2); border-radius: 5px; overflow: hidden; margin-top: 1px; }
-
+ 
 /* ── Risk banner ── */
 .risk-banner { border-radius: 8px; padding: 14px 18px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; border: 1px solid; }
 .risk-banner.HIGH { background: var(--red-bg); border-color: var(--red-border); }
@@ -121,7 +121,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 .risk-pill.LOW { background: var(--green); color: white; }
 .stat-chips { display: flex; gap: 6px; }
 .stat-chip { font-size: 11px; padding: 3px 8px; border-radius: 4px; background: var(--surface3); color: var(--text2); font-family: var(--mono); }
-
+ 
 /* ── Constraint cards ── */
 .constraints-grid { display: flex; flex-direction: column; gap: 6px; }
 .c-card { background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 11px 14px; border-left: 3px solid; }
@@ -145,7 +145,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 .node-tag.pos { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
 .node-tag.neg { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
 .node-tag.neu { background: var(--surface3); color: var(--text3); border-color: var(--border2); }
-
+ 
 /* ── DA section ── */
 .da-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .da-spread-table { width: 100%; border-collapse: collapse; font-size: 12px; }
@@ -156,7 +156,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 .spread-pos { color: var(--green); }
 .spread-neg { color: var(--red); }
 .spread-bar { height: 3px; border-radius: 2px; margin-top: 3px; min-width: 2px; }
-
+ 
 /* ── Shadow price table ── */
 .sp-table { width: 100%; border-collapse: collapse; font-size: 12px; }
 .sp-table th { text-align: left; font-size: 9px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); padding: 0 10px 8px; border-bottom: 1px solid var(--border2); }
@@ -168,20 +168,20 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 .sp-val.lo { color: var(--green); }
 .sp-bar { height: 4px; border-radius: 2px; display: block; margin-top: 3px; }
 .playbook-match { font-size: 9px; color: var(--teal); margin-left: 4px; }
-
+ 
 /* ── Op note ── */
 .op-note { padding: 11px 14px; background: rgba(212,135,42,0.07); border: 1px solid var(--amber-border); border-radius: 6px; font-size: 12px; color: var(--text); line-height: 1.55; }
 .op-note-label { font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); margin-bottom: 4px; }
-
+ 
 /* ── Img insight ── */
 .img-insight { padding: 10px 13px; background: var(--teal-bg); border: 1px solid var(--teal-border); border-radius: 6px; font-size: 12px; color: var(--text2); line-height: 1.5; }
 .img-insight strong { color: var(--teal); }
-
+ 
 /* ── Unlikely ── */
 .unlikely-wrap { padding: 10px 13px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; }
 .unlikely-label { font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin-bottom: 5px; }
 .unlikely-list { font-size: 11px; color: var(--text3); line-height: 1.9; font-family: var(--mono); }
-
+ 
 /* ── Upload ── */
 .upload-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .uz { border: 1px dashed var(--border); border-radius: 5px; padding: 8px; text-align: center; cursor: pointer; background: var(--surface2); transition: border-color .12s; position: relative; }
@@ -191,33 +191,33 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 .uz-label { font-size: 10px; color: var(--text3); margin-top: 3px; }
 .uz-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; margin-top: 4px; }
 .uz-chip { font-size: 9px; padding: 1px 5px; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; color: var(--text3); }
-
+ 
 /* ── Progress ── */
 .progress-wrap { display: none; }
 .progress-bar { height: 2px; background: var(--surface3); border-radius: 1px; overflow: hidden; margin-bottom: 6px; }
 .progress-fill { height: 100%; background: var(--teal); border-radius: 1px; transition: width .3s; }
 .progress-label { font-size: 10px; color: var(--text3); font-family: var(--mono); text-align: center; }
-
+ 
 /* ── Error ── */
 .err-box { display: none; padding: 9px 12px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 5px; font-size: 12px; color: var(--red); }
-
+ 
 /* ── Empty states ── */
 .empty-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2.5rem 1rem; color: var(--text3); gap: 8px; }
 .empty-panel svg { width: 28px; height: 28px; opacity: 0.3; }
 .empty-panel p { font-size: 12px; }
-
+ 
 /* Spinner */
 @keyframes spin { to { transform: rotate(360deg); } }
 .spinner { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.2); border-top-color: white; border-radius: 50%; animation: spin .65s linear infinite; }
-
+ 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 2px; }
-
+ 
 @media (max-width: 900px) { .body-wrap { grid-template-columns: 1fr; } .sidebar { border-right: none; border-bottom: 1px solid var(--border); } .data-grid, .load-grid { grid-template-columns: repeat(3,1fr); } }
 </style>
 </head>
 <body>
-
+ 
 <!-- TOP BAR -->
 <div class="topbar">
   <div class="topbar-left">
@@ -231,12 +231,12 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
     <div class="season-badge" id="top-season" style="background:var(--surface3);color:var(--text3);border:1px solid var(--border2)">—</div>
   </div>
 </div>
-
+ 
 <div class="body-wrap">
-
+ 
 <!-- SIDEBAR -->
 <div class="sidebar">
-
+ 
   <div class="sidebar-section">
     <div class="sidebar-label">Mode</div>
     <div class="run-mode">
@@ -244,7 +244,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
       <button class="mode-btn" id="mode-da" onclick="setMode('da')">DA (12:45+)</button>
     </div>
   </div>
-
+ 
   <div class="sidebar-section">
     <div class="sidebar-label">ERCOT credentials</div>
     <div class="field"><label>Username</label><input type="text" id="eu" placeholder="you@email.com" oninput="saveCreds()"></div>
@@ -252,12 +252,12 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
     <div class="field"><label>Subscription key</label><input type="password" id="esk" placeholder="4ce1f2…" oninput="saveCreds()"></div>
     <div class="cred-save">Saved to this browser only</div>
   </div>
-
+ 
   <div class="sidebar-section">
     <div class="sidebar-label">Anthropic key</div>
     <div class="field"><input type="password" id="ak" placeholder="sk-ant-…" oninput="saveCreds()"></div>
   </div>
-
+ 
   <div class="sidebar-section" id="morning-inputs">
     <div class="sidebar-label">Morning inputs</div>
     <div class="field"><label>High temp (°F)</label><input type="number" id="inp-temp" placeholder="e.g. 98"></div>
@@ -269,7 +269,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
       <div class="uz-chips" id="wch"></div>
     </div>
   </div>
-
+ 
   <div class="sidebar-section" id="da-inputs" style="display:none">
     <div class="sidebar-label">DA site LMPs ($/MWh)</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
@@ -298,7 +298,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
       </div>
     </div>
   </div>
-
+ 
   <div style="margin-top:auto;display:flex;flex-direction:column;gap:8px;">
     <div class="progress-wrap" id="prog-wrap">
       <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
@@ -310,12 +310,12 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
     </button>
     <div class="err-box" id="err-box"></div>
   </div>
-
+ 
 </div>
-
+ 
 <!-- MAIN -->
 <div class="main" id="main-content">
-
+ 
   <!-- ERCOT live data -->
   <div class="data-panel">
     <div class="section-hdr">
@@ -343,7 +343,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
       <div class="lc-wrap" id="cell-ph"><div class="data-cell"><div class="dc-label">Peak hour</div><div class="dc-val loading" id="dv-ph">—</div><div class="dc-unit">HE expected</div></div></div>
     </div>
   </div>
-
+ 
   <!-- Results panel -->
   <div id="results-panel">
     <div class="empty-panel">
@@ -351,10 +351,10 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
       <p>Select a mode and click Run analysis to get today's constraint briefing.</p>
     </div>
   </div>
-
+ 
 </div>
 </div>
-
+ 
 <script>
 // ═══════════════════════════════════════════════════════
 // PLAYBOOK
@@ -389,7 +389,7 @@ const PB=[
   {n:'MAXWELL-HAMILTON 138KV',p:'WATCH',s:'Summer/Fall',h:'HE 2,24,1',d:'West wind 13GW+.',nodes:{Hamilton:.23,'Fort Duncan':.143,Russek:-.05},m:114.9},
   {n:'SONR-ATSO 69KV',p:'WATCH',s:'All seasons',h:'HE 1,3,2',d:'West load 9GW+ overnight.',nodes:{Russek:.05,Hamilton:.014},m:25},
 ];
-
+ 
 // ═══════════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════════
@@ -399,7 +399,7 @@ let LD={wind:{west:null,south:null,coastal:null,pan:null,total:null,solar:null,a
 let tok=null,tokExp=null;
 const AUTH='https://ercotb2c.b2clogin.com/ercotb2c.onmicrosoft.com/B2C_1_PUBAPI-ROPC-FLOW/oauth2/v2.0/token';
 const BASE='https://api.ercot.com/api/public-reports';
-
+ 
 // ═══════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════
@@ -409,10 +409,10 @@ window.addEventListener('DOMContentLoaded',()=>{
   updateDateBadge();
   setInterval(updateDateBadge,60000);
 });
-
+ 
 function $(id){return document.getElementById(id)}
 function saveCreds(){localStorage.setItem('hen_c',JSON.stringify({u:$('eu').value,p:$('ep').value,k:$('esk').value,a:$('ak').value}))}
-
+ 
 function updateDateBadge(){
   const now=new Date();
   $('top-date').textContent=now.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
@@ -422,7 +422,7 @@ function updateDateBadge(){
   const [fg,bg]=colors[s];
   $('top-season').textContent=s;$('top-season').style.background=bg+'33';$('top-season').style.color=fg;$('top-season').style.border=`1px solid ${fg}44`;
 }
-
+ 
 function setMode(m){
   mode=m;
   document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
@@ -432,7 +432,7 @@ function setMode(m){
   if(m==='morning'){$('morning-inputs').style.flexDirection='column';$('morning-inputs').style.gap='6px'}
   if(m==='da'){$('da-inputs').style.flexDirection='column';$('da-inputs').style.gap='6px'}
 }
-
+ 
 // ═══════════════════════════════════════════════════════
 // ERCOT AUTH
 // ═══════════════════════════════════════════════════════
@@ -447,7 +447,7 @@ async function getToken(){
   tok=d.id_token;tokExp=Date.now()+3500000;return tok;
 }
 function hdrs(){const k=$('esk').value.trim();if(!k)throw new Error('Subscription key required');return{'Authorization':'Bearer '+tok,'Ocp-Apim-Subscription-Key':k}}
-
+ 
 // ═══════════════════════════════════════════════════════
 // FETCH ERCOT DATA
 // ═══════════════════════════════════════════════════════
@@ -473,7 +473,7 @@ async function fetchERCOT(){
   LD.wind.at=LD.load.at=new Date();
   updateCells();
 }
-
+ 
 function parseWind(data){
   const items=data?._embedded?.wpp_hrly_actual_fcast_geo||data?.data||[];
   const m={WEST:[],SOUTH:[],COASTAL:[],PANHANDLE:[]};
@@ -502,7 +502,7 @@ function parseShadow(data){
   LD.shadow.items=Object.values(byC).filter(c=>c.sps.length>0).map(c=>({name:c.name,maxSP:Math.max(...c.sps.map(Math.abs)),hrs:[...new Set(c.hrs)].sort((a,b)=>a-b),cnt:c.sps.length})).sort((a,b)=>b.maxSP-a.maxSP).slice(0,20);
   LD.shadow.at=new Date();
 }
-
+ 
 function fmt(v,dec=1){return v!=null?v.toFixed(dec):'—'}
 function updateCells(){
   const set=(id,v,warnFn,alertFn)=>{
@@ -526,7 +526,7 @@ function updateCells(){
   const t=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
   ['wind-tag','load-tag'].forEach(id=>{$(id).className='live-tag live';$(id).textContent='live · '+t});
 }
-
+ 
 // ═══════════════════════════════════════════════════════
 // MAIN RUN
 // ═══════════════════════════════════════════════════════
@@ -550,18 +550,23 @@ async function runAnalysis(){
     if(data.error)throw new Error(data.error.message);
     let raw=data.content.filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json|```/g,'').trim();
     let res=null;
-    // Extract JSON - find first { and last } to handle extra text
     const jsonStart=raw.indexOf('{');
     const jsonEnd=raw.lastIndexOf('}');
     if(jsonStart>=0&&jsonEnd>jsonStart){
-      try{res=JSON.parse(raw.slice(jsonStart,jsonEnd+1))}catch(e){}
+      const jsonStr=raw.slice(jsonStart,jsonEnd+1)
+        .replace(/\u2013|\u2014/g,'-')
+        .replace(/\u2026/g,'...')
+        .replace(/[\u2018\u2019]/g,"'")
+        .replace(/[\u201C\u201D]/g,'"');
+      try{res=JSON.parse(jsonStr)}catch(e){console.error('JSON parse error:',e.message)}
     }
     hideProg();
-    if(mode==='morning')renderMorning(res,raw);else renderDA(res,raw);
+    if(res){if(mode==='morning')renderMorning(res,raw);else renderDA(res,raw);}
+    else{document.getElementById('results-panel').innerHTML='<div style="padding:1rem"><pre style="font-size:11px;white-space:pre-wrap;color:var(--text2)">'+raw+'</pre></div>';}
   }catch(e){hideProg();showErr(e.message)}
   btn.disabled=false;btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Run analysis';
 }
-
+ 
 // ═══════════════════════════════════════════════════════
 // SYSTEM PROMPTS
 // ═══════════════════════════════════════════════════════
@@ -574,7 +579,7 @@ function buildDASys(){
   const ns=PB.map(c=>{const s=Object.entries(c.nodes).map(([k,v])=>`${k}(${v>0?'+':''}${(v*100).toFixed(1)}%)`).join(', ');return`- ${c.n}: ${s}`}).join('\n');
   return`You are the NOC Constraint Analyst for HEN, expert in ERCOT DA price interpretation.\nPRINCIPLE: Load-side nodes = premium to hub. Gen-side nodes = discount. Spread / SF ≈ implied shadow price.\nNODE MAP: Russek premium → TWINBU-HARGROVE, ESCONDID-GANSO, PALOUSE-WOLFCAMP. Hamilton/FtDuncan → E_PASP, LARDVNTH-LASCRUCE, NLARSW-PILONCIL. Judkins/Saddleback → LNGSW-PRLSW, MGSW-CATSW. Junction → FORTMA-YELWJCKT, TREADWEL. ValVerde neg → E_PASP, LARDVNTH. Catarina very high → ASHERTON-CATARINA. Olney → CRDCW-OLNEY.\nSF DATA:\n${ns}\nReturn ONLY valid JSON:\n{"headline":"one sentence DA summary","signals":[{"constraint":"...","confidence":"HIGH|MEDIUM|LOW","impliedShadowPrice":null,"evidence":"...","likelyHours":"..."}],"spreadTable":[{"site":"...","vsHub":0.0,"signal":"bullish|bearish|neutral"}],"damConfirmed":["names"],"imageInsights":"...","tradingNote":"key dispatch implication"}`;
 }
-
+ 
 function buildMUser(){
   const w=LD.wind,l=LD.load,src=w.at?'LIVE ('+w.at.toLocaleTimeString()+')':'NOT LOADED';
   return`Morning briefing — ${new Date().toDateString()}\n\nGEN FORECAST [${src}]:\nWest wind: ${fmt(w.west)} GW | South: ${fmt(w.south)} GW | Coastal: ${fmt(w.coastal)} GW | Panhandle: ${fmt(w.pan)} GW | Total: ${fmt(w.total)} GW | Solar: ${fmt(w.solar)} GW\n\nLOAD [${src}]:\nWest: ${fmt(l.west)} GW | South: ${fmt(l.south)} GW | North: ${fmt(l.north)} GW | Houston: ${fmt(l.hou)} GW | Total: ${fmt(l.total)} GW\nHigh temp: ${$('inp-temp').value||'not provided'} F\n\nOUTAGES:\n${$('inp-notes').value||'None'}\n\nAnalyze which playbook constraints are most likely today.`;
@@ -588,7 +593,7 @@ function buildDAUser(){
   const pStr=Object.entries(prices).map(([k,v])=>`${k}: $${v.toFixed(2)}`).join(' | ')||'No site LMPs entered';
   return`DA analysis — ${new Date().toDateString()}\n\n${spSum}\n\nSITE LMPs: ${pStr}\nHub: ${hub?'$'+parseFloat(hub).toFixed(2):'not provided'}\n\nIdentify binding constraints from shadow prices and spreads. Which hours are highest risk? What is HEN's congestion exposure?`;
 }
-
+ 
 // ═══════════════════════════════════════════════════════
 // RENDER MORNING
 // ═══════════════════════════════════════════════════════
@@ -618,7 +623,7 @@ function renderMorning(res,raw){
     ${un.length?`<div class="unlikely-wrap"><div class="unlikely-label">Low probability today</div><div class="unlikely-list">${un.join('  ·  ')}</div></div>`:''}
   `;
 }
-
+ 
 function cCard(c,tier){
   const nh=(c.nodes||[]).map(n=>{const pos=n.includes('+');const neg=n.includes('-')&&!n.startsWith('- ');return`<span class="node-tag ${pos?'pos':neg?'neg':'neu'}">${n}</span>`}).join('');
   const lbdr=tier==='high'?'high':tier==='watch'?'watch':'medium';
@@ -635,7 +640,7 @@ function cCard(c,tier){
     <div class="c-nodes">${nh}</div>
   </div>`;
 }
-
+ 
 // ═══════════════════════════════════════════════════════
 // RENDER DA
 // ═══════════════════════════════════════════════════════
@@ -649,7 +654,7 @@ function renderDA(res,raw){
     const bc=s.vsHub>0?'var(--green)':'var(--red)';
     return`<tr><td style="font-size:12px;color:var(--text)">${s.site}</td><td><div class="spread-val ${s.vsHub>0?'spread-pos':'spread-neg'}">${s.vsHub>=0?'+':''}$${s.vsHub.toFixed(2)}</div><div class="spread-bar" style="width:${bw}px;background:${bc}"></div></td><td><span style="font-size:10px;color:var(--text3)">${s.signal}</span></td></tr>`;
   }).join('');
-
+ 
   // Shadow prices
   const mx=LD.shadow.items.length?Math.max(...LD.shadow.items.map(c=>c.maxSP)):1;
   const spTableRows=LD.shadow.items.slice(0,12).map(c=>{
@@ -659,7 +664,7 @@ function renderDA(res,raw){
     const match=PB.find(p=>c.name.toUpperCase().includes(p.n.split(' ')[0].toUpperCase()));
     return`<tr><td style="font-size:11px;color:var(--text)">${c.name}${match?'<span class="playbook-match">✓ HEN</span>':''}</td><td><span class="sp-val ${cls}">$${c.maxSP.toFixed(0)}</span></td><td style="font-family:var(--mono);font-size:10px;color:var(--text3)">HE ${c.hrs.slice(0,3).join(',')}</td><td><div class="sp-bar" style="width:${bw}px;background:${bc}"></div></td></tr>`;
   }).join('');
-
+ 
   el.innerHTML=`
     <div class="risk-banner ${conf.length?'HIGH':'NONE'}">
       <div class="rb-left">
@@ -684,7 +689,7 @@ function renderDA(res,raw){
     ${res.tradingNote?`<div class="op-note"><div class="op-note-label">Dispatch / bidding note</div>${res.tradingNote}</div>`:''}
   `;
 }
-
+ 
 // ═══════════════════════════════════════════════════════
 // HELPERS
 // ═══════════════════════════════════════════════════════
@@ -701,3 +706,8 @@ function showErr(msg){const e=$('err-box');e.style.display='block';e.textContent
 </script>
 </body>
 </html>
+
+
+
+
+
