@@ -554,6 +554,7 @@ async function runAnalysis(){
     const jsonEnd=raw.lastIndexOf('}');
     if(jsonStart>=0&&jsonEnd>jsonStart){
       let jsonStr=raw.slice(jsonStart,jsonEnd+1);
+     jsonStr=jsonStr.replace(/[\r\n]+/g,' ');
       // Replace unicode punctuation with ASCII equivalents
       jsonStr=jsonStr.split('–').join('-').split('—').join('-').split('…').join('...').split('‘').join("'").split('’').join("'").split('“').join('"').split('”').join('"');
       try{res=JSON.parse(jsonStr)}catch(e){console.error('JSON parse error:',e.message);}
