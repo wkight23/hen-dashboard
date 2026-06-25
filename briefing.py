@@ -70,14 +70,18 @@ wind["solar"]=max(sv)/1000 if sv else 0
 print("Wind: West="+str(round(wind["west"],1))+" South="+str(round(wind["south"],1))+" Coastal="+str(round(wind["coastal"],1))+" Total="+str(round(wind["total"],1))+" Solar="+str(round(wind["solar"],1)))
 load_rows=load_data.get("data",[])
 load_fields=load_data.get("fields",[])
-zone_idx=next((f["cardinality"]-1 for f in load_fields if "weatherZone" in f.get("name","")),2)
-total_idx=next((f["cardinality"]-1 for f in load_fields if "systemTotal" in f.get("name","")),3)
+print("Load fields:", [f.get("name") for f in load_fields[:8]])
+print("Load sample:", load_rows[:1])
+zone_idx=next((f["cardinality"]-1 for f in load_fields if "weatherZone" in f.get("name","") or "zone" in f.get("name","").lower()),None)
+total_idx=next((f["cardinality"]-1 for f in load_fields if "systemTotal" in f.get("name","") or "total" in f.get("name","").lower()),None)
+print("Load zone_idx="+str(zone_idx)+" total_idx="+str(total_idx))
 bz={"WEST":[],"SOUTH":[],"NORTH":[],"HOUSTON":[]}
 for r in load_rows:
-    if not isinstance(r,list) or len(r)<=max(zone_idx,total_idx): continue
-    z=str(r[zone_idx]).upper().replace("LZ_","") if r[zone_idx] else ""
-    v=float(r[total_idx]) if r[total_idx] and isinstance(r[total_idx],(int,float)) else 0
-    if z in bz and v>0: bz[z].append(v)
+    if not isinstance(r,list): continue
+    if zone_idx is not None and total_idx is not None and len(r)>max(zone_idx,total_idx):
+        z=str(r[zone_idx]).upper().replace("LZ_","") if r[zone_idx] else ""
+        v=float(r[total_idx]) if r[total_idx] and isinstance(r[total_idx],(int,float)) else 0
+        if z in bz and v>0: bz[z].append(v)
 def mxmw(lst): return max(lst)/1000 if lst else 0
 load={"west":mxmw(bz["WEST"]),"south":mxmw(bz["SOUTH"]),"north":mxmw(bz["NORTH"]),"houston":mxmw(bz["HOUSTON"])}
 load["total"]=load["west"]+load["south"]+load["north"]+load["houston"]
@@ -156,8 +160,18 @@ sys_msg+="Return ONLY valid JSON matching: "+SCHEMA
 print("Calling Claude...")
 cr=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":2000,"system":sys_msg,"messages":[{"role":"user","content":user_msg}]},timeout=90)
 raw=cr.json()["content"][0]["text"]
-clean=re.sub(r"[\x00-\x1f\x7f]"," ",raw)
-result=json.loads(clean[clean.index("{"):clean.rindex("}")+1])
+clean=re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]"," ",raw)
+clean=re.sub(r"\r\n|\r|\n"," ",clean)
+chunk=clean[clean.index("{"):clean.rindex("}")+1]
+try:
+    result=json.loads(chunk)
+except json.JSONDecodeError as je:
+    print("JSON parse failed at char "+str(je.pos)+", using repair...")
+    cr2=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":2000,"system":"Fix broken JSON. Return ONLY valid JSON. No explanation.","messages":[{"role":"user","content":"Fix: "+chunk[:4000]}]},timeout=60)
+    raw2=cr2.json()["content"][0]["text"]
+    clean2=re.sub(r"[\x00-\x1f\x7f]"," ",raw2)
+    clean2=re.sub(r"\r\n|\r|\n"," ",clean2)
+    result=json.loads(clean2[clean2.index("{"):clean2.rindex("}")+1])
 overall_risk=result.get("overallRisk","MODERATE")
 summary=result.get("summary","")
 op_note=result.get("operatorNote","")
