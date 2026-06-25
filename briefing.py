@@ -28,13 +28,13 @@ def eg(path,date_str=None,size=500):
     except:
         return {}
 print("Fetching ERCOT data...")
-print("Wind keys:", list(wind_data.keys())[:5])
-print("Load keys:", list(load_data.keys())[:5])
-print("Shadow keys:", list(shadow_data.keys())[:5])
 wind_data=eg("np4-742-cd/wpp_hrly_actual_fcast_geo")
 load_data=eg("np3-565-cd/lf_by_model_weather_zone")
 solar_data=eg("np4-737-cd/spp_hrly_avrg_actl_fcast")
 shadow_data=eg("np4-191-cd/dam_shadow_prices")
+print("Wind keys:", list(wind_data.keys())[:5])
+print("Load keys:", list(load_data.keys())[:5])
+print("Shadow keys:", list(shadow_data.keys())[:5])
 print("Fetching DA prices...")
 da_prices={}
 print("DA prices sites found:", list(da_prices.keys())[:5])
