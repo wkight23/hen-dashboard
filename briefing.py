@@ -258,26 +258,3 @@ html+="<span style="+Q+"font-size:10px;font-weight:700;padding:3px 9px;border-ra
 html+="<div style="+Q+"max-width:960px;margin:0 auto;padding:1.5rem"+Q+">"+body+"</div></body></html>"
 with open("results.html","w") as f: f.write(html)
 print("Done. Risk:"+overall_risk+" DA_spreads:"+str(len(site_spreads))+" Blocks:"+str(len(time_blocks)))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CollapseCollapse
