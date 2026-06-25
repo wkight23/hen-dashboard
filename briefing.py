@@ -147,7 +147,18 @@ print("Calling Claude...")
 cr=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":2000,"system":sys_msg,"messages":[{"role":"user","content":user_msg}]},timeout=90)
 raw=cr.json()["content"][0]["text"]
 clean=re.sub(r"[\x00-\x1f\x7f]"," ",raw)
-result=json.loads(clean[clean.index("{"):clean.rindex("}")+1])
+chunk=clean[clean.index("{"):clean.rindex("}")+1]
+try:
+    result=json.loads(chunk)
+except json.JSONDecodeError:
+    import ast
+    try:
+        result=ast.literal_eval(chunk)
+    except:
+        cr2=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":2000,"system":"Return ONLY valid JSON. No markdown. No special characters.","messages":[{"role":"user","content":"Fix this JSON and return only valid JSON: "+chunk[:3000]}]},timeout=60)
+        raw2=cr2.json()["content"][0]["text"]
+        clean2=re.sub(r"[\x00-\x1f\x7f]"," ",raw2)
+        result=json.loads(clean2[clean2.index("{"):clean2.rindex("}")+1])
 overall_risk=result.get("overallRisk","MODERATE")
 summary=result.get("summary","")
 op_note=result.get("operatorNote","")
