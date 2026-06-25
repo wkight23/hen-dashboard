@@ -68,15 +68,20 @@ sol_rows=solar_data.get("data",[])
 sv=[float(r[3]) for r in sol_rows if isinstance(r,list) and len(r)>3 and r[3] and isinstance(r[3],(int,float)) and float(r[3])>0]
 wind["solar"]=max(sv)/1000 if sv else 0
 print("Wind: West="+str(round(wind["west"],1))+" South="+str(round(wind["south"],1))+" Coastal="+str(round(wind["coastal"],1))+" Total="+str(round(wind["total"],1))+" Solar="+str(round(wind["solar"],1)))
-li=load_data.get("_embedded",{}).get("lf_by_model_weather_zone",load_data.get("data",[]))
+load_rows=load_data.get("data",[])
+load_fields=load_data.get("fields",[])
+zone_idx=next((f["cardinality"]-1 for f in load_fields if "weatherZone" in f.get("name","")),2)
+total_idx=next((f["cardinality"]-1 for f in load_fields if "systemTotal" in f.get("name","")),3)
 bz={"WEST":[],"SOUTH":[],"NORTH":[],"HOUSTON":[]}
-for r in li:
-    if not isinstance(r,dict): continue
-    z=(r.get("weatherZone") or r.get("zone") or "").upper().replace("LZ_","")
-    v=float(r.get("systemTotal") or r.get("loadForecast") or r.get("totalLoad") or 0)
+for r in load_rows:
+    if not isinstance(r,list) or len(r)<=max(zone_idx,total_idx): continue
+    z=str(r[zone_idx]).upper().replace("LZ_","") if r[zone_idx] else ""
+    v=float(r[total_idx]) if r[total_idx] and isinstance(r[total_idx],(int,float)) else 0
     if z in bz and v>0: bz[z].append(v)
-load={"west":mx(bz["WEST"]),"south":mx(bz["SOUTH"]),"north":mx(bz["NORTH"]),"houston":mx(bz["HOUSTON"])}
+def mxmw(lst): return max(lst)/1000 if lst else 0
+load={"west":mxmw(bz["WEST"]),"south":mxmw(bz["SOUTH"]),"north":mxmw(bz["NORTH"]),"houston":mxmw(bz["HOUSTON"])}
 load["total"]=load["west"]+load["south"]+load["north"]+load["houston"]
+print("Load: West="+str(round(load["west"],1))+" South="+str(round(load["south"],1))+" North="+str(round(load["north"],1))+" Houston="+str(round(load["houston"],1)))
 si=shadow_data.get("_embedded",{}).get("dam_shadow_prices",shadow_data.get("data",[]))
 sc={}
 for r in si:
@@ -134,31 +139,25 @@ user_msg="HEN Bid Briefing "+TODAY+" ("+SEASON+") run "+NOW.strftime("%H:%M CDT"
 user_msg+="ERCOT: Wind West:"+str(round(wind["west"],1))+"GW South:"+str(round(wind["south"],1))+"GW Coastal:"+str(round(wind["coastal"],1))+"GW Total:"+str(round(wind["total"],1))+"GW Solar:"+str(round(wind["solar"],1))+"GW"+chr(10)
 user_msg+="Load West:"+str(round(load["west"],1))+"GW South:"+str(round(load["south"],1))+"GW North:"+str(round(load["north"],1))+"GW Houston:"+str(round(load["houston"],1))+"GW"+chr(10)+chr(10)
 user_msg+=shadow_text+chr(10)+spread_text+chr(10)+da_sig_text+chr(10)
-user_msg+="Bid window HE16 today through HE24 tomorrow. Identify constraint risk in each time block."
+user_msg+="Bid window HE17 today through HE16 tomorrow. For each constraint identify whether HEN sites face discharge risk (positive SF) or charging opportunity (negative SF when LMP may go near zero or negative)."
 SCHEMA="{overallRisk:HIGH/MODERATE/LOW,summary:2-3 sentences,operatorNote:key bid note,timeBlocks:{tonight:{he:HE16-24,constraints:[{name:x,risk:HIGH/MODERATE/WATCH,driver:x,henSites:[x],action:x}],summary:x},overnight:{he:HE1-7,constraints:[same structure],summary:x},morning:{he:HE8-14,constraints:[same],summary:x},afternoon:{he:HE15-24,constraints:[same],summary:x}},daSignals:{confirmedConstraints:[x],chargingOpportunity:x or none,sitesToWatch:[x]}}"
 sys_msg="You are the NOC Constraint Analyst for Hunt Energy Network (HEN) preparing daily bids."+chr(10)
 sys_msg+="HEN has 32 battery sites in ERCOT West, South, North, Houston zones."+chr(10)
-sys_msg+="Bid window is HE16 today through HE24 tomorrow (28 hours)."+chr(10)+chr(10)
+sys_msg+="Bid window is HE17 today through HE16 tomorrow. HE1=midnight-1am HE8=7am-8am HE17=4pm-5pm HE24=11pm-midnight."+chr(10)
+sys_msg+="TIME BLOCKS: TONIGHT=HE17-24 today, OVERNIGHT=HE1-7 tomorrow, MORNING=HE8-14 tomorrow, AFTERNOON=HE15-16 tomorrow."+chr(10)+chr(10)
 sys_msg+="HEN SHIFT FACTOR DATA:"+chr(10)+SF_TEXT+chr(10)+chr(10)
+sys_msg+="CRITICAL SHIFT FACTOR RULES:"+chr(10)
+sys_msg+="Positive SF site = on LOAD side. Constraint binding pushes LMP HIGHER than hub. Discharging earns congestion premium."+chr(10)
+sys_msg+="Negative SF site = on GENERATION side. Constraint binding pushes LMP toward ZERO or NEGATIVE. This is a CHARGING OPPORTUNITY."+chr(10)
+sys_msg+="Example: WESTEX constraint with Judkins SF=-0.71 means when WESTEX binds during high renewables, Judkins LMP goes near zero or negative. Flag as charging opportunity not risk."+chr(10)
+sys_msg+="For every constraint list: positive SF sites as discharge risk, negative SF sites as charging opportunity."+chr(10)
 sys_msg+="RULES: ASCII only. No apostrophes. No em-dashes. No newlines in strings."+chr(10)
-sys_msg+="Focus on which HEN sites are exposed for each constraint in each time block."+chr(10)
 sys_msg+="Return ONLY valid JSON matching: "+SCHEMA
 print("Calling Claude...")
 cr=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":2000,"system":sys_msg,"messages":[{"role":"user","content":user_msg}]},timeout=90)
 raw=cr.json()["content"][0]["text"]
 clean=re.sub(r"[\x00-\x1f\x7f]"," ",raw)
-chunk=clean[clean.index("{"):clean.rindex("}")+1]
-try:
-    result=json.loads(chunk)
-except json.JSONDecodeError:
-    import ast
-    try:
-        result=ast.literal_eval(chunk)
-    except:
-        cr2=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":2000,"system":"Return ONLY valid JSON. No markdown. No special characters.","messages":[{"role":"user","content":"Fix this JSON and return only valid JSON: "+chunk[:3000]}]},timeout=60)
-        raw2=cr2.json()["content"][0]["text"]
-        clean2=re.sub(r"[\x00-\x1f\x7f]"," ",raw2)
-        result=json.loads(clean2[clean2.index("{"):clean2.rindex("}")+1])
+result=json.loads(clean[clean.index("{"):clean.rindex("}")+1])
 overall_risk=result.get("overallRisk","MODERATE")
 summary=result.get("summary","")
 op_note=result.get("operatorNote","")
@@ -244,10 +243,10 @@ if site_spreads:
     if charging and charging!="none": body+="<div style="+Q+"font-size:12px;color:#c8b87a;padding:8px 12px;background:rgba(212,135,42,0.08);border-left:3px solid #9a6200;border-radius:0 4px 4px 0;margin-top:10px"+Q+"><strong>Charging opportunity:</strong> "+charging+"</div>"
     if watching: body+="<div style="+Q+"font-size:11px;color:#7ea8bc;margin-top:8px"+Q+">Sites to watch: "+", ".join(watching)+"</div>"
     body+="</div>"
-body+=block_section("Tonight - Peak into Evening",time_blocks.get("tonight",{}))
-body+=block_section("Overnight - Low Load Window",time_blocks.get("overnight",{}))
-body+=block_section("Morning / Solar Window",time_blocks.get("morning",{}))
-body+=block_section("Afternoon - Next Day Peak",time_blocks.get("afternoon",{}))
+body+=block_section("Tonight HE17-24 (4PM-Midnight)",time_blocks.get("tonight",{}))
+body+=block_section("Overnight HE1-7 (Midnight-6AM)",time_blocks.get("overnight",{}))
+body+=block_section("Morning / Solar HE8-14 (7AM-1PM)",time_blocks.get("morning",{}))
+body+=block_section("Afternoon HE15-16 (2PM-3PM)",time_blocks.get("afternoon",{}))
 html="<!DOCTYPE html><html lang="+Q+"en"+Q+"><head><meta charset="+Q+"UTF-8"+Q+"><meta name="+Q+"viewport"+Q+" content="+Q+"width=device-width,initial-scale=1.0"+Q+">"
 html+="<title>HEN Bid Briefing "+TODAY+"</title>"
 html+="<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;background:#070f1a;color:#e8f4f8;min-height:100vh}</style></head><body>"
