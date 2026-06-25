@@ -53,6 +53,8 @@ except Exception as e: print("DA error:",e)
 def avg(lst): return sum(lst)/len(lst)/1000 if lst else 0
 def mx(lst): return max(lst)/1000 if lst else 0
 items=wind_data.get("_embedded",{}).get("wpp_hrly_actual_fcast_geo",wind_data.get("data",[]))
+print("Wind data sample:", wind_data.get("data",[[]])[:1])
+print("Wind fields:", wind_data.get("fields",[]))
 br={"WEST":[],"SOUTH":[],"COASTAL":[],"PANHANDLE":[]}
 for r in items:
     if not isinstance(r,dict): continue
