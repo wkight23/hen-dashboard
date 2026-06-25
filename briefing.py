@@ -70,22 +70,32 @@ wind["solar"]=max(sv)/1000 if sv else 0
 print("Wind: West="+str(round(wind["west"],1))+" South="+str(round(wind["south"],1))+" Coastal="+str(round(wind["coastal"],1))+" Total="+str(round(wind["total"],1))+" Solar="+str(round(wind["solar"],1)))
 load_rows=load_data.get("data",[])
 load_fields=load_data.get("fields",[])
-print("Load fields:", [f.get("name") for f in load_fields[:8]])
-print("Load sample:", load_rows[:1])
-zone_idx=next((f["cardinality"]-1 for f in load_fields if "weatherZone" in f.get("name","") or "zone" in f.get("name","").lower()),None)
-total_idx=next((f["cardinality"]-1 for f in load_fields if "systemTotal" in f.get("name","") or "total" in f.get("name","").lower()),None)
-print("Load zone_idx="+str(zone_idx)+" total_idx="+str(total_idx))
-bz={"WEST":[],"SOUTH":[],"NORTH":[],"HOUSTON":[]}
+# Build field name->index map
+lf_map={f.get("name","").lower():f["cardinality"]-1 for f in load_fields}
+# ERCOT weather zones: coast,east,farWest,north,northCentral,south,southCentral,west,houston,systemTotal
+far_west_idx=lf_map.get("farwest",lf_map.get("far west",5))
+north_idx=lf_map.get("north",6)
+nc_idx=lf_map.get("northcentral",lf_map.get("north central",7))
+south_idx=lf_map.get("south",lf_map.get("southcentral",8))
+houston_idx=lf_map.get("houston",lf_map.get("coast",3))
+total_idx=lf_map.get("systemtotal",lf_map.get("system total",11))
+west_vals=[]
+south_vals=[]
+north_vals=[]
+houston_vals=[]
+total_vals=[]
 for r in load_rows:
-    if not isinstance(r,list): continue
-    if zone_idx is not None and total_idx is not None and len(r)>max(zone_idx,total_idx):
-        z=str(r[zone_idx]).upper().replace("LZ_","") if r[zone_idx] else ""
-        v=float(r[total_idx]) if r[total_idx] and isinstance(r[total_idx],(int,float)) else 0
-        if z in bz and v>0: bz[z].append(v)
+    if not isinstance(r,list) or len(r)<12: continue
+    def gv(idx): return float(r[idx]) if idx<len(r) and r[idx] and isinstance(r[idx],(int,float)) and float(r[idx])>0 else 0
+    west_vals.append(gv(far_west_idx))
+    south_vals.append(gv(south_idx))
+    north_vals.append(gv(north_idx)+gv(nc_idx))
+    houston_vals.append(gv(houston_idx))
+    total_vals.append(gv(total_idx))
 def mxmw(lst): return max(lst)/1000 if lst else 0
-load={"west":mxmw(bz["WEST"]),"south":mxmw(bz["SOUTH"]),"north":mxmw(bz["NORTH"]),"houston":mxmw(bz["HOUSTON"])}
-load["total"]=load["west"]+load["south"]+load["north"]+load["houston"]
-print("Load: West="+str(round(load["west"],1))+" South="+str(round(load["south"],1))+" North="+str(round(load["north"],1))+" Houston="+str(round(load["houston"],1)))
+load={"west":mxmw(west_vals),"south":mxmw(south_vals),"north":mxmw(north_vals),"houston":mxmw(houston_vals)}
+load["total"]=mxmw(total_vals)
+print("Load: West="+str(round(load["west"],1))+" South="+str(round(load["south"],1))+" North="+str(round(load["north"],1))+" Houston="+str(round(load["houston"],1))+" Total="+str(round(load["total"],1)))
 si=shadow_data.get("_embedded",{}).get("dam_shadow_prices",shadow_data.get("data",[]))
 sc={}
 for r in si:
