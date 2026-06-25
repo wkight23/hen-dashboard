@@ -32,40 +32,42 @@ wind_data=eg("np4-742-cd/wpp_hrly_actual_fcast_geo")
 load_data=eg("np3-565-cd/lf_by_model_weather_zone")
 solar_data=eg("np4-737-cd/spp_hrly_avrg_actl_fcast")
 shadow_data=eg("np4-191-cd/dam_shadow_prices")
-print("Wind keys:", list(wind_data.keys())[:5])
-print("Load keys:", list(load_data.keys())[:5])
-print("Shadow keys:", list(shadow_data.keys())[:5])
 print("Fetching DA prices...")
 da_prices={}
-print("DA prices sites found:", list(da_prices.keys())[:5])
 try:
     da_resp=requests.get(BASE+"/np4-190-cd/dam_stlmt_pnt_prices?deliveryDateFrom="+TODAY+"&deliveryDateTo="+TODAY+"&size=2000",headers=hdrs,timeout=30)
     if da_resp.ok:
-        for item in da_resp.json().get("_embedded",{}).get("dam_stlmt_pnt_prices",da_resp.json().get("data",[])):
-            if not isinstance(item,dict): continue
-            sp=item.get("settlementPoint") or item.get("settlementPointName") or ""
-            he=int(item.get("deliveryHour") or item.get("hour") or 0)
-            price=float(item.get("settlementPointPrice") or item.get("price") or 0)
+        da_json=da_resp.json()
+        da_fields=da_json.get("fields",[])
+        da_rows=da_json.get("data",[])
+        sp_col=next((f["cardinality"]-1 for f in da_fields if "settlementPoint" in f.get("name","")),2)
+        he_col=next((f["cardinality"]-1 for f in da_fields if "deliveryHour" in f.get("name","") or "hourEnding" in f.get("name","")),3)
+        pr_col=next((f["cardinality"]-1 for f in da_fields if "Price" in f.get("name","")),4)
+        print("DA cols: sp="+str(sp_col)+" he="+str(he_col)+" pr="+str(pr_col)+" rows="+str(len(da_rows)))
+        for item in da_rows:
+            if not isinstance(item,list) or len(item)<=max(sp_col,he_col,pr_col): continue
+            sp=str(item[sp_col]) if item[sp_col] else ""
+            he=int(item[he_col]) if item[he_col] else 0
+            price=float(item[pr_col]) if item[pr_col] and isinstance(item[pr_col],(int,float)) else 0
             if sp and he:
                 if sp not in da_prices: da_prices[sp]={}
                 da_prices[sp][he]=price
 except Exception as e: print("DA error:",e)
 def avg(lst): return sum(lst)/len(lst)/1000 if lst else 0
 def mx(lst): return max(lst)/1000 if lst else 0
-items=wind_data.get("_embedded",{}).get("wpp_hrly_actual_fcast_geo",wind_data.get("data",[]))
-print("Wind data sample:", wind_data.get("data",[[]])[:1])
-print("Wind fields:", wind_data.get("fields",[]))
-br={"WEST":[],"SOUTH":[],"COASTAL":[],"PANHANDLE":[]}
-for r in items:
-    if not isinstance(r,dict): continue
-    rg=(r.get("genRegion") or r.get("region") or "").upper()
-    v=float(r.get("hourlyWindGenForecast") or r.get("genForecast") or 0)
-    if rg in br and v>0: br[rg].append(v)
-wind={"west":avg(br["WEST"]),"south":avg(br["SOUTH"]),"coastal":avg(br["COASTAL"]),"pan":avg(br["PANHANDLE"])}
+# ERCOT returns arrays - field positions: idx2=hourEnding,idx7=pan,idx11=coastal,idx15=south,idx19=west
+wind_rows=wind_data.get("data",[])
+def avgmw(lst): return sum(lst)/len(lst)/1000 if lst else 0
+w_west=[float(r[19]) for r in wind_rows if isinstance(r,list) and len(r)>19 and r[19] and float(r[19])>0]
+w_south=[float(r[15]) for r in wind_rows if isinstance(r,list) and len(r)>15 and r[15] and float(r[15])>0]
+w_coastal=[float(r[11]) for r in wind_rows if isinstance(r,list) and len(r)>11 and r[11] and float(r[11])>0]
+w_pan=[float(r[7]) for r in wind_rows if isinstance(r,list) and len(r)>7 and r[7] and float(r[7])>0]
+wind={"west":avgmw(w_west),"south":avgmw(w_south),"coastal":avgmw(w_coastal),"pan":avgmw(w_pan)}
 wind["total"]=wind["west"]+wind["south"]+wind["coastal"]+wind["pan"]
-sol=solar_data.get("_embedded",{}).get("spp_hrly_avrg_actl_fcast",solar_data.get("data",[]))
-sv=[float(r.get("hourlySystemGenForecast") or 0) for r in sol if isinstance(r,dict) and float(r.get("hourlySystemGenForecast") or 0)>0]
+sol_rows=solar_data.get("data",[])
+sv=[float(r[3]) for r in sol_rows if isinstance(r,list) and len(r)>3 and r[3] and isinstance(r[3],(int,float)) and float(r[3])>0]
 wind["solar"]=max(sv)/1000 if sv else 0
+print("Wind: West="+str(round(wind["west"],1))+" South="+str(round(wind["south"],1))+" Coastal="+str(round(wind["coastal"],1))+" Total="+str(round(wind["total"],1))+" Solar="+str(round(wind["solar"],1)))
 li=load_data.get("_embedded",{}).get("lf_by_model_weather_zone",load_data.get("data",[]))
 bz={"WEST":[],"SOUTH":[],"NORTH":[],"HOUSTON":[]}
 for r in li:
@@ -145,21 +147,7 @@ print("Calling Claude...")
 cr=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":2000,"system":sys_msg,"messages":[{"role":"user","content":user_msg}]},timeout=90)
 raw=cr.json()["content"][0]["text"]
 clean=re.sub(r"[\x00-\x1f\x7f]"," ",raw)
-chunk=clean[clean.index("{"):clean.rindex("}")+1]
-# Try direct parse first
-try:
-    result=json.loads(chunk)
-except json.JSONDecodeError:
-    # Try with json5-style repair - replace single quotes used as string delimiters
-    import ast
-    try:
-        result=ast.literal_eval(chunk)
-    except:
-        # Last resort - ask Claude again with stricter instruction
-        cr2=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":2000,"system":"Return ONLY valid JSON. No markdown. No explanation. No special characters. Use only ASCII.","messages":[{"role":"user","content":"Fix this broken JSON and return only valid JSON: "+chunk[:3000]}]},timeout=60)
-        raw2=cr2.json()["content"][0]["text"]
-        clean2=re.sub(r"[\x00-\x1f\x7f]"," ",raw2)
-        result=json.loads(clean2[clean2.index("{"):clean2.rindex("}")+1])
+result=json.loads(clean[clean.index("{"):clean.rindex("}")+1])
 overall_risk=result.get("overallRisk","MODERATE")
 summary=result.get("summary","")
 op_note=result.get("operatorNote","")
@@ -259,3 +247,26 @@ html+="<span style="+Q+"font-size:10px;font-weight:700;padding:3px 9px;border-ra
 html+="<div style="+Q+"max-width:960px;margin:0 auto;padding:1.5rem"+Q+">"+body+"</div></body></html>"
 with open("results.html","w") as f: f.write(html)
 print("Done. Risk:"+overall_risk+" DA_spreads:"+str(len(site_spreads))+" Blocks:"+str(len(time_blocks)))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CollapseCollapse
