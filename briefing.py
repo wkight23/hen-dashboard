@@ -59,18 +59,25 @@ def mx(lst): return max(lst)/1000 if lst else 0
 wind_rows=wind_data.get("data",[])
 # Use most recent row (last posted) for current conditions
 def get_current(rows, val_idx, he_idx=2):
-    # Get the row with the highest hourEnding that is <= current hour
-    cur_he = NOW.hour + 1  # HE convention: HE1=midnight-1am
+    cur_he = NOW.hour + 1
     best = None
     for r in rows:
         if not isinstance(r,list) or len(r)<=max(val_idx,he_idx): continue
         try:
-            he_raw = str(r[he_idx]) if r[he_idx] else "0"
-            he = int(he_raw.split(":")[0]) if ":" in he_raw else int(he_raw)
+            he_raw = str(r[he_idx]) if r[he_idx] is not None else "0"
+            if ":" in he_raw:
+                he = int(he_raw.split(":")[0])
+            elif "." in he_raw:
+                he = int(float(he_raw))
+            else:
+                he = int(he_raw) if he_raw.strip().isdigit() else 0
         except:
             he = 0
-        v = float(r[val_idx]) if r[val_idx] and isinstance(r[val_idx],(int,float)) else 0
-        if he <= cur_he and v >= 0:
+        try:
+            v = float(r[val_idx]) if r[val_idx] is not None and isinstance(r[val_idx],(int,float)) else 0
+        except:
+            v = 0
+        if 1 <= he <= 24:
             if best is None or he > best[0]:
                 best = (he, v)
     return best[1]/1000 if best else 0
@@ -78,6 +85,8 @@ wind={"west":get_current(wind_rows,19),"south":get_current(wind_rows,15),"coasta
 wind["total"]=wind["west"]+wind["south"]+wind["coastal"]+wind["pan"]
 sol_rows=solar_data.get("data",[])
 wind["solar"]=get_current(sol_rows,3)
+# Debug: show sample wind data
+if wind_rows: print("Wind sample HE field:", repr(wind_rows[0][2]) if len(wind_rows[0])>2 else "N/A")
 print("Wind: West="+str(round(wind["west"],1))+" South="+str(round(wind["south"],1))+" Coastal="+str(round(wind["coastal"],1))+" Total="+str(round(wind["total"],1))+" Solar="+str(round(wind["solar"],1)))
 # Build hourly forecast for bid window HE17-24 today + HE1-16 tomorrow
 def get_hourly(rows, val_idx, he_idx=2):
@@ -108,7 +117,7 @@ def wind_fcst_str():
         c=hourly_coastal.get(he,0)/1000
         sol=hourly_solar.get(he,0)/1000
         tot=w+s+c+hourly_pan.get(he,0)/1000
-        lines.append("HE"+str(he)+":W="+str(round(w,1))+"GW S="+str(round(s,1))+"GW C="+str(round(c,1))+"GW Sol="+str(round(sol,1))+"GW Tot="+str(round(tot,1))+"GW")
+        lines.append("HE"+str(he)+":W"+str(round(w,1))+" S"+str(round(s,1))+" C"+str(round(c,1))+" Sol"+str(round(sol,1))+" Tot"+str(round(tot,1)))
     return chr(10).join(lines)
 WIND_FCST=wind_fcst_str()
 load_rows=load_data.get("data",[])
@@ -184,7 +193,7 @@ for sp,spread_info in site_spreads.items():
             if (sf_val>0 and avg_spread>0) or (sf_val<0 and avg_spread<0):
                 if cname not in constraint_signals: constraint_signals[cname]={"sites":[],"peak_he":cdata["peak_he"],"total":cdata["total"]}
                 constraint_signals[cname]["sites"].append({"name":spread_info["name"],"sf":sf_val,"spread":round(avg_spread,2)})
-sf_lines=[name[:42]+" PeakHE:"+str(cdata["peak_he"])+" "+str({k:round(v,3) for k,v in cdata["sf"].items() if abs(v)>=0.05}) for name,cdata in sorted(SF_DATA.items(),key=lambda x:-x[1]["total"])[:25] if any(abs(v)>=0.05 for v in cdata["sf"].values())]
+sf_lines=[name[:42]+" PeakHE:"+str(cdata["peak_he"])+" "+str({k:round(v,2) for k,v in cdata["sf"].items() if abs(v)>=0.08}) for name,cdata in sorted(SF_DATA.items(),key=lambda x:-x[1]["total"])[:20] if any(abs(v)>=0.08 for v in cdata["sf"].values())]
 SF_TEXT=chr(10).join(sf_lines)
 shadow_text=""
 if shadow_list: shadow_text="ERCOT DAM BINDING:"+chr(10)+chr(10).join(["  "+c["name"][:42]+": $"+str(int(c["maxSP"]))+"/MWh HE"+",".join(map(str,c["hours"][:3])) for c in shadow_list[:10]])
