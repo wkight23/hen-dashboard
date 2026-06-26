@@ -77,8 +77,8 @@ def get_current(rows, val_idx, he_idx=2):
             v = float(r[val_idx]) if r[val_idx] is not None and isinstance(r[val_idx],(int,float)) else 0
         except:
             v = 0
-        if 1 <= he <= 24:
-            if best is None or he > best[0]:
+        if 1 <= he <= 24 and v > 0:
+            if best is None or he > best[0] or (he == best[0] and v > best[1]):
                 best = (he, v)
     return best[1]/1000 if best else 0
 wind={"west":get_current(wind_rows,19),"south":get_current(wind_rows,15),"coastal":get_current(wind_rows,11),"pan":get_current(wind_rows,7)}
@@ -86,7 +86,7 @@ wind["total"]=wind["west"]+wind["south"]+wind["coastal"]+wind["pan"]
 sol_rows=solar_data.get("data",[])
 wind["solar"]=get_current(sol_rows,3)
 # Debug: show sample wind data
-if wind_rows: print("Wind sample HE field:", repr(wind_rows[0][2]), "West idx19:", repr(wind_rows[0][19]) if len(wind_rows[0])>19 else "N/A", "Total rows:", len(wind_rows))
+if wind_rows: print("Wind sample HE field:", repr(wind_rows[0][2]) if len(wind_rows[0])>2 else "N/A")
 print("Wind: West="+str(round(wind["west"],1))+" South="+str(round(wind["south"],1))+" Coastal="+str(round(wind["coastal"],1))+" Total="+str(round(wind["total"],1))+" Solar="+str(round(wind["solar"],1)))
 # Build hourly forecast for bid window HE17-24 today + HE1-16 tomorrow
 def get_hourly(rows, val_idx, he_idx=2):
@@ -99,7 +99,9 @@ def get_hourly(rows, val_idx, he_idx=2):
         except:
             continue
         v=float(r[val_idx]) if r[val_idx] and isinstance(r[val_idx],(int,float)) else 0
-        if he not in result or v>0: result[he]=v
+        if he and v > 0:
+            if he not in result or v > result[he]:
+                result[he] = v
     return result
 hourly_west=get_hourly(wind_rows,19)
 hourly_south=get_hourly(wind_rows,15)
