@@ -29,7 +29,6 @@ def eg(path,date_str=None,size=500):
         return {}
 print("Fetching ERCOT data...")
 wind_data=eg("np4-742-cd/wpp_hrly_actual_fcast_geo")
-print("Wind tmrw sample:", wind_data_tmrw.get("data",[[]])[0][:3] if wind_data_tmrw.get("data") else "empty")
 wind_data_tmrw=eg("np4-742-cd/wpp_hrly_actual_fcast_geo",TOMORROW)
 print("Wind tmrw sample:", wind_data_tmrw.get("data",[[]])[0][:3] if wind_data_tmrw.get("data") else "empty")
 load_data=eg("np3-565-cd/lf_by_model_weather_zone")
