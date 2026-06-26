@@ -57,17 +57,56 @@ def avg(lst): return sum(lst)/len(lst)/1000 if lst else 0
 def mx(lst): return max(lst)/1000 if lst else 0
 # ERCOT returns arrays - field positions: idx2=hourEnding,idx7=pan,idx11=coastal,idx15=south,idx19=west
 wind_rows=wind_data.get("data",[])
-def avgmw(lst): return sum(lst)/len(lst)/1000 if lst else 0
-w_west=[float(r[19]) for r in wind_rows if isinstance(r,list) and len(r)>19 and r[19] and float(r[19])>0]
-w_south=[float(r[15]) for r in wind_rows if isinstance(r,list) and len(r)>15 and r[15] and float(r[15])>0]
-w_coastal=[float(r[11]) for r in wind_rows if isinstance(r,list) and len(r)>11 and r[11] and float(r[11])>0]
-w_pan=[float(r[7]) for r in wind_rows if isinstance(r,list) and len(r)>7 and r[7] and float(r[7])>0]
-wind={"west":avgmw(w_west),"south":avgmw(w_south),"coastal":avgmw(w_coastal),"pan":avgmw(w_pan)}
+# Use most recent row (last posted) for current conditions
+def get_current(rows, val_idx, he_idx=2):
+    # Get the row with the highest hourEnding that is <= current hour
+    cur_he = NOW.hour + 1  # HE convention: HE1=midnight-1am
+    best = None
+    for r in rows:
+        if not isinstance(r,list) or len(r)<=max(val_idx,he_idx): continue
+        try:
+            he = int(str(r[he_idx]).replace(":00","").replace(":30","")) if r[he_idx] else 0
+        except:
+            he = 0
+        v = float(r[val_idx]) if r[val_idx] and isinstance(r[val_idx],(int,float)) else 0
+        if he <= cur_he and v >= 0:
+            if best is None or he > best[0]:
+                best = (he, v)
+    return best[1]/1000 if best else 0
+wind={"west":get_current(wind_rows,19),"south":get_current(wind_rows,15),"coastal":get_current(wind_rows,11),"pan":get_current(wind_rows,7)}
 wind["total"]=wind["west"]+wind["south"]+wind["coastal"]+wind["pan"]
 sol_rows=solar_data.get("data",[])
-sv=[float(r[3]) for r in sol_rows if isinstance(r,list) and len(r)>3 and r[3] and isinstance(r[3],(int,float)) and float(r[3])>0]
-wind["solar"]=max(sv)/1000 if sv else 0
+wind["solar"]=get_current(sol_rows,3)
 print("Wind: West="+str(round(wind["west"],1))+" South="+str(round(wind["south"],1))+" Coastal="+str(round(wind["coastal"],1))+" Total="+str(round(wind["total"],1))+" Solar="+str(round(wind["solar"],1)))
+# Build hourly forecast for bid window HE17-24 today + HE1-16 tomorrow
+def get_hourly(rows, val_idx, he_idx=2):
+    result={}
+    for r in rows:
+        if not isinstance(r,list) or len(r)<=max(val_idx,he_idx): continue
+        try: he=int(str(r[he_idx]).replace(":00","").replace(":30",""))
+        except: continue
+        v=float(r[val_idx]) if r[val_idx] and isinstance(r[val_idx],(int,float)) else 0
+        if he not in result or v>0: result[he]=v
+    return result
+hourly_west=get_hourly(wind_rows,19)
+hourly_south=get_hourly(wind_rows,15)
+hourly_coastal=get_hourly(wind_rows,11)
+hourly_pan=get_hourly(wind_rows,7)
+hourly_solar=get_hourly(sol_rows,3)
+# Build forecast summary text for Claude
+BID_HES=list(range(17,25))+list(range(1,17))
+def fmt_he(he): return "HE"+str(he)
+def wind_fcst_str():
+    lines=[]
+    for he in BID_HES:
+        w=hourly_west.get(he,0)/1000
+        s=hourly_south.get(he,0)/1000
+        c=hourly_coastal.get(he,0)/1000
+        sol=hourly_solar.get(he,0)/1000
+        tot=w+s+c+hourly_pan.get(he,0)/1000
+        lines.append("HE"+str(he)+":W="+str(round(w,1))+"GW S="+str(round(s,1))+"GW C="+str(round(c,1))+"GW Sol="+str(round(sol,1))+"GW Tot="+str(round(tot,1))+"GW")
+    return chr(10).join(lines)
+WIND_FCST=wind_fcst_str()
 load_rows=load_data.get("data",[])
 load_fields=load_data.get("fields",[])
 # Build field name->index map
@@ -87,14 +126,21 @@ total_vals=[]
 for r in load_rows:
     if not isinstance(r,list) or len(r)<12: continue
     def gv(idx): return float(r[idx]) if idx<len(r) and r[idx] and isinstance(r[idx],(int,float)) and float(r[idx])>0 else 0
-    west_vals.append(gv(far_west_idx))
-    south_vals.append(gv(south_idx))
-    north_vals.append(gv(north_idx)+gv(nc_idx))
-    houston_vals.append(gv(houston_idx))
-    total_vals.append(gv(total_idx))
-def mxmw(lst): return max(lst)/1000 if lst else 0
-load={"west":mxmw(west_vals),"south":mxmw(south_vals),"north":mxmw(north_vals),"houston":mxmw(houston_vals)}
-load["total"]=mxmw(total_vals)
+    he_idx_l=lf_map.get("hourending",lf_map.get("hour ending",2))
+    cur_he=NOW.hour+1
+    try:
+        he=int(str(r[he_idx_l]).replace(":00","").replace(":30","")) if r[he_idx_l] else 0
+    except:
+        he=0
+    if he<=cur_he:
+        west_vals.append((he,gv(far_west_idx)))
+        south_vals.append((he,gv(south_idx)))
+        north_vals.append((he,gv(north_idx)+gv(nc_idx)))
+        houston_vals.append((he,gv(houston_idx)))
+        total_vals.append((he,gv(total_idx)))
+def latest(lst): return max(lst,key=lambda x:x[0])[1]/1000 if lst else 0
+load={"west":latest(west_vals),"south":latest(south_vals),"north":latest(north_vals),"houston":latest(houston_vals)}
+load["total"]=latest(total_vals)
 print("Load: West="+str(round(load["west"],1))+" South="+str(round(load["south"],1))+" North="+str(round(load["north"],1))+" Houston="+str(round(load["houston"],1))+" Total="+str(round(load["total"],1)))
 si=shadow_data.get("_embedded",{}).get("dam_shadow_prices",shadow_data.get("data",[]))
 sc={}
@@ -150,11 +196,14 @@ if constraint_signals:
         st=",".join([s["name"] for s in info["sites"][:3]])
         da_sig_text+="  "+c[:40]+": "+st+chr(10)
 user_msg="HEN Bid Briefing "+TODAY+" ("+SEASON+") run "+NOW.strftime("%H:%M CDT")+chr(10)
-user_msg+="ERCOT: Wind West:"+str(round(wind["west"],1))+"GW South:"+str(round(wind["south"],1))+"GW Coastal:"+str(round(wind["coastal"],1))+"GW Total:"+str(round(wind["total"],1))+"GW Solar:"+str(round(wind["solar"],1))+"GW"+chr(10)
+user_msg+="CURRENT CONDITIONS:"+chr(10)
+user_msg+="Wind West:"+str(round(wind["west"],1))+"GW South:"+str(round(wind["south"],1))+"GW Coastal:"+str(round(wind["coastal"],1))+"GW Total:"+str(round(wind["total"],1))+"GW Solar:"+str(round(wind["solar"],1))+"GW"+chr(10)
 user_msg+="Load West:"+str(round(load["west"],1))+"GW South:"+str(round(load["south"],1))+"GW North:"+str(round(load["north"],1))+"GW Houston:"+str(round(load["houston"],1))+"GW"+chr(10)+chr(10)
+user_msg+="HOURLY WIND/SOLAR FORECAST (HE17 today thru HE16 tomorrow):"+chr(10)
+user_msg+=WIND_FCST+chr(10)+chr(10)
 user_msg+=shadow_text+chr(10)+spread_text+chr(10)+da_sig_text+chr(10)
-user_msg+="Bid window HE17 today through HE16 tomorrow. For each constraint identify whether HEN sites face discharge risk (positive SF) or charging opportunity (negative SF when LMP may go near zero or negative)."
-SCHEMA="{overallRisk:HIGH/MODERATE/LOW,summary:2-3 sentences,operatorNote:key bid note,timeBlocks:{tonight:{he:HE16-24,constraints:[{name:x,risk:HIGH/MODERATE/WATCH,driver:x,henSites:[x],action:x}],summary:x},overnight:{he:HE1-7,constraints:[same structure],summary:x},morning:{he:HE8-14,constraints:[same],summary:x},afternoon:{he:HE15-24,constraints:[same],summary:x}},daSignals:{confirmedConstraints:[x],chargingOpportunity:x or none,sitesToWatch:[x]}}"
+user_msg+="Bid window HE17 today through HE16 tomorrow. Use the hourly forecast to identify when wind/load thresholds get crossed and write plain-English outlook narratives for each time block. Identify discharge risk (positive SF) vs charging opportunity (negative SF)."
+SCHEMA="{overallRisk:HIGH/MODERATE/LOW,summary:2-3 sentences,operatorNote:key bid note,outlook:{tonight:plain English forecast HE17-24,overnight:plain English forecast HE1-7,morning:plain English forecast HE8-14,afternoon:plain English forecast HE15-16},timeBlocks:{tonight:{he:HE17-24,constraints:[{name:x,risk:HIGH/MODERATE/WATCH,driver:x,henSites:[x],action:x}],summary:x},overnight:{he:HE1-7,constraints:[same structure],summary:x},morning:{he:HE8-14,constraints:[same],summary:x},afternoon:{he:HE15-16,constraints:[same],summary:x}},daSignals:{confirmedConstraints:[x],chargingOpportunity:x or none,sitesToWatch:[x]}}"
 sys_msg="You are the NOC Constraint Analyst for Hunt Energy Network (HEN) preparing daily bids."+chr(10)
 sys_msg+="HEN has 32 battery sites in ERCOT West, South, North, Houston zones."+chr(10)
 sys_msg+="Bid window is HE17 today through HE16 tomorrow. HE1=midnight-1am HE8=7am-8am HE17=4pm-5pm HE24=11pm-midnight."+chr(10)
@@ -166,6 +215,7 @@ sys_msg+="Negative SF site = on GENERATION side. Constraint binding pushes LMP t
 sys_msg+="Example: WESTEX constraint with Judkins SF=-0.71 means when WESTEX binds during high renewables, Judkins LMP goes near zero or negative. Flag as charging opportunity not risk."+chr(10)
 sys_msg+="For every constraint list: positive SF sites as discharge risk, negative SF sites as charging opportunity."+chr(10)
 sys_msg+="RULES: ASCII only. No apostrophes. No em-dashes. No newlines in strings."+chr(10)
+sys_msg+="The outlook field should be a plain-English narrative for each time block describing which wind/load thresholds get crossed and when, written like a briefing note an energy trader would read. Use specific hour ranges and GW values."+chr(10)
 sys_msg+="Return ONLY valid JSON matching: "+SCHEMA
 print("Calling Claude...")
 cr=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":2000,"system":sys_msg,"messages":[{"role":"user","content":user_msg}]},timeout=90)
@@ -266,6 +316,23 @@ if site_spreads:
     if confirmed: body+="<div style="+Q+"font-size:11px;color:#5db87a;margin-top:10px"+Q+">DA confirmed: "+", ".join(confirmed)+"</div>"
     if charging and charging!="none": body+="<div style="+Q+"font-size:12px;color:#c8b87a;padding:8px 12px;background:rgba(212,135,42,0.08);border-left:3px solid #9a6200;border-radius:0 4px 4px 0;margin-top:10px"+Q+"><strong>Charging opportunity:</strong> "+charging+"</div>"
     if watching: body+="<div style="+Q+"font-size:11px;color:#7ea8bc;margin-top:8px"+Q+">Sites to watch: "+", ".join(watching)+"</div>"
+    body+="</div>"
+# Outlook section
+outlook=result.get("outlook",{})
+if outlook:
+    body+="<div style="+Q+"background:#0d1825;border:0.5px solid rgba(75,172,198,0.15);border-radius:10px;padding:1.25rem;margin-bottom:1rem"+Q+">"
+    body+="<div style="+Q+"display:flex;align-items:center;gap:10px;margin-bottom:12px"+Q+"><div style="+Q+"width:3px;height:16px;background:#4BACC6;border-radius:2px;flex-shrink:0"+Q+"></div><div style="+Q+"font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:#4BACC6"+Q+">Forward Outlook - HE17 Today through HE16 Tomorrow</div></div>"
+    block_icons={"tonight":"🌙","overnight":"🌑","morning":"☀️","afternoon":"⛅"}
+    block_labels={"tonight":"Tonight HE17-24","overnight":"Overnight HE1-7","morning":"Morning/Solar HE8-14","afternoon":"Afternoon HE15-16"}
+    for blk in ["tonight","overnight","morning","afternoon"]:
+        txt=outlook.get(blk,"")
+        if txt:
+            icon=block_icons.get(blk,"")
+            label=block_labels.get(blk,blk)
+            body+="<div style="+Q+"margin-bottom:10px;padding:10px 12px;background:#0a1525;border-radius:6px;border-left:2px solid rgba(75,172,198,0.3)"+Q+">"
+            body+="<div style="+Q+"font-size:11px;font-weight:600;color:#4BACC6;margin-bottom:4px"+Q+">"+icon+" "+label+"</div>"
+            body+="<div style="+Q+"font-size:12px;color:#c8d8e8;line-height:1.6"+Q+">"+txt+"</div>"
+            body+="</div>"
     body+="</div>"
 body+=block_section("Tonight HE17-24 (4PM-Midnight)",time_blocks.get("tonight",{}))
 body+=block_section("Overnight HE1-7 (Midnight-6AM)",time_blocks.get("overnight",{}))
