@@ -65,10 +65,8 @@ def get_current(rows, val_idx, he_idx=2):
     for r in rows:
         if not isinstance(r,list) or len(r)<=max(val_idx,he_idx): continue
         try:
-    he_raw = str(r[he_idx]) if r[he_idx] else "0"
-    he = int(he_raw.split(":")[0]) if ":" in he_raw else int(he_raw)
-except:
-    he = 0
+            he_raw = str(r[he_idx]) if r[he_idx] else "0"
+            he = int(he_raw.split(":")[0]) if ":" in he_raw else int(he_raw)
         except:
             he = 0
         v = float(r[val_idx]) if r[val_idx] and isinstance(r[val_idx],(int,float)) else 0
@@ -87,11 +85,10 @@ def get_hourly(rows, val_idx, he_idx=2):
     for r in rows:
         if not isinstance(r,list) or len(r)<=max(val_idx,he_idx): continue
         try:
-    he_raw = str(r[he_idx]) if r[he_idx] else "0"
-    he = int(he_raw.split(":")[0]) if ":" in he_raw else int(he_raw)
-except:
-    he = 0
-        except: continue
+            he_raw = str(r[he_idx]) if r[he_idx] else "0"
+            he = int(he_raw.split(":")[0]) if ":" in he_raw else int(he_raw)
+        except:
+            continue
         v=float(r[val_idx]) if r[val_idx] and isinstance(r[val_idx],(int,float)) else 0
         if he not in result or v>0: result[he]=v
     return result
@@ -136,12 +133,10 @@ for r in load_rows:
     he_idx_l=lf_map.get("hourending",lf_map.get("hour ending",2))
     cur_he=NOW.hour+1
     try:
-    he_raw = str(r[he_idx]) if r[he_idx] else "0"
-    he = int(he_raw.split(":")[0]) if ":" in he_raw else int(he_raw)
-except:
-    he = 0
+        he_raw = str(r[he_idx_l]) if r[he_idx_l] else "0"
+        he = int(he_raw.split(":")[0]) if ":" in he_raw else int(he_raw)
     except:
-        he=0
+        he = 0
     if he<=cur_he:
         west_vals.append((he,gv(far_west_idx)))
         south_vals.append((he,gv(south_idx)))
@@ -228,7 +223,7 @@ sys_msg+="RULES: ASCII only. No apostrophes. No em-dashes. No newlines in string
 sys_msg+="The outlook field should be a plain-English narrative for each time block describing which wind/load thresholds get crossed and when, written like a briefing note an energy trader would read. Use specific hour ranges and GW values."+chr(10)
 sys_msg+="Return ONLY valid JSON matching: "+SCHEMA
 print("Calling Claude...")
-cr=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":2000,"system":sys_msg,"messages":[{"role":"user","content":user_msg}]},timeout=90)
+cr=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":3000,"system":sys_msg,"messages":[{"role":"user","content":user_msg}]},timeout=90)
 raw=cr.json()["content"][0]["text"]
 clean=re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]"," ",raw)
 clean=re.sub(r"\r\n|\r|\n"," ",clean)
@@ -237,7 +232,7 @@ try:
     result=json.loads(chunk)
 except json.JSONDecodeError as je:
     print("JSON parse failed at char "+str(je.pos)+", using repair...")
-    cr2=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":2000,"system":"Fix broken JSON. Return ONLY valid JSON. No explanation.","messages":[{"role":"user","content":"Fix: "+chunk[:4000]}]},timeout=60)
+    cr2=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":3000,"system":"Fix broken JSON. Return ONLY valid JSON. No explanation.","messages":[{"role":"user","content":"Fix: "+chunk[:4000]}]},timeout=60)
     raw2=cr2.json()["content"][0]["text"]
     clean2=re.sub(r"[\x00-\x1f\x7f]"," ",raw2)
     clean2=re.sub(r"\r\n|\r|\n"," ",clean2)
