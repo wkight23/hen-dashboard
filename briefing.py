@@ -29,8 +29,10 @@ def eg(path,date_str=None,size=500):
         return {}
 print("Fetching ERCOT data...")
 wind_data=eg("np4-742-cd/wpp_hrly_actual_fcast_geo")
+wind_data_tmrw=eg("np4-742-cd/wpp_hrly_actual_fcast_geo",TOMORROW)
 load_data=eg("np3-565-cd/lf_by_model_weather_zone")
 solar_data=eg("np4-737-cd/spp_hrly_avrg_actl_fcast")
+solar_data_tmrw=eg("np4-737-cd/spp_hrly_avrg_actl_fcast",TOMORROW)
 shadow_data=eg("np4-191-cd/dam_shadow_prices")
 print("Fetching DA prices...")
 da_prices={}
@@ -103,11 +105,22 @@ def get_hourly(rows, val_idx, he_idx=2):
             if he not in result or v > result[he]:
                 result[he] = v
     return result
-hourly_west=get_hourly(wind_rows,19)
-hourly_south=get_hourly(wind_rows,15)
-hourly_coastal=get_hourly(wind_rows,11)
-hourly_pan=get_hourly(wind_rows,7)
-hourly_solar=get_hourly(sol_rows,3)
+# Merge today and tomorrow wind rows for full forecast
+wind_rows_tmrw=wind_data_tmrw.get("data",[])
+sol_rows_tmrw=solar_data_tmrw.get("data",[])
+def merge_hourly(today_rows, tmrw_rows, val_idx):
+    h = get_hourly(today_rows, val_idx)
+    t = get_hourly(tmrw_rows, val_idx)
+    # For tomorrow hours (HE1-16), prefer tomorrow data
+    for he in range(1,17):
+        if he in t and t[he]>0:
+            h[he] = t[he]
+    return h
+hourly_west=merge_hourly(wind_rows,wind_rows_tmrw,19)
+hourly_south=merge_hourly(wind_rows,wind_rows_tmrw,15)
+hourly_coastal=merge_hourly(wind_rows,wind_rows_tmrw,11)
+hourly_pan=merge_hourly(wind_rows,wind_rows_tmrw,7)
+hourly_solar=merge_hourly(sol_rows,sol_rows_tmrw,3)
 # Build forecast summary text for Claude
 BID_HES=list(range(17,25))+list(range(1,17))
 def fmt_he(he): return "HE"+str(he)
