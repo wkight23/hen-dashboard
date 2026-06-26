@@ -86,7 +86,7 @@ wind["total"]=wind["west"]+wind["south"]+wind["coastal"]+wind["pan"]
 sol_rows=solar_data.get("data",[])
 wind["solar"]=get_current(sol_rows,3)
 # Debug: show sample wind data
-if wind_rows: print("Wind sample HE field:", repr(wind_rows[0][2]) if len(wind_rows[0])>2 else "N/A")
+if wind_rows: print("Wind sample HE field:", repr(wind_rows[0][2]), "West idx19:", repr(wind_rows[0][19]) if len(wind_rows[0])>19 else "N/A", "Total rows:", len(wind_rows))
 print("Wind: West="+str(round(wind["west"],1))+" South="+str(round(wind["south"],1))+" Coastal="+str(round(wind["coastal"],1))+" Total="+str(round(wind["total"],1))+" Solar="+str(round(wind["solar"],1)))
 # Build hourly forecast for bid window HE17-24 today + HE1-16 tomorrow
 def get_hourly(rows, val_idx, he_idx=2):
