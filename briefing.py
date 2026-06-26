@@ -233,8 +233,37 @@ sys_msg+="For every constraint list: positive SF sites as discharge risk, negati
 sys_msg+="RULES: ASCII only. No apostrophes. No em-dashes. No newlines in strings."+chr(10)
 sys_msg+="The outlook field should be a plain-English narrative for each time block describing which wind/load thresholds get crossed and when, written like a briefing note an energy trader would read. Use specific hour ranges and GW values."+chr(10)
 sys_msg+="Return ONLY valid JSON matching: "+SCHEMA
-print("Calling Claude...")
-cr=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":3000,"system":sys_msg,"messages":[{"role":"user","content":user_msg}]},timeout=90)
+print("Calling Claude - Part 1: Forward Outlook...")
+outlook_sys="You are an ERCOT energy market analyst for Hunt Energy Network (HEN)."+chr(10)
+outlook_sys+="Bid window HE17 today through HE16 tomorrow. HE1=midnight-1am HE17=4pm-5pm."+chr(10)
+outlook_sys+="Negative SF sites get LMP near zero or negative when constraint binds - CHARGING OPPORTUNITY."+chr(10)
+outlook_sys+="WESTEX: Judkins/Saddleback/Cedarvale SF=-0.71, charging opportunity when west wind high."+chr(10)
+outlook_sys+="Write 1-2 plain sentences per block. Be specific about GW levels and HE ranges. No JSON."
+outlook_user="FORECAST (HE17 today thru HE16 tomorrow):"+chr(10)+WIND_FCST+chr(10)+chr(10)
+outlook_user+="Current: West "+str(round(wind["west"],1))+"GW South "+str(round(wind["south"],1))+"GW Solar "+str(round(wind["solar"],1))+"GW Load "+str(round(load["total"],1))+"GW"+chr(10)+chr(10)
+outlook_user+=shadow_text+chr(10)+chr(10)
+outlook_user+="Format exactly:"+chr(10)+"TONIGHT: [HE17-24]"+chr(10)+"OVERNIGHT: [HE1-7]"+chr(10)+"MORNING: [HE8-14]"+chr(10)+"AFTERNOON: [HE15-16]"
+or1=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":600,"system":outlook_sys,"messages":[{"role":"user","content":outlook_user}]},timeout=60)
+outlook_raw=or1.json()["content"][0]["text"]
+outlook={"tonight":"","overnight":"","morning":"","afternoon":""}
+for line in outlook_raw.split(chr(10)):
+    line=line.strip()
+    if line.upper().startswith("TONIGHT:"): outlook["tonight"]=line[8:].strip()
+    elif line.upper().startswith("OVERNIGHT:"): outlook["overnight"]=line[10:].strip()
+    elif line.upper().startswith("MORNING:"): outlook["morning"]=line[8:].strip()
+    elif line.upper().startswith("AFTERNOON:"): outlook["afternoon"]=line[10:].strip()
+print("Outlook done. Tonight:"+outlook["tonight"][:60])
+print("Calling Claude - Part 2: Constraint JSON...")
+SCHEMA2 = '{"overallRisk":"HIGH/MODERATE/LOW","summary":"2-3 sentences","operatorNote":"key bid note","timeBlocks":{"tonight":{"he":"HE17-24","constraints":[{"name":"x","risk":"HIGH/MODERATE/WATCH","driver":"x","henSites":["x"],"action":"x"}],"summary":"x"},"overnight":{"he":"HE1-7","constraints":[{"name":"x","risk":"x","driver":"x","henSites":["x"],"action":"x"}],"summary":"x"},"morning":{"he":"HE8-14","constraints":[{"name":"x","risk":"x","driver":"x","henSites":["x"],"action":"x"}],"summary":"x"},"afternoon":{"he":"HE15-16","constraints":[{"name":"x","risk":"x","driver":"x","henSites":["x"],"action":"x"}],"summary":"x"}},"daSignals":{"confirmedConstraints":["x"],"chargingOpportunity":"x or none","sitesToWatch":["x"]}}'
+sys_msg2="HEN NOC Constraint Analyst. Bid window HE17 today through HE16 tomorrow."+chr(10)
+sys_msg2+="SHIFT FACTORS (Positive=discharge risk, Negative=CHARGING OPPORTUNITY):"+chr(10)+SF_TEXT+chr(10)+chr(10)
+sys_msg2+="ASCII only. No apostrophes. No em-dashes. No newlines in strings."+chr(10)
+sys_msg2+="Return ONLY valid JSON: "+SCHEMA2
+user_msg2="HEN Briefing "+TODAY+" "+NOW.strftime("%H:%M CDT")+chr(10)
+user_msg2+="West wind:"+str(round(wind["west"],1))+"GW South:"+str(round(wind["south"],1))+"GW Solar:"+str(round(wind["solar"],1))+"GW"+chr(10)
+user_msg2+="Load W:"+str(round(load["west"],1))+" S:"+str(round(load["south"],1))+" N:"+str(round(load["north"],1))+" H:"+str(round(load["houston"],1))+"GW"+chr(10)
+user_msg2+=shadow_text+chr(10)+spread_text+chr(10)+da_sig_text
+cr=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":2000,"system":sys_msg2,"messages":[{"role":"user","content":user_msg2}]},timeout=90)
 raw=cr.json()["content"][0]["text"]
 clean=re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]"," ",raw)
 clean=re.sub(r"\r\n|\r|\n"," ",clean)
@@ -243,7 +272,7 @@ try:
     result=json.loads(chunk)
 except json.JSONDecodeError as je:
     print("JSON parse failed at char "+str(je.pos)+", using repair...")
-    cr2=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":3000,"system":"Fix broken JSON. Return ONLY valid JSON. No explanation.","messages":[{"role":"user","content":"Fix: "+chunk[:4000]}]},timeout=60)
+    cr2=requests.post("https://api.anthropic.com/v1/messages",headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},json={"model":"claude-sonnet-4-6","max_tokens":2000,"system":"Fix broken JSON. Return ONLY valid JSON. No explanation.","messages":[{"role":"user","content":"Fix: "+chunk[:4000]}]},timeout=60)
     raw2=cr2.json()["content"][0]["text"]
     clean2=re.sub(r"[\x00-\x1f\x7f]"," ",raw2)
     clean2=re.sub(r"\r\n|\r|\n"," ",clean2)
@@ -333,8 +362,7 @@ if site_spreads:
     if charging and charging!="none": body+="<div style="+Q+"font-size:12px;color:#c8b87a;padding:8px 12px;background:rgba(212,135,42,0.08);border-left:3px solid #9a6200;border-radius:0 4px 4px 0;margin-top:10px"+Q+"><strong>Charging opportunity:</strong> "+charging+"</div>"
     if watching: body+="<div style="+Q+"font-size:11px;color:#7ea8bc;margin-top:8px"+Q+">Sites to watch: "+", ".join(watching)+"</div>"
     body+="</div>"
-# Outlook section
-outlook=result.get("outlook",{})
+# Outlook section (from Call 1)
 if outlook:
     body+="<div style="+Q+"background:#0d1825;border:0.5px solid rgba(75,172,198,0.15);border-radius:10px;padding:1.25rem;margin-bottom:1rem"+Q+">"
     body+="<div style="+Q+"display:flex;align-items:center;gap:10px;margin-bottom:12px"+Q+"><div style="+Q+"width:3px;height:16px;background:#4BACC6;border-radius:2px;flex-shrink:0"+Q+"></div><div style="+Q+"font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:#4BACC6"+Q+">Forward Outlook - HE17 Today through HE16 Tomorrow</div></div>"
