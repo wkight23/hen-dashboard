@@ -65,7 +65,10 @@ def get_current(rows, val_idx, he_idx=2):
     for r in rows:
         if not isinstance(r,list) or len(r)<=max(val_idx,he_idx): continue
         try:
-            he = int(str(r[he_idx]).replace(":00","").replace(":30","")) if r[he_idx] else 0
+    he_raw = str(r[he_idx]) if r[he_idx] else "0"
+    he = int(he_raw.split(":")[0]) if ":" in he_raw else int(he_raw)
+except:
+    he = 0
         except:
             he = 0
         v = float(r[val_idx]) if r[val_idx] and isinstance(r[val_idx],(int,float)) else 0
@@ -83,7 +86,11 @@ def get_hourly(rows, val_idx, he_idx=2):
     result={}
     for r in rows:
         if not isinstance(r,list) or len(r)<=max(val_idx,he_idx): continue
-        try: he=int(str(r[he_idx]).replace(":00","").replace(":30",""))
+        try:
+    he_raw = str(r[he_idx]) if r[he_idx] else "0"
+    he = int(he_raw.split(":")[0]) if ":" in he_raw else int(he_raw)
+except:
+    he = 0
         except: continue
         v=float(r[val_idx]) if r[val_idx] and isinstance(r[val_idx],(int,float)) else 0
         if he not in result or v>0: result[he]=v
@@ -129,7 +136,10 @@ for r in load_rows:
     he_idx_l=lf_map.get("hourending",lf_map.get("hour ending",2))
     cur_he=NOW.hour+1
     try:
-        he=int(str(r[he_idx_l]).replace(":00","").replace(":30","")) if r[he_idx_l] else 0
+    he_raw = str(r[he_idx]) if r[he_idx] else "0"
+    he = int(he_raw.split(":")[0]) if ":" in he_raw else int(he_raw)
+except:
+    he = 0
     except:
         he=0
     if he<=cur_he:
