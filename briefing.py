@@ -38,7 +38,7 @@ shadow_data=eg("np4-191-cd/dam_shadow_prices")
 print("Fetching DA prices...")
 da_prices={}
 try:
-    da_resp=requests.get(BASE+"/np4-190-cd/dam_stlmt_pnt_prices?deliveryDateFrom="+TODAY+"&deliveryDateTo="+TODAY+"&size=2000",headers=hdrs,timeout=30)
+    da_resp=requests.get(BASE+"/np4-190-cd/dam_stlmt_pnt_prices?deliveryDateFrom="+TOMORROW+"&deliveryDateTo="+TOMORROW+"&size=2000",headers=hdrs,timeout=30)
     if da_resp.ok:
         da_json=da_resp.json()
         da_fields=da_json.get("fields",[])
