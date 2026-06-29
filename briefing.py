@@ -54,12 +54,15 @@ for query_date in [TODAY,TOMORROW]:
                 for item in drows:
                     if not isinstance(item,list) or len(item)<=max(sp_col,he_col,pr_col): continue
                     sp=str(item[sp_col]) if item[sp_col] else ""
-                    he=int(item[he_col]) if item[he_col] else 0
+                    try:
+                        he_r=str(item[he_col]) if item[he_col] else "0"
+                        he=int(he_r.split(":")[0]) if ":" in he_r else int(he_r)
+                    except: he=0
                     price=float(item[pr_col]) if item[pr_col] and isinstance(item[pr_col],(int,float)) else 0
                     if sp and he:
                         if sp not in da_prices: da_prices[sp]={}
                         da_prices[sp][he]=price
-        except Exception as _e: print("DA node error:",node,str(_e)[:50])
+        except: pass
         _time.sleep(0.3)
 print("DA nodes found:",len(da_prices))
 def avg(lst): return sum(lst)/len(lst)/1000 if lst else 0
