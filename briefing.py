@@ -59,7 +59,7 @@ for query_date in [TODAY,TOMORROW]:
                     if sp and he:
                         if sp not in da_prices: da_prices[sp]={}
                         da_prices[sp][he]=price
-        except: pass
+        except Exception as _e: print("DA node error:",node,str(_e)[:50])
         _time.sleep(0.3)
 print("DA nodes found:",len(da_prices))
 def avg(lst): return sum(lst)/len(lst)/1000 if lst else 0
