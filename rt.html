@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>HEN RT Dispatch Analysis</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;background:#070f1a;color:#e8f4f8;min-height:100vh}
+.btn{cursor:pointer;border:none;border-radius:6px;font-weight:600;transition:opacity 0.2s}
+.btn:hover{opacity:0.85}
+.btn:disabled{opacity:0.4;cursor:not-allowed}
+input{background:#111f30;border:1px solid rgba(75,172,198,0.3);border-radius:6px;color:#e8f4f8;padding:8px 12px;font-size:13px;width:100%}
+input:focus{outline:none;border-color:#4BACC6}
+</style>
+</head>
+<body>
+
+<div style="background:#022a4e;border-bottom:1px solid rgba(75,172,198,0.25);padding:0 1.5rem;height:52px;display:flex;align-items:center;justify-content:space-between">
+  <div style="display:flex;align-items:center;gap:10px">
+    <svg fill="#4BACC6" width="20" height="20" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    <strong style="font-size:14px">HEN RT Dispatch Analysis</strong>
+  </div>
+  <a href="results.html" style="font-size:11px;color:#4BACC6;text-decoration:none;background:rgba(75,172,198,0.1);border:1px solid rgba(75,172,198,0.25);padding:3px 10px;border-radius:4px">← Bid Prep Dashboard</a>
+</div>
+
+<div style="max-width:700px;margin:0 auto;padding:2rem 1.5rem">
+
+  <!-- Token input -->
+  <div style="background:#0d1825;border:0.5px solid rgba(75,172,198,0.15);border-radius:10px;padding:1.25rem;margin-bottom:1rem" id="token-section">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div style="width:3px;height:16px;background:#4BACC6;border-radius:2px"></div>
+      <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:#4BACC6">GitHub Access</div>
+    </div>
+    <p style="font-size:12px;color:#7ea8bc;margin-bottom:10px">Paste your GitHub Personal Access Token to trigger analysis. It stays in your browser and is never stored.</p>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+      <button class="btn" onclick="saveToken()" style="background:#4BACC6;color:#070f1a;padding:8px 16px;font-size:12px;white-space:nowrap">Save</button>
+    </div>
+    <div id="token-status" style="font-size:11px;color:#3d6478;margin-top:6px"></div>
+  </div>
+
+  <!-- Run button -->
+  <div style="background:#0d1825;border:0.5px solid rgba(75,172,198,0.15);border-radius:10px;padding:1.5rem;margin-bottom:1rem;text-align:center">
+    <div style="font-size:14px;color:#e8f4f8;margin-bottom:6px;font-weight:600">Real-Time Dispatch Analysis</div>
+    <div style="font-size:12px;color:#7ea8bc;margin-bottom:16px">Pulls current RT LMPs, yesterday's SCED constraints, and tomorrow's DA prices then asks Claude: should you dispatch now, hold for later, or charge overnight?</div>
+    <button class="btn" id="run-btn" onclick="runAnalysis()" style="background:#c0392b;color:white;padding:12px 32px;font-size:14px">
+      ⚡ Run Analysis
+    </button>
+    <div id="status-msg" style="font-size:12px;color:#7ea8bc;margin-top:12px;min-height:20px"></div>
+    <div id="progress-bar" style="display:none;margin-top:10px">
+      <div style="background:#111f30;border-radius:4px;height:4px;overflow:hidden">
+        <div id="progress-fill" style="background:#4BACC6;height:100%;width:0%;transition:width 1s linear"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- What it analyzes -->
+  <div style="background:#0d1825;border:0.5px solid rgba(75,172,198,0.15);border-radius:10px;padding:1.25rem;margin-bottom:1rem">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div style="width:3px;height:16px;background:#4BACC6;border-radius:2px"></div>
+      <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:#4BACC6">What This Analyzes</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+      <div style="background:#111f30;border-radius:6px;padding:10px">
+        <div style="font-size:10px;font-weight:600;color:#4BACC6;margin-bottom:4px">RIGHT NOW</div>
+        <div style="font-size:11px;color:#7ea8bc;line-height:1.5">Current RT LMPs vs zone hubs. Are prices favorable for dispatch this hour?</div>
+      </div>
+      <div style="background:#111f30;border-radius:6px;padding:10px">
+        <div style="font-size:10px;font-weight:600;color:#c8b87a;margin-bottom:4px">LATER TODAY</div>
+        <div style="font-size:11px;color:#7ea8bc;line-height:1.5">Yesterday's SCED binding constraints ranked by impact. What should you watch for tonight?</div>
+      </div>
+      <div style="background:#111f30;border-radius:6px;padding:10px">
+        <div style="font-size:10px;font-weight:600;color:#5db87a;margin-bottom:4px">TOMORROW SOLAR</div>
+        <div style="font-size:11px;color:#7ea8bc;line-height:1.5">DA prices for HE9-14 tomorrow. Should you charge overnight to be full for the solar window?</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Link to latest result -->
+  <div style="text-align:center">
+    <a href="rt_result.html" id="view-latest" style="font-size:12px;color:#4BACC6;text-decoration:none;background:rgba(75,172,198,0.1);border:1px solid rgba(75,172,198,0.25);padding:6px 16px;border-radius:6px;display:none">View Latest Analysis →</a>
+  </div>
+
+</div>
+
+<script>
+const OWNER = 'wkight23';
+const REPO = 'hen-dashboard';
+const WORKFLOW = 'rt-analysis.yml';
+
+function saveToken() {
+  const t = document.getElementById('gh-token').value.trim();
+  if (!t.startsWith('ghp_') && !t.startsWith('github_pat_')) {
+    document.getElementById('token-status').textContent = 'Token should start with ghp_ or github_pat_';
+    document.getElementById('token-status').style.color = '#c0392b';
+    return;
+  }
+  sessionStorage.setItem('gh_token', t);
+  document.getElementById('token-status').textContent = '✓ Token saved for this session';
+  document.getElementById('token-status').style.color = '#5db87a';
+  document.getElementById('gh-token').value = '';
+}
+
+async function runAnalysis() {
+  const token = sessionStorage.getItem('gh_token');
+  if (!token) {
+    alert('Please enter your GitHub token first.');
+    return;
+  }
+
+  const btn = document.getElementById('run-btn');
+  const status = document.getElementById('status-msg');
+  const progress = document.getElementById('progress-bar');
+  const fill = document.getElementById('progress-fill');
+
+  btn.disabled = true;
+  btn.textContent = '⚡ Triggering...';
+  progress.style.display = 'block';
+  fill.style.width = '5%';
+
+  // Trigger workflow
+  try {
+    const triggerResp = await fetch(
+      `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW}/dispatches`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ref: 'main'})
+      }
+    );
+
+    if (!triggerResp.ok) {
+      throw new Error(`Trigger failed: ${triggerResp.status}`);
+    }
+
+    status.textContent = 'Workflow triggered. Waiting for it to start...';
+    fill.style.width = '15%';
+
+    // Poll for workflow run
+    await new Promise(r => setTimeout(r, 5000));
+    fill.style.width = '25%';
+
+    let runId = null;
+    for (let i = 0; i < 10; i++) {
+      await new Promise(r => setTimeout(r, 3000));
+      const runsResp = await fetch(
+        `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW}/runs?per_page=1`,
+        {headers: {'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json'}}
+      );
+      const runsData = await runsResp.json();
+      if (runsData.workflow_runs && runsData.workflow_runs.length > 0) {
+        const run = runsData.workflow_runs[0];
+        if (run.status !== 'completed') {
+          runId = run.id;
+          status.textContent = `Running... (${run.status})`;
+          fill.style.width = `${30 + i * 5}%`;
+          break;
+        }
+      }
+    }
+
+    if (!runId) {
+      status.textContent = 'Checking run status...';
+    }
+
+    // Poll until complete
+    let elapsed = 0;
+    while (elapsed < 180) {
+      await new Promise(r => setTimeout(r, 5000));
+      elapsed += 5;
+
+      const runsResp = await fetch(
+        `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW}/runs?per_page=1`,
+        {headers: {'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json'}}
+      );
+      const runsData = await runsResp.json();
+      const run = runsData.workflow_runs && runsData.workflow_runs[0];
+
+      if (run) {
+        const pct = Math.min(90, 30 + (elapsed / 180) * 60);
+        fill.style.width = `${pct}%`;
+        status.textContent = `Running... ${elapsed}s elapsed (${run.status})`;
+
+        if (run.status === 'completed') {
+          if (run.conclusion === 'success') {
+            fill.style.width = '100%';
+            fill.style.background = '#5db87a';
+            status.textContent = '✓ Analysis complete! Loading result...';
+            setTimeout(() => {
+              window.location.href = 'rt.html?t=' + Date.now();
+            }, 2000);
+          } else {
+            fill.style.background = '#c0392b';
+            status.textContent = `Run ended with: ${run.conclusion}. Check GitHub Actions for details.`;
+            btn.disabled = false;
+            btn.textContent = '⚡ Run Analysis';
+          }
+          return;
+        }
+      }
+    }
+
+    status.textContent = 'Timed out waiting. Check GitHub Actions tab for status.';
+    btn.disabled = false;
+    btn.textContent = '⚡ Run Analysis';
+
+  } catch (err) {
+    status.textContent = 'Error: ' + err.message;
+    status.style.color = '#c0392b';
+    btn.disabled = false;
+    btn.textContent = '⚡ Run Analysis';
+  }
+}
+
+// Check if a result already exists
+fetch('rt.html')
+  .then(r => { if (r.ok) document.getElementById('view-latest').style.display = 'inline-block'; })
+  .catch(() => {});
+
+// Load saved token indicator
+if (sessionStorage.getItem('gh_token')) {
+  document.getElementById('token-status').textContent = '✓ Token loaded from session';
+  document.getElementById('token-status').style.color = '#5db87a';
+}
+</script>
+</body>
+</html>
