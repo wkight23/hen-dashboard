@@ -1,4 +1,4 @@
-fimport os, json, requests, re
+import os, json, requests, re
 from datetime import datetime, date, timedelta
 ERCOT_USER = os.environ["ERCOT_USERNAME"]
 ERCOT_PASS = os.environ["ERCOT_PASSWORD"]
