@@ -9,6 +9,7 @@ AUTH_URL = "https://ercotb2c.b2clogin.com/ercotb2c.onmicrosoft.com/B2C_1_PUBAPI-
 TODAY = date.today().isoformat()
 TOMORROW = (date.today() + timedelta(days=1)).isoformat()
 NOW = datetime.now()
+CDT = datetime.utcnow() - __import__("datetime").timedelta(hours=5)
 SEASON = {1:"Winter",2:"Winter",3:"Spring",4:"Spring",5:"Spring",6:"Summer",7:"Summer",8:"Summer",9:"Fall",10:"Fall",11:"Fall",12:"Winter"}[NOW.month]
 SITE_ZONES = {"RUSSEKST_RN":"WEST","JUNCTION_RN":"WEST","OLNEYTN_RN":"WEST","GRDNE_ESR_RN":"WEST","JDKNS_RN":"WEST","LONESTAR_RN":"WEST","RTLSNAKE_BT":"WEST","SANDLAKE_RN":"WEST","CEDRVALE_RN":"WEST","COYOTSPR_RN":"WEST","FAULKNER_RN":"WEST","SADLBACK_RN":"WEST","TOYAH_RN":"WEST","GOMZ_RN":"WEST","SBEAN_BESS":"WEST","HAMI_BESS_RN":"SOUTH","FTDUNCAN_RN":"SOUTH","CATARINA_B1":"SOUTH","HOLCOMB_RN1":"SOUTH","POTEETS_RN":"SOUTH","FALFUR_RN":"SOUTH","MV_VALV4_RN":"SOUTH","TYNAN_RN":"SOUTH","WLTC_ESR_RN":"SOUTH","PAVLOV_BT_RN":"SOUTH","MAINLAND_RN":"HOUSTON","DIBOL_RN":"NORTH","PAULN_RN":"NORTH","FRMRSVLW_RN":"NORTH","MNWL_BESS_RN":"NORTH","CISC_RN":"NORTH","LFSTH_RN":"NORTH"}
 SITE_NAMES = {"RUSSEKST_RN":"Russek","JUNCTION_RN":"Junction","OLNEYTN_RN":"Olney","GRDNE_ESR_RN":"Garden City","JDKNS_RN":"Judkins","LONESTAR_RN":"Lonestar","RTLSNAKE_BT":"Rattlesnake","SANDLAKE_RN":"Sandlake","CEDRVALE_RN":"Cedarvale","COYOTSPR_RN":"Coyote","FAULKNER_RN":"Faulkner","SADLBACK_RN":"Saddleback","TOYAH_RN":"Toyah","GOMZ_RN":"Gomez","SBEAN_BESS":"Screwbean","HAMI_BESS_RN":"Hamilton","FTDUNCAN_RN":"Fort Duncan","CATARINA_B1":"Catarina","HOLCOMB_RN1":"Holcomb","POTEETS_RN":"Poteets","FALFUR_RN":"Falfurrias","MV_VALV4_RN":"Val Verde","TYNAN_RN":"Tynan","WLTC_ESR_RN":"Weil Tract","PAVLOV_BT_RN":"Pavlov","MAINLAND_RN":"Mainland","DIBOL_RN":"Diboll","PAULN_RN":"Pauline","FRMRSVLW_RN":"Farmersville","MNWL_BESS_RN":"Mineral Wells","CISC_RN":"Cisco","LFSTH_RN":"Lufkin South"}
@@ -30,6 +31,7 @@ def eg(path,date_str=None,size=500):
 print("Fetching ERCOT data...")
 wind_data=eg("np4-742-cd/wpp_hrly_actual_fcast_geo")
 wind_data_tmrw=eg("np4-742-cd/wpp_hrly_actual_fcast_geo",TOMORROW)
+print("Wind tmrw sample:", wind_data_tmrw.get("data",[[]])[0][:3] if wind_data_tmrw.get("data") else "empty")
 load_data=eg("np3-565-cd/lf_by_model_weather_zone")
 solar_data=eg("np4-737-cd/spp_hrly_avrg_actl_fcast")
 solar_data_tmrw=eg("np4-737-cd/spp_hrly_avrg_actl_fcast",TOMORROW)
@@ -37,7 +39,7 @@ shadow_data=eg("np4-191-cd/dam_shadow_prices")
 print("Fetching DA prices...")
 da_prices={}
 try:
-    da_resp=requests.get(BASE+"/np4-190-cd/dam_stlmt_pnt_prices?deliveryDateFrom="+TODAY+"&deliveryDateTo="+TOMORROW+"&size=9999",headers=hdrs,timeout=30)
+    da_resp=requests.get(BASE+"/np4-190-cd/dam_stlmt_pnt_prices?deliveryDateFrom="+TODAY+"&deliveryDateTo="+TODAY+"&size=9999",headers=hdrs,timeout=30)
     if da_resp.ok:
         da_json=da_resp.json()
         da_fields=da_json.get("fields",[])
@@ -54,7 +56,7 @@ try:
                 if sp not in da_prices: da_prices[sp]={}
                 da_prices[sp][he]=price
 except Exception as e: print("DA error:",e)
-    print("DA prices found for nodes:", list(da_prices.keys())[:5] if da_prices else "none")
+print("DA prices found:",list(da_prices.keys())[:5] if da_prices else "none")
 def avg(lst): return sum(lst)/len(lst)/1000 if lst else 0
 def mx(lst): return max(lst)/1000 if lst else 0
 # ERCOT returns arrays - field positions: idx2=hourEnding,idx7=pan,idx11=coastal,idx15=south,idx19=west
@@ -88,6 +90,7 @@ wind["total"]=wind["west"]+wind["south"]+wind["coastal"]+wind["pan"]
 sol_rows=solar_data.get("data",[])
 wind["solar"]=get_current(sol_rows,3)
 # Debug: show sample wind data
+if wind_rows: print("Wind sample HE field:", repr(wind_rows[0][2]) if len(wind_rows[0])>2 else "N/A")
 print("Wind: West="+str(round(wind["west"],1))+" South="+str(round(wind["south"],1))+" Coastal="+str(round(wind["coastal"],1))+" Total="+str(round(wind["total"],1))+" Solar="+str(round(wind["solar"],1)))
 # Build hourly forecast for bid window HE17-24 today + HE1-16 tomorrow
 def get_hourly(rows, val_idx, he_idx=2):
@@ -356,7 +359,7 @@ body+=gcell("South load",str(round(load["south"],1))+" GW",load["south"]>=16,loa
 body+=gcell("North load",str(round(load["north"],1))+" GW",load["north"]>=20,load["north"]>=22)
 body+=gcell("Houston load",str(round(load["houston"],1))+" GW",load["houston"]>=16,load["houston"]>=18)
 body+=gcell("ERCOT total",str(round(load["total"],1))+" GW")
-body+=gcell("Updated",NOW.strftime("%H:%M CDT"))
+body+=gcell("Updated",CDT.strftime("%H:%M CDT"))
 body+="</div></div>"
 if site_spreads:
     rows=""
