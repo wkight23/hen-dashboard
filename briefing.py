@@ -30,7 +30,6 @@ def eg(path,date_str=None,size=500):
 print("Fetching ERCOT data...")
 wind_data=eg("np4-742-cd/wpp_hrly_actual_fcast_geo")
 wind_data_tmrw=eg("np4-742-cd/wpp_hrly_actual_fcast_geo",TOMORROW)
-print("Wind tmrw sample:", wind_data_tmrw.get("data",[[]])[0][:3] if wind_data_tmrw.get("data") else "empty")
 load_data=eg("np3-565-cd/lf_by_model_weather_zone")
 solar_data=eg("np4-737-cd/spp_hrly_avrg_actl_fcast")
 solar_data_tmrw=eg("np4-737-cd/spp_hrly_avrg_actl_fcast",TOMORROW)
@@ -38,7 +37,7 @@ shadow_data=eg("np4-191-cd/dam_shadow_prices")
 print("Fetching DA prices...")
 da_prices={}
 try:
-    da_resp=requests.get(BASE+"/np4-190-cd/dam_stlmt_pnt_prices?deliveryDateFrom="+TODAY+"&deliveryDateTo="+TODAY+"&size=2000",headers=hdrs,timeout=30)
+    da_resp=requests.get(BASE+"/np4-190-cd/dam_stlmt_pnt_prices?deliveryDateFrom="+TOMORROW+"&deliveryDateTo="+TOMORROW+"&size=2000",headers=hdrs,timeout=30)
     if da_resp.ok:
         da_json=da_resp.json()
         da_fields=da_json.get("fields",[])
@@ -88,7 +87,6 @@ wind["total"]=wind["west"]+wind["south"]+wind["coastal"]+wind["pan"]
 sol_rows=solar_data.get("data",[])
 wind["solar"]=get_current(sol_rows,3)
 # Debug: show sample wind data
-if wind_rows: print("Wind sample HE field:", repr(wind_rows[0][2]) if len(wind_rows[0])>2 else "N/A")
 print("Wind: West="+str(round(wind["west"],1))+" South="+str(round(wind["south"],1))+" Coastal="+str(round(wind["coastal"],1))+" Total="+str(round(wind["total"],1))+" Solar="+str(round(wind["solar"],1)))
 # Build hourly forecast for bid window HE17-24 today + HE1-16 tomorrow
 def get_hourly(rows, val_idx, he_idx=2):
