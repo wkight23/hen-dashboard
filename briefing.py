@@ -1,4 +1,4 @@
-import os, json, requests, re
+fimport os, json, requests, re
 from datetime import datetime, date, timedelta
 ERCOT_USER = os.environ["ERCOT_USERNAME"]
 ERCOT_PASS = os.environ["ERCOT_PASSWORD"]
@@ -37,7 +37,7 @@ shadow_data=eg("np4-191-cd/dam_shadow_prices")
 print("Fetching DA prices...")
 da_prices={}
 try:
-    da_resp=requests.get(BASE+"/np4-190-cd/dam_stlmt_pnt_prices?deliveryDateFrom="+TOMORROW+"&deliveryDateTo="+TOMORROW+"&size=2000",headers=hdrs,timeout=30)
+    da_resp=requests.get(BASE+"/np4-190-cd/dam_stlmt_pnt_prices?deliveryDateFrom="+TODAY+"&deliveryDateTo="+TOMORROW+"&size=9999",headers=hdrs,timeout=30)
     if da_resp.ok:
         da_json=da_resp.json()
         da_fields=da_json.get("fields",[])
@@ -54,6 +54,7 @@ try:
                 if sp not in da_prices: da_prices[sp]={}
                 da_prices[sp][he]=price
 except Exception as e: print("DA error:",e)
+    print("DA prices found for nodes:", list(da_prices.keys())[:5] if da_prices else "none")
 def avg(lst): return sum(lst)/len(lst)/1000 if lst else 0
 def mx(lst): return max(lst)/1000 if lst else 0
 # ERCOT returns arrays - field positions: idx2=hourEnding,idx7=pan,idx11=coastal,idx15=south,idx19=west
