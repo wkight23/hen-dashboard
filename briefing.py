@@ -38,7 +38,7 @@ shadow_data=eg("np4-191-cd/dam_shadow_prices")
 print("Fetching DA prices...")
 da_prices={}
 try:
-    da_resp=requests.get(BASE+"/np4-190-cd/dam_stlmt_pnt_prices?deliveryDateFrom="+TOMORROW+"&deliveryDateTo="+TOMORROW+"&size=2000",headers=hdrs,timeout=30)
+    da_resp=requests.get(BASE+"/np4-190-cd/dam_stlmt_pnt_prices?deliveryDateFrom="+TODAY+"&deliveryDateTo="+TODAY+"&size=2000",headers=hdrs,timeout=30)
     if da_resp.ok:
         da_json=da_resp.json()
         da_fields=da_json.get("fields",[])
@@ -46,7 +46,6 @@ try:
         sp_col=next((f["cardinality"]-1 for f in da_fields if "settlementPoint" in f.get("name","")),2)
         he_col=next((f["cardinality"]-1 for f in da_fields if "deliveryHour" in f.get("name","") or "hourEnding" in f.get("name","")),3)
         pr_col=next((f["cardinality"]-1 for f in da_fields if "Price" in f.get("name","")),4)
-        print("DA cols: sp="+str(sp_col)+" he="+str(he_col)+" pr="+str(pr_col)+" rows="+str(len(da_rows)))
         for item in da_rows:
             if not isinstance(item,list) or len(item)<=max(sp_col,he_col,pr_col): continue
             sp=str(item[sp_col]) if item[sp_col] else ""
