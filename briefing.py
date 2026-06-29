@@ -38,24 +38,30 @@ solar_data_tmrw=eg("np4-737-cd/spp_hrly_avrg_actl_fcast",TOMORROW)
 shadow_data=eg("np4-191-cd/dam_shadow_prices")
 print("Fetching DA prices...")
 da_prices={}
-try:
-    da_resp=requests.get(BASE+"/np4-190-cd/dam_stlmt_pnt_prices?deliveryDateFrom="+TODAY+"&deliveryDateTo="+TODAY+"&size=9999",headers=hdrs,timeout=30)
-    if da_resp.ok:
-        da_json=da_resp.json()
-        da_fields=da_json.get("fields",[])
-        da_rows=da_json.get("data",[])
-        sp_col=next((f["cardinality"]-1 for f in da_fields if "settlementPoint" in f.get("name","")),2)
-        he_col=next((f["cardinality"]-1 for f in da_fields if "deliveryHour" in f.get("name","") or "hourEnding" in f.get("name","")),3)
-        pr_col=next((f["cardinality"]-1 for f in da_fields if "Price" in f.get("name","")),4)
-        for item in da_rows:
-            if not isinstance(item,list) or len(item)<=max(sp_col,he_col,pr_col): continue
-            sp=str(item[sp_col]) if item[sp_col] else ""
-            he=int(item[he_col]) if item[he_col] else 0
-            price=float(item[pr_col]) if item[pr_col] and isinstance(item[pr_col],(int,float)) else 0
-            if sp and he:
-                if sp not in da_prices: da_prices[sp]={}
-                da_prices[sp][he]=price
-except Exception as e: print("DA error:",e)
+import time as _time
+DA_NODES=list(ZONE_HUBS.values())+["JDKNS_RN","SADLBACK_RN","CEDRVALE_RN","RUSSEKST_RN","CATARINA_B1","HOLCOMB_RN1","HAMI_BESS_RN","JUNCTION_RN","MV_VALV4_RN","FALFUR_RN"]
+for query_date in [TODAY,TOMORROW]:
+    for node in DA_NODES:
+        try:
+            dr=requests.get(BASE+"/np4-190-cd/dam_stlmnt_pnt_prices?settlementPoint="+node+"&deliveryDateFrom="+query_date+"&deliveryDateTo="+query_date+"&size=25",headers=hdrs,timeout=15)
+            if dr.ok:
+                dj=dr.json()
+                df=dj.get("fields",[])
+                drows=dj.get("data",[])
+                sp_col=next((f["cardinality"]-1 for f in df if "settlementPoint" in f.get("name","")),2)
+                he_col=next((f["cardinality"]-1 for f in df if "deliveryHour" in f.get("name","") or "hourEnding" in f.get("name","")),3)
+                pr_col=next((f["cardinality"]-1 for f in df if "Price" in f.get("name","")),4)
+                for item in drows:
+                    if not isinstance(item,list) or len(item)<=max(sp_col,he_col,pr_col): continue
+                    sp=str(item[sp_col]) if item[sp_col] else ""
+                    he=int(item[he_col]) if item[he_col] else 0
+                    price=float(item[pr_col]) if item[pr_col] and isinstance(item[pr_col],(int,float)) else 0
+                    if sp and he:
+                        if sp not in da_prices: da_prices[sp]={}
+                        da_prices[sp][he]=price
+        except: pass
+        _time.sleep(0.3)
+print("DA nodes found:",len(da_prices))
 def avg(lst): return sum(lst)/len(lst)/1000 if lst else 0
 def mx(lst): return max(lst)/1000 if lst else 0
 # ERCOT returns arrays - field positions: idx2=hourEnding,idx7=pan,idx11=coastal,idx15=south,idx19=west
