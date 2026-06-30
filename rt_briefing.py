@@ -619,6 +619,9 @@ async function loadOutlookChart() {{
     if (!resp.ok) throw new Error('chart_data.json not found (status ' + resp.status + ') - has the Chart Data Update workflow run yet?');
     const data = await resp.json();
     document.getElementById('chart-updated').textContent = 'updated ' + data.generated_at;
+    if (typeof Chart === 'undefined') {{
+      throw new Error('Chart.js library failed to load from CDN. Check your internet connection and try again.');
+    }}
     const pts = data.points;
     const labels = pts.map(p => p.date.slice(5) + ' HE' + p.he);
     const series = (key, label, color, dashed) => ({{
