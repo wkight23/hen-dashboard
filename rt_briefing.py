@@ -8,11 +8,11 @@ ERCOT_SUBKEY = os.environ["ERCOT_SUBKEY"]
 ANTHROPIC_KEY = os.environ["ANTHROPIC_API_KEY"]
 BASE = "https://api.ercot.com/api/public-reports"
 AUTH_URL = "https://ercotb2c.b2clogin.com/ercotb2c.onmicrosoft.com/B2C_1_PUBAPI-ROPC-FLOW/oauth2/v2.0/token"
-TODAY = date.today().isoformat()
-YESTERDAY = (date.today() - timedelta(days=1)).isoformat()
-TOMORROW = (date.today() + timedelta(days=1)).isoformat()
-NOW = datetime.now()
 CDT = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(hours=5)
+TODAY = CDT.date().isoformat()
+YESTERDAY = (CDT.date() - timedelta(days=1)).isoformat()
+TOMORROW = (CDT.date() + timedelta(days=1)).isoformat()
+NOW = datetime.now()
 SOLAR_HE = set(range(9, 15))
 
 # ─── Site / zone taxonomy (Stage 1 re-zone: West Texas / North Texas / Coastal / Premium) ───
