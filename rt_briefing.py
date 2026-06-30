@@ -477,6 +477,7 @@ html = f"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name
 <title>HEN RT Analysis {TODAY}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <style>
 *{{box-sizing:border-box;margin:0;padding:0}}
 body{{font-family:'Inter',-apple-system,sans-serif;background:#05080d;color:#eef4f8;min-height:100vh}}
@@ -524,6 +525,7 @@ input:focus{{outline:none;border-color:#4BACC6}}
 <div class="tab-bar">
 <button class="tab-btn active" onclick="showTab('outlook',this)">Outlook — HE16–24 + tomorrow AM</button>
 <button class="tab-btn" onclick="showTab('overnight',this)">Historical — HE1–15</button>
+<button class="tab-btn" onclick="showTab('chart',this)">7-day outlook</button>
 </div>
 
 <div class="tab-panel active" id="tab-outlook">
@@ -579,6 +581,22 @@ input:focus{{outline:none;border-color:#4BACC6}}
 
 </div>
 
+<div class="tab-panel" id="tab-chart">
+
+<div class="card" style="padding:1.25rem;margin-bottom:1.25rem">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+<div style="width:3px;height:14px;background:#4BACC6;border-radius:1px"></div>
+<div class="eyebrow">ERCOT system outlook — yesterday through 7 days ahead</div>
+<span class="mono" style="font-size:10px;color:#3d5a70;margin-left:auto" id="chart-updated">loading...</span></div>
+<div style="font-size:11px;color:#5c7a8c;margin-bottom:14px">Solid lines are forecast, dashed lines are real-time actuals (actuals stop at the current hour). Use the legend below the chart to toggle lines on/off.</div>
+<div style="position:relative;height:480px">
+<canvas id="outlook-canvas"></canvas>
+</div>
+<div id="chart-error" style="font-size:12px;color:#e0584f;margin-top:10px;display:none"></div>
+</div>
+
+</div>
+
 <div style="text-align:center;font-size:10px;color:#3d5a70;padding:16px 0 0">Data: ERCOT SCED {TODAY} (live) + {YESTERDAY} (full day) · RT prices {TODAY} HE{cur_he} · DA prices {TOMORROW}</div>
 </div>
 
@@ -588,6 +606,62 @@ function showTab(name, btn) {{
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
   document.getElementById("tab-"+name).classList.add("active");
   btn.classList.add("active");
+  if (name === 'chart' && !window.chartLoaded) {{
+    window.chartLoaded = true;
+    loadOutlookChart();
+  }}
+}}
+
+async function loadOutlookChart() {{
+  const errEl = document.getElementById('chart-error');
+  try {{
+    const resp = await fetch('chart_data.json?t=' + Date.now());
+    if (!resp.ok) throw new Error('chart_data.json not found (status ' + resp.status + ') - has the Chart Data Update workflow run yet?');
+    const data = await resp.json();
+    document.getElementById('chart-updated').textContent = 'updated ' + data.generated_at;
+    const pts = data.points;
+    const labels = pts.map(p => p.date.slice(5) + ' HE' + p.he);
+    const series = (key, label, color, dashed) => ({{
+      label: label,
+      data: pts.map(p => p[key]),
+      borderColor: color,
+      backgroundColor: color,
+      borderDash: dashed ? [4,3] : [],
+      pointRadius: 0,
+      borderWidth: dashed ? 1.5 : 2,
+      tension: 0.15,
+      spanGaps: false,
+    }});
+    new Chart(document.getElementById('outlook-canvas'), {{
+      type: 'line',
+      data: {{
+        labels: labels,
+        datasets: [
+          series('load_fcst', 'Total load (forecast)', '#ff6fd8', false),
+          series('load_act', 'Total load (actual)', '#ff6fd8', true),
+          series('net_load_fcst', 'Net load (forecast)', '#eef4f8', false),
+          series('net_load_act', 'Net load (actual)', '#eef4f8', true),
+          series('solar_fcst', 'Solar (forecast)', '#facc15', false),
+          series('solar_act', 'Solar (actual)', '#facc15', true),
+          series('wind_fcst', 'Wind (forecast)', '#9b7fe0', false),
+          series('wind_act', 'Wind (actual)', '#9b7fe0', true),
+          series('hsl_outage', 'HSL outages', '#4fcf8a', false),
+        ]
+      }},
+      options: {{
+        responsive: true, maintainAspectRatio: false,
+        interaction: {{ mode: 'index', intersect: false }},
+        plugins: {{ legend: {{ position: 'top', labels: {{ color: '#7ea8bc', boxWidth: 14, font: {{ size: 11 }} }} }} }},
+        scales: {{
+          x: {{ ticks: {{ color: '#3d5a70', maxTicksLimit: 16, font: {{ size: 9 }} }}, grid: {{ color: 'rgba(148,184,200,0.08)' }} }},
+          y: {{ ticks: {{ color: '#3d5a70', font: {{ size: 10 }} }}, grid: {{ color: 'rgba(148,184,200,0.08)' }} }}
+        }}
+      }}
+    }});
+  }} catch (err) {{
+    errEl.style.display = 'block';
+    errEl.textContent = 'Could not load chart data: ' + err.message;
+  }}
 }}
 
 const OWNER = 'wkight23';
