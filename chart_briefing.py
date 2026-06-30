@@ -132,9 +132,15 @@ wind = fetch_series("/np4-732-cd/wpp_hrly_avrg_actl_fcast", "Wind actual+forecas
 outages = fetch_outages()
 
 # ─── Assemble one combined hourly series ───
+CHART_START = (TODAY - timedelta(days=1)).isoformat()  # yesterday
+CHART_END = END_DATE                                    # 7 days ahead
+
 all_keys = set(load_fcst) | set(load_act) | set(solar) | set(wind) | set(outages)
 points = []
 for d_str, he in sorted(all_keys):
+    # Skip anything outside the chart window — load_act returns years of history without a date filter
+    if d_str < CHART_START or d_str > CHART_END:
+        continue
     is_future = d_str > CDT.date().isoformat() or (d_str == CDT.date().isoformat() and he > CDT.hour + 1)
     lf = load_fcst.get((d_str,he), {}).get("load")
     la = load_act.get((d_str,he), {}).get("load")
