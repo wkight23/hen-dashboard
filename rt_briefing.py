@@ -477,6 +477,7 @@ html = f"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name
 <title>HEN RT Analysis {TODAY}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="chart.umd.min.js"></script>
 <style>
 *{{box-sizing:border-box;margin:0;padding:0}}
 body{{font-family:'Inter',-apple-system,sans-serif;background:#05080d;color:#eef4f8;min-height:100vh}}
@@ -614,69 +615,76 @@ function showTab(name, btn) {{
 async function loadOutlookChart() {{
   const errEl = document.getElementById('chart-error');
   try {{
-    // Load Chart.js dynamically - try cdnjs first, fall back to jsDelivr
-    if (typeof Chart === 'undefined') {{
-      await new Promise((resolve, reject) => {{
-        const s = document.createElement('script');
-        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js';
-        s.onload = resolve;
-        s.onerror = () => {{
-          // Primary CDN failed, try jsDelivr
-          const s2 = document.createElement('script');
-          s2.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js';
-          s2.onload = resolve;
-          s2.onerror = () => reject(new Error('Both Chart.js CDNs failed to load. Check browser console.'));
-          document.head.appendChild(s2);
-        }};
-        document.head.appendChild(s);
-      }});
-    }}
+    if (typeof Chart === 'undefined') throw new Error('chart.umd.min.js did not load — is the file in the repo root?');
     const resp = await fetch('chart_data.json?t=' + Date.now());
     if (!resp.ok) throw new Error('chart_data.json not found (status ' + resp.status + ') — has the Chart Data Update workflow run yet?');
     const data = await resp.json();
     document.getElementById('chart-updated').textContent = 'updated ' + data.generated_at;
     const pts = data.points;
     const labels = pts.map(p => p.date.slice(5) + ' HE' + p.he);
-    const series = (key, label, color, dashed) => ({{
-      label: label,
-      data: pts.map(p => p[key]),
-      borderColor: color,
-      backgroundColor: color,
-      borderDash: dashed ? [4,3] : [],
-      pointRadius: 0,
+    const mkSeries = (key, label, color, dashed) => ({{
+      label, data: pts.map(p => p[key] != null ? Math.round(p[key]) : null),
+      borderColor: color, backgroundColor: color + '22',
+      borderDash: dashed ? [5,4] : [],
+      pointRadius: 0, pointHoverRadius: 4,
       borderWidth: dashed ? 1.5 : 2,
-      tension: 0.15,
-      spanGaps: false,
+      tension: 0.1, spanGaps: false,
     }});
     new Chart(document.getElementById('outlook-canvas'), {{
       type: 'line',
       data: {{
-        labels: labels,
+        labels,
         datasets: [
-          series('load_fcst', 'Total load (forecast)', '#ff6fd8', false),
-          series('load_act', 'Total load (actual)', '#ff6fd8', true),
-          series('net_load_fcst', 'Net load (forecast)', '#eef4f8', false),
-          series('net_load_act', 'Net load (actual)', '#eef4f8', true),
-          series('solar_fcst', 'Solar (forecast)', '#facc15', false),
-          series('solar_act', 'Solar (actual)', '#facc15', true),
-          series('wind_fcst', 'Wind (forecast)', '#9b7fe0', false),
-          series('wind_act', 'Wind (actual)', '#9b7fe0', true),
-          series('hsl_outage', 'HSL outages', '#4fcf8a', false),
+          mkSeries('load_fcst',    'Total load — fcst',   '#ff6fd8', false),
+          mkSeries('load_act',     'Total load — actual', '#ff6fd8', true),
+          mkSeries('net_load_fcst','Net load — fcst',     '#eef4f8', false),
+          mkSeries('net_load_act', 'Net load — actual',   '#eef4f8', true),
+          mkSeries('solar_fcst',   'Solar — fcst',        '#facc15', false),
+          mkSeries('solar_act',    'Solar — actual',      '#facc15', true),
+          mkSeries('wind_fcst',    'Wind — fcst',         '#9b7fe0', false),
+          mkSeries('wind_act',     'Wind — actual',       '#9b7fe0', true),
+          mkSeries('hsl_outage',   'HSL outages',         '#4fcf8a', false),
         ]
       }},
       options: {{
         responsive: true, maintainAspectRatio: false,
         interaction: {{ mode: 'index', intersect: false }},
-        plugins: {{ legend: {{ position: 'top', labels: {{ color: '#7ea8bc', boxWidth: 14, font: {{ size: 11 }} }} }} }},
+        plugins: {{
+          legend: {{
+            position: 'top',
+            labels: {{ color: '#7ea8bc', boxWidth: 14, font: {{ size: 11 }}, padding: 16 }}
+          }},
+          tooltip: {{
+            backgroundColor: '#0c131e',
+            borderColor: 'rgba(75,172,198,0.3)',
+            borderWidth: 1,
+            titleColor: '#4BACC6',
+            bodyColor: '#c8d8e8',
+            padding: 10,
+            callbacks: {{
+              title: items => labels[items[0].dataIndex],
+              label: item => ` ${{item.dataset.label}}: ${{item.raw != null ? (item.raw/1000).toFixed(1) + 'k MW' : 'n/a'}}`
+            }}
+          }}
+        }},
         scales: {{
-          x: {{ ticks: {{ color: '#3d5a70', maxTicksLimit: 16, font: {{ size: 9 }} }}, grid: {{ color: 'rgba(148,184,200,0.08)' }} }},
-          y: {{ ticks: {{ color: '#3d5a70', font: {{ size: 10 }} }}, grid: {{ color: 'rgba(148,184,200,0.08)' }} }}
+          x: {{
+            ticks: {{ color: '#3d5a70', maxTicksLimit: 16, font: {{ size: 9 }}, maxRotation: 0 }},
+            grid: {{ color: 'rgba(148,184,200,0.08)' }}
+          }},
+          y: {{
+            ticks: {{
+              color: '#3d5a70', font: {{ size: 10 }},
+              callback: v => (v/1000).toFixed(0) + 'k'
+            }},
+            grid: {{ color: 'rgba(148,184,200,0.08)' }}
+          }}
         }}
       }}
     }});
   }} catch (err) {{
     errEl.style.display = 'block';
-    errEl.textContent = 'Could not load chart data: ' + err.message;
+    errEl.textContent = 'Could not load chart: ' + err.message;
   }}
 }}
 
