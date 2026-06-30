@@ -712,7 +712,7 @@ async function loadOutlookChart() {{
             padding: 12,
             
             callbacks: {{
-              title: items => `${pts[items[0].dataIndex].date} HE${pts[items[0].dataIndex].he}`,
+              title: items => pts[items[0].dataIndex].date + ' HE' + pts[items[0].dataIndex].he,
               label: item => {{
                 if (item.raw == null) return null;
                 const isOutage = item.dataset.yAxisID === 'y2';
