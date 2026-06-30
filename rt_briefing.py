@@ -633,7 +633,8 @@ async function loadOutlookChart() {{
     const data = await resp.json();
     document.getElementById('chart-updated').textContent = 'updated ' + data.generated_at;
     const pts = data.points;
-    const labels = pts.map(p => p.date.slice(5) + ' HE' + p.he);
+    // Show the date at HE1 of each day, blank elsewhere — simple and reliable
+    const labels = pts.map(p => p.he === 1 ? p.date.slice(5) : '');
 
     // Find "now" index — first point where load_act goes null (future)
     const nowIdx = pts.findIndex(p => p.load_act === null && p.load_fcst !== null);
@@ -727,17 +728,16 @@ async function loadOutlookChart() {{
         scales: {{
           x: {{
             ticks: {{
-              color: '#3d5a70', maxTicksLimit: 10,
-              font: {{ size: 9 }}, maxRotation: 0,
-              callback: (val, idx) => {{
-                const p = pts[idx];
-                return p && p.he === 12 ? p.date.slice(5) : (p && p.he === 1 ? '│' : '');
-              }}
+              color: '#7ea8bc',
+              font: {{ size: 10 }},
+              maxRotation: 0,
+              autoSkip: false,
             }},
             grid: {{ color: 'rgba(148,184,200,0.06)' }}
           }},
           y: {{
             position: 'left',
+            beginAtZero: false,
             title: {{ display: true, text: 'MW (load / solar / wind)', color: '#3d5a70', font: {{ size: 10 }} }},
             ticks: {{
               color: '#3d5a70', font: {{ size: 10 }},
