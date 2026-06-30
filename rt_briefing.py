@@ -662,16 +662,16 @@ async function loadOutlookChart() {{
       }}
     }};
 
-    const mkS = (key, label, color, dashed, yAxis) => ({{
-      label, yAxisID: yAxis || 'y',
+    const mkS = (key, label, color, dashed) => ({{
+      label,
       data: pts.map(p => p[key] != null ? Math.round(p[key]) : null),
       borderColor: color,
-      backgroundColor: color + '18',
+      backgroundColor: 'transparent',
       borderDash: dashed ? [5,4] : [],
       pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: color,
       borderWidth: dashed ? 1.5 : 2.5,
       tension: 0.1,
-      spanGaps: true,  // keep both forecast and actual lines continuous
+      spanGaps: true,
       fill: false,
     }});
 
@@ -682,15 +682,15 @@ async function loadOutlookChart() {{
       data: {{
         labels,
         datasets: [
-          mkS('load_fcst',     'Total load — fcst',    '#ff6fd8', false),
-          mkS('load_act',      'Total load — actual',  '#ff80e0', true),
+          mkS('load_fcst',     'Total load — fcst',    '#f472b6', false),
+          mkS('load_act',      'Total load — actual',  '#f472b6', true),
           mkS('net_load_fcst', 'Net load — fcst',      '#94a3b8', false),
           mkS('net_load_act',  'Net load — actual',    '#e2e8f0', true),
-          mkS('solar_fcst',    'Solar — fcst',         '#facc15', false),
+          mkS('solar_fcst',    'Solar — fcst',         '#fbbf24', false),
           mkS('solar_act',     'Solar — actual',       '#fde68a', true),
-          mkS('wind_fcst',     'Wind — fcst',          '#9b7fe0', false),
+          mkS('wind_fcst',     'Wind — fcst',          '#a78bfa', false),
           mkS('wind_act',      'Wind — actual',        '#c4b5fd', true),
-          mkS('hsl_outage',    'HSL outages',          '#4fcf8a', false, 'y2'),
+          mkS('hsl_outage',    'HSL outages',          '#34d399', false),
         ]
       }},
       options: {{
@@ -699,9 +699,7 @@ async function loadOutlookChart() {{
         plugins: {{
           legend: {{
             position: 'top',
-            labels: {{ color: '#7ea8bc', boxWidth: 16, font: {{ size: 11 }}, padding: 14,
-              filter: item => true
-            }}
+            labels: {{ color: '#94a3b8', boxWidth: 16, font: {{ size: 11 }}, padding: 16 }}
           }},
           tooltip: {{
             backgroundColor: '#0a1622',
@@ -710,16 +708,11 @@ async function loadOutlookChart() {{
             titleColor: '#4BACC6',
             bodyColor: '#c8d8e8',
             padding: 12,
-            
             callbacks: {{
               title: items => pts[items[0].dataIndex].date + ' HE' + pts[items[0].dataIndex].he,
               label: item => {{
                 if (item.raw == null) return null;
-                const isOutage = item.dataset.yAxisID === 'y2';
-                const val = isOutage
-                  ? item.raw.toLocaleString() + ' MW'
-                  : (item.raw / 1000).toFixed(1) + 'k MW';
-                return ` ${{item.dataset.label}}: ${{val}}`;
+                return ' ' + item.dataset.label + ': ' + (item.raw / 1000).toFixed(1) + 'k MW';
               }},
               filter: item => item.raw != null,
             }}
@@ -727,32 +720,16 @@ async function loadOutlookChart() {{
         }},
         scales: {{
           x: {{
-            ticks: {{
-              color: '#7ea8bc',
-              font: {{ size: 10 }},
-              maxRotation: 0,
-              autoSkip: false,
-            }},
+            ticks: {{ color: '#7ea8bc', font: {{ size: 10 }}, maxRotation: 0, autoSkip: false }},
             grid: {{ color: 'rgba(148,184,200,0.06)' }}
           }},
           y: {{
-            position: 'left',
             beginAtZero: false,
-            title: {{ display: true, text: 'MW (load / solar / wind)', color: '#3d5a70', font: {{ size: 10 }} }},
             ticks: {{
               color: '#3d5a70', font: {{ size: 10 }},
               callback: v => (v / 1000).toFixed(0) + 'k'
             }},
             grid: {{ color: 'rgba(148,184,200,0.06)' }}
-          }},
-          y2: {{
-            position: 'right',
-            title: {{ display: true, text: 'MW (HSL outages)', color: '#4fcf8a', font: {{ size: 10 }} }},
-            ticks: {{
-              color: '#4fcf8a', font: {{ size: 10 }},
-              callback: v => (v / 1000).toFixed(1) + 'k'
-            }},
-            grid: {{ drawOnChartArea: false }}
           }}
         }}
       }}
