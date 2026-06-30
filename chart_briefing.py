@@ -106,11 +106,42 @@ def fetch_outages():
     return out
 
 # ─── Load: forecast (7-day, system total) + actual (system total) ───
-load_fcst = fetch_series(
-    "/np3-565-cd/lf_by_model_weather_zone",
-    "Load forecast",
-    {"load": ["system", "total"]}
-)
+# np3-565-cd returns multiple model forecasts per hour - must filter to inUseFlag=True
+print("Fetching load forecast...")
+load_fcst = {}
+try:
+    for page in range(1, 6):
+        r = requests.get(BASE+"/np3-565-cd/lf_by_model_weather_zone",
+            params={"deliveryDateFrom":START_DATE,"deliveryDateTo":END_DATE,"page":page,"size":5000},
+            headers=hdrs, timeout=30)
+        if not r.ok:
+            print(f"Load forecast: request failed with status {r.status_code}")
+            break
+        d = r.json()
+        fields = d.get("fields",[])
+        rows = d.get("data",[])
+        if page == 1:
+            print(f"Load forecast: fields = {[f.get('name') for f in fields]}")
+        date_col = next((f["cardinality"]-1 for f in fields if "deliverydate" in f.get("name","").lower()), 1)
+        hour_col = next((f["cardinality"]-1 for f in fields if "hour" in f.get("name","").lower()), 2)
+        total_col = next((f["cardinality"]-1 for f in fields if "systemtotal" in f.get("name","").lower()), None)
+        flag_col  = next((f["cardinality"]-1 for f in fields if "inuse" in f.get("name","").lower()), None)
+        for row in rows:
+            if not isinstance(row, list): continue
+            try:
+                # Only store rows where inUseFlag is True (the active model)
+                if flag_col is not None and flag_col < len(row):
+                    flag = str(row[flag_col]).strip().lower()
+                    if flag not in ("true","1","yes"): continue
+                d_str = str(row[date_col])[:10]
+                he = parse_he(row[hour_col]) if hour_col < len(row) else 0
+                if total_col is not None and total_col < len(row) and row[total_col] not in (None,""):
+                    load_fcst[(d_str, he)] = {"load": float(row[total_col])}
+            except: continue
+        if len(rows) < 5000: break
+except Exception as e:
+    print(f"Load forecast: error {e}")
+print(f"Load forecast: {len(load_fcst)} hourly rows parsed")
 
 # Actual load uses operatingDay (not deliveryDate) — fetch last 5 days + today
 load_act = fetch_series(
