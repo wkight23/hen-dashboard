@@ -2,6 +2,7 @@
 <title>HEN RT Analysis 2026-06-30</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="chart.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter',-apple-system,sans-serif;background:#05080d;color:#eef4f8;min-height:100vh}
@@ -28,7 +29,7 @@ input:focus{outline:none;border-color:#4BACC6}
 <svg fill="#4BACC6" width="18" height="18" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
 <strong style="font-size:13px;font-weight:600">HEN RT Dispatch Analysis</strong></div>
 <div style="display:flex;align-items:center;gap:16px">
-<div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#7ea8bc"><span class="livedot"></span><span class="mono">HE17 · 16:17 CDT</span></div>
+<div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#7ea8bc"><span class="livedot"></span><span class="mono">HE17 · 16:35 CDT</span></div>
 <a href="results.html" style="font-size:11px;color:#4BACC6;text-decoration:none;border:0.5px solid rgba(75,172,198,0.25);padding:4px 10px;border-radius:5px">← Bid prep</a></div></div>
 
 <div style="max-width:960px;margin:0 auto;padding:1.5rem 1.5rem 3rem">
@@ -60,7 +61,7 @@ input:focus{outline:none;border-color:#4BACC6}
 </div>
 <div style="text-align:right;flex-shrink:0">
 <div class="lbl">RT now</div>
-<div class="mono" style="font-size:24px;font-weight:600;color:#e0584f">$87.3</div>
+<div class="mono" style="font-size:24px;font-weight:600;color:#e0584f">$76.79</div>
 </div></div>
 
 <div class="tab-bar">
@@ -76,17 +77,17 @@ input:focus{outline:none;border-color:#4BACC6}
 <div style="width:3px;height:14px;background:#4BACC6;border-radius:1px"></div>
 <div class="eyebrow">Claude dispatch analysis</div>
 <span class="mono" style="font-size:10px;color:#3d5a70;margin-left:auto">2026-06-30</span></div>
-<div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>HEN RT Dispatch Analysis — 2026-06-30 HE17</div><div style='font-size:13px;color:#c8d8e8;line-height:1.65;margin-bottom:6px'>---</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>1. WHAT IS HAPPENING RIGHT NOW</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>West Texas: DO NOT DISPATCH. LZ_WEST at -$0.1/MWh. WESTEX constraint still active (103 intervals today, peaking HE8-10). West Texas sites seeing near-zero/negative LMP — hold or opportunistically charge.</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>Russek: -$1.79/MWh — charge if capacity available. Stacked congestion (WESTEX + MCCAMY) is suppressing this node specifically.</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>Junction: DISPATCH NOW — $87.3/MWh. Strongest signal in the portfolio. This is a West Texas premium node diverging sharply upward from LZ_WEST (-$0.1). Unusual and commercially significant — localized congestion benefit pushing Junction well above zone. Max it out.</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>North Texas / Coastal: HOLD. RT $21.9 and $22.17 respectively — reasonable but not compelling vs. DA peak tonight at $45-49. Preserve energy for HE20-22 discharge window.</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>Hamilton: $9.17/MWh — below commercial threshold. Stacked congestion (MAXWELL→HAMILTON + WESTEX) suppressing node. Do not dispatch; hold for evening.</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>Fort Duncan / Catarina / Holcomb: HOLD. RT $13-18/MWh, below tonight's expected DA peak. Stacked congestion on Fort Duncan (WESTEX + MCCAMY) is a drag but not severe enough to charge against.</div><div style='font-size:13px;color:#c8d8e8;line-height:1.65;margin-bottom:6px'>---</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>2. WHAT TO EXPECT LATER TODAY/TONIGHT</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>HE18-22 is the primary discharge window across all zones. DA shows $25-47/MWh North Texas, $25-46 Coastal, $17-50 West Texas. RT spikes tonight could exceed DA significantly given today's active constraint environment.</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>Watch: CRDSW→OLNEY has been relentless (109 intervals today, 220 yesterday) — Olney node congestion is persistent and severe. If it carries into evening, Olney RT will diverge further.</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>Hamilton stacked congestion (MAXWELL→HAMILTON + WESTEX) could ease post-sunset as West Texas solar drops and WESTEX relaxes — Hamilton may recover for HE19-21 discharge. Monitor.</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>Junction's $87 spike may be transient localized congestion — don't assume it holds into evening, but capture what you can now.</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>WESTEX</div>
+<div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>HEN RT Dispatch Analysis — 2026-06-30 HE17</div><div style='font-size:13px;color:#c8d8e8;line-height:1.65;margin-bottom:6px'>---</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>1. WHAT IS HAPPENING RIGHT NOW</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>West Texas: DO NOT DISPATCH. LZ_WEST at $0.09/MWh — WESTEX constraint (103 intervals today, still active) is crushing West Texas LMPs to near-zero. All West Texas sites (Judkins, Saddleback, Cedarvale, etc.) should hold or charge if capacity available.</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>North Texas & Coastal: HOLD. LZ_NORTH $21.33, LZ_SOUTH $20.53 — modest but not compelling at HE17. DA tonight ramps hard (HE20-21 ~$45-47), so preserve capacity for the evening peak.</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>Premium Node Divergence — act on these:</div><div style='font-size:13px;color:#c8d8e8;line-height:1.65;margin-bottom:6px'>- **Junction: DISPATCH NOW — $76.79/MWh.** Massive premium above its West Texas zone ($0.09). This is the standout signal of the hour. Dispatch while it holds.</div><div style='font-size:13px;color:#c8d8e8;line-height:1.65;margin-bottom:6px'>- **Russek: $-1.2/MWh — CHARGE if capacity allows.** Stacked congestion (WESTEX + MCCAMY) driving it negative. Cheap charging opportunity.</div><div style='font-size:13px;color:#c8d8e8;line-height:1.65;margin-bottom:6px'>- **Hamilton: $8.90/MWh — HOLD.** Stacked congestion (WESTEX + MAXWELL→HAMILTON) suppressing it well below zone. Save for evening.</div><div style='font-size:13px;color:#c8d8e8;line-height:1.65;margin-bottom:6px'>- **Catarina/Holcomb/Fort Duncan: HOLD.** $16-17 range, not worth burning capacity ahead of tonight's DA peak.</div><div style='font-size:13px;color:#c8d8e8;line-height:1.65;margin-bottom:6px'>---</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>2. WHAT TO EXPECT LATER TODAY/TONIGHT</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>HE18-19: Prices begin ramping. North Texas DA shows $27-30, Coastal $25-30. RT should track upward. Start positioning for dispatch across North Texas and Coastal sites by HE19.</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>HE20-21 (PRIORITY DISPATCH WINDOW): DA peaks at $46-49 across all zones. This is tonight's primary dispatch window — all available capacity should target these hours. West Texas sites (DA $46.74-49.74 HE20-21) are worth dispatching IF WESTEX constraint has released by then. WESTEX has historically peaked HE20/19, so monitor closely — if it re-binds overnight, West Texas LMPs collapse again. Yesterday WESTEX peaked HEs 1-3 (overnight), not evening, so evening dispatch in West Texas may be viable.</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:10px 0 3px'>Stacked congestion nodes (Olney, Russek, Hamilton,</div>
 </div>
 
 <div class="eyebrow" style="margin-bottom:8px;display:block">By zone</div>
 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem">
-<div class='card' style='padding:0.9rem;'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>West Texas</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#4fcf8a;margin-bottom:8px'>$-0.1</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$7.6</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$49.74</span></div></div><div class='card' style='padding:0.9rem;'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>North Texas</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#eef4f8;margin-bottom:8px'>$21.9</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$19.54</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$47.01</span></div></div><div class='card' style='padding:0.9rem;'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Coastal</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#eef4f8;margin-bottom:8px'>$22.17</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$20.92</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$46.18</span></div></div><div class='card' style='padding:0.9rem;'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Mainland (Houston zone)</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#4BACC622;color:#4BACC6'>monitor</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#eef4f8;margin-bottom:8px'>$43.62</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$27.42</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$46.95</span></div></div>
+<div class='card' style='padding:0.9rem;'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>West Texas</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#4fcf8a;margin-bottom:8px'>$0.09</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$7.6</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$49.74</span></div></div><div class='card' style='padding:0.9rem;'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>North Texas</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#eef4f8;margin-bottom:8px'>$21.33</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$19.54</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$47.01</span></div></div><div class='card' style='padding:0.9rem;'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Coastal</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#eef4f8;margin-bottom:8px'>$20.53</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$20.92</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$46.18</span></div></div><div class='card' style='padding:0.9rem;'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Mainland (Houston zone)</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#4BACC622;color:#4BACC6'>monitor</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#eef4f8;margin-bottom:8px'>$41.05</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$27.42</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$46.95</span></div></div>
 </div>
 
 <div class="eyebrow" style="margin-bottom:8px;display:block">Premium nodes (RT-volatile, watched individually)</div>
 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem">
-<div class='card' style='padding:0.9rem;border-color:rgba(224,88,79,0.4)'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Catarina</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#eef4f8;margin-bottom:8px'>$17.01</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$20.92</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$46.18</span></div></div><div class='card' style='padding:0.9rem;border-color:rgba(224,88,79,0.4)'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Holcomb</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#eef4f8;margin-bottom:8px'>$18.12</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$20.92</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$46.18</span></div></div><div class='card' style='padding:0.9rem;border-color:rgba(224,88,79,0.4)'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Hamilton</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#4fcf8a;margin-bottom:8px'>$9.17</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$20.92</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$46.18</span></div></div><div class='card' style='padding:0.9rem;border-color:rgba(224,88,79,0.4)'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Junction</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#e0584f22;color:#e0584f'>dispatch</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#e0584f;margin-bottom:8px'>$87.3</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$7.6</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$49.74</span></div></div><div class='card' style='padding:0.9rem;border-color:rgba(224,88,79,0.4)'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Russek</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#4fcf8a;margin-bottom:8px'>$-1.79</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$7.6</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$49.74</span></div></div><div class='card' style='padding:0.9rem;border-color:rgba(224,88,79,0.4)'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Fort Duncan</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#eef4f8;margin-bottom:8px'>$13.26</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$20.92</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$46.18</span></div></div>
+<div class='card' style='padding:0.9rem;border-color:rgba(224,88,79,0.4)'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Catarina</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#eef4f8;margin-bottom:8px'>$16.02</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$20.92</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$46.18</span></div></div><div class='card' style='padding:0.9rem;border-color:rgba(224,88,79,0.4)'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Holcomb</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#eef4f8;margin-bottom:8px'>$17.0</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$20.92</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$46.18</span></div></div><div class='card' style='padding:0.9rem;border-color:rgba(224,88,79,0.4)'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Hamilton</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#4fcf8a;margin-bottom:8px'>$8.9</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$20.92</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$46.18</span></div></div><div class='card' style='padding:0.9rem;border-color:rgba(224,88,79,0.4)'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Junction</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#e0584f22;color:#e0584f'>dispatch</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#e0584f;margin-bottom:8px'>$76.79</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$7.6</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$49.74</span></div></div><div class='card' style='padding:0.9rem;border-color:rgba(224,88,79,0.4)'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Russek</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#4fcf8a;margin-bottom:8px'>$-1.2</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$7.6</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$49.74</span></div></div><div class='card' style='padding:0.9rem;border-color:rgba(224,88,79,0.4)'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Fort Duncan</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#eef4f8;margin-bottom:8px'>$12.62</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$20.92</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$46.18</span></div></div>
 </div>
 
 </div>
@@ -156,69 +157,76 @@ function showTab(name, btn) {
 async function loadOutlookChart() {
   const errEl = document.getElementById('chart-error');
   try {
-    // Load Chart.js dynamically - try cdnjs first, fall back to jsDelivr
-    if (typeof Chart === 'undefined') {
-      await new Promise((resolve, reject) => {
-        const s = document.createElement('script');
-        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js';
-        s.onload = resolve;
-        s.onerror = () => {
-          // Primary CDN failed, try jsDelivr
-          const s2 = document.createElement('script');
-          s2.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js';
-          s2.onload = resolve;
-          s2.onerror = () => reject(new Error('Both Chart.js CDNs failed to load. Check browser console.'));
-          document.head.appendChild(s2);
-        };
-        document.head.appendChild(s);
-      });
-    }
+    if (typeof Chart === 'undefined') throw new Error('chart.umd.min.js did not load — is the file in the repo root?');
     const resp = await fetch('chart_data.json?t=' + Date.now());
     if (!resp.ok) throw new Error('chart_data.json not found (status ' + resp.status + ') — has the Chart Data Update workflow run yet?');
     const data = await resp.json();
     document.getElementById('chart-updated').textContent = 'updated ' + data.generated_at;
     const pts = data.points;
     const labels = pts.map(p => p.date.slice(5) + ' HE' + p.he);
-    const series = (key, label, color, dashed) => ({
-      label: label,
-      data: pts.map(p => p[key]),
-      borderColor: color,
-      backgroundColor: color,
-      borderDash: dashed ? [4,3] : [],
-      pointRadius: 0,
+    const mkSeries = (key, label, color, dashed) => ({
+      label, data: pts.map(p => p[key] != null ? Math.round(p[key]) : null),
+      borderColor: color, backgroundColor: color + '22',
+      borderDash: dashed ? [5,4] : [],
+      pointRadius: 0, pointHoverRadius: 4,
       borderWidth: dashed ? 1.5 : 2,
-      tension: 0.15,
-      spanGaps: false,
+      tension: 0.1, spanGaps: false,
     });
     new Chart(document.getElementById('outlook-canvas'), {
       type: 'line',
       data: {
-        labels: labels,
+        labels,
         datasets: [
-          series('load_fcst', 'Total load (forecast)', '#ff6fd8', false),
-          series('load_act', 'Total load (actual)', '#ff6fd8', true),
-          series('net_load_fcst', 'Net load (forecast)', '#eef4f8', false),
-          series('net_load_act', 'Net load (actual)', '#eef4f8', true),
-          series('solar_fcst', 'Solar (forecast)', '#facc15', false),
-          series('solar_act', 'Solar (actual)', '#facc15', true),
-          series('wind_fcst', 'Wind (forecast)', '#9b7fe0', false),
-          series('wind_act', 'Wind (actual)', '#9b7fe0', true),
-          series('hsl_outage', 'HSL outages', '#4fcf8a', false),
+          mkSeries('load_fcst',    'Total load — fcst',   '#ff6fd8', false),
+          mkSeries('load_act',     'Total load — actual', '#ff6fd8', true),
+          mkSeries('net_load_fcst','Net load — fcst',     '#eef4f8', false),
+          mkSeries('net_load_act', 'Net load — actual',   '#eef4f8', true),
+          mkSeries('solar_fcst',   'Solar — fcst',        '#facc15', false),
+          mkSeries('solar_act',    'Solar — actual',      '#facc15', true),
+          mkSeries('wind_fcst',    'Wind — fcst',         '#9b7fe0', false),
+          mkSeries('wind_act',     'Wind — actual',       '#9b7fe0', true),
+          mkSeries('hsl_outage',   'HSL outages',         '#4fcf8a', false),
         ]
       },
       options: {
         responsive: true, maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
-        plugins: { legend: { position: 'top', labels: { color: '#7ea8bc', boxWidth: 14, font: { size: 11 } } } },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: { color: '#7ea8bc', boxWidth: 14, font: { size: 11 }, padding: 16 }
+          },
+          tooltip: {
+            backgroundColor: '#0c131e',
+            borderColor: 'rgba(75,172,198,0.3)',
+            borderWidth: 1,
+            titleColor: '#4BACC6',
+            bodyColor: '#c8d8e8',
+            padding: 10,
+            callbacks: {
+              title: items => labels[items[0].dataIndex],
+              label: item => ` ${item.dataset.label}: ${item.raw != null ? (item.raw/1000).toFixed(1) + 'k MW' : 'n/a'}`
+            }
+          }
+        },
         scales: {
-          x: { ticks: { color: '#3d5a70', maxTicksLimit: 16, font: { size: 9 } }, grid: { color: 'rgba(148,184,200,0.08)' } },
-          y: { ticks: { color: '#3d5a70', font: { size: 10 } }, grid: { color: 'rgba(148,184,200,0.08)' } }
+          x: {
+            ticks: { color: '#3d5a70', maxTicksLimit: 16, font: { size: 9 }, maxRotation: 0 },
+            grid: { color: 'rgba(148,184,200,0.08)' }
+          },
+          y: {
+            ticks: {
+              color: '#3d5a70', font: { size: 10 },
+              callback: v => (v/1000).toFixed(0) + 'k'
+            },
+            grid: { color: 'rgba(148,184,200,0.08)' }
+          }
         }
       }
     });
   } catch (err) {
     errEl.style.display = 'block';
-    errEl.textContent = 'Could not load chart data: ' + err.message;
+    errEl.textContent = 'Could not load chart: ' + err.message;
   }
 }
 
