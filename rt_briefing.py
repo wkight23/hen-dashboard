@@ -645,7 +645,7 @@ async function loadOutlookChart() {{
       afterDraw(chart) {{
         if (nowIdx < 0) return;
         const {{ctx, chartArea, scales}} = chart;
-        const x = scales.x.getPixelForIndex(nowIdx);
+        const x = scales.x.getPixelForValue(nowIdx);
         ctx.save();
         ctx.strokeStyle = 'rgba(224,88,79,0.6)';
         ctx.lineWidth = 1.5;
