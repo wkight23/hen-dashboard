@@ -188,27 +188,28 @@ for c in top_today_constraints:
         site_hit_counts[site] = site_hit_counts.get(site, 0) + 1
 stacked_sites = [s for s, n in site_hit_counts.items() if n >= 2]
 
-# ─── 2. RT Settlement Point Prices (current hour) ───
+# ─── 2. RT prices: 5-minute SCED LMPs (catches single-interval spikes, not a 15-min average) ───
 print("Fetching RT prices...")
 rt_prices = {}
 KEY_NODES = ["LZ_WEST","LZ_NORTH","LZ_SOUTH","LZ_HOUSTON"] + PREMIUM_NODES
 for node in KEY_NODES:
     try:
-        r = requests.get(BASE+"/np6-905-cd/spp_node_zone_hub",
-            params={"settlementPoint":node,"deliveryDateFrom":TODAY,"deliveryDateTo":TODAY,"size":100},
+        r = requests.get(BASE+"/np6-788-cd/lmp_node_zone_hub",
+            params={"settlementPoint":node,"SCEDTimestampFrom":TODAY+"T00:00:00","SCEDTimestampTo":ts_to_today,"size":500},
             headers=hdrs, timeout=15)
         if r.ok:
             d = r.json()
             fields = d.get("fields",[])
             rows = d.get("data",[])
-            pr_col = next((f["cardinality"]-1 for f in fields if "price" in f.get("name","").lower()),3)
-            if rows:
-                latest = rows[-1]
-                if isinstance(latest, list) and len(latest) > pr_col:
-                    try:
-                        price = float(latest[pr_col])
-                        rt_prices[node] = round(price, 2)
-                    except: pass
+            ts_col = next((f["cardinality"]-1 for f in fields if "sced" in f.get("name","").lower() or "timestamp" in f.get("name","").lower()), 0)
+            pr_col = next((f["cardinality"]-1 for f in fields if "lmp" in f.get("name","").lower() or "price" in f.get("name","").lower()), 1)
+            valid_rows = [r_ for r_ in rows if isinstance(r_, list) and len(r_) > max(ts_col, pr_col)]
+            if valid_rows:
+                latest = max(valid_rows, key=lambda r_: str(r_[ts_col]))
+                try:
+                    price = float(latest[pr_col])
+                    rt_prices[node] = round(price, 2)
+                except: pass
     except: pass
     time.sleep(0.2)
 print(f"RT prices: {len(rt_prices)} nodes")
