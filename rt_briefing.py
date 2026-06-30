@@ -477,7 +477,7 @@ html = f"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name
 <title>HEN RT Analysis {TODAY}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="chart.umd.min.js"></script>
+<script src="chart.umd.min.js" onload="if(window._chartPending)loadOutlookChart()"></script>
 <style>
 *{{box-sizing:border-box;margin:0;padding:0}}
 body{{font-family:'Inter',-apple-system,sans-serif;background:#05080d;color:#eef4f8;min-height:100vh}}
@@ -583,13 +583,18 @@ input:focus{{outline:none;border-color:#4BACC6}}
 
 <div class="tab-panel" id="tab-chart">
 
-<div class="card" style="padding:1.25rem;margin-bottom:1.25rem">
+<div class="card" style="padding:1.25rem;margin-bottom:1.25rem" id="chart-card">
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
 <div style="width:3px;height:14px;background:#4BACC6;border-radius:1px"></div>
 <div class="eyebrow">ERCOT system outlook — yesterday through 7 days ahead</div>
-<span class="mono" style="font-size:10px;color:#3d5a70;margin-left:auto" id="chart-updated">loading...</span></div>
-<div style="font-size:11px;color:#5c7a8c;margin-bottom:14px">Solid lines are forecast, dashed lines are real-time actuals (actuals stop at the current hour). Use the legend below the chart to toggle lines on/off.</div>
-<div style="position:relative;height:480px">
+<span class="mono" style="font-size:10px;color:#3d5a70;margin-left:6px" id="chart-updated">loading...</span>
+<div style="margin-left:auto;display:flex;gap:8px">
+<button class="btn" onclick="refreshChart()" style="background:#111f30;border:0.5px solid rgba(75,172,198,0.3);color:#4BACC6;padding:5px 12px;font-size:11px">↺ Refresh</button>
+<button class="btn" onclick="toggleFullscreen()" style="background:#111f30;border:0.5px solid rgba(75,172,198,0.3);color:#4BACC6;padding:5px 12px;font-size:11px" id="fs-btn">⛶ Fullscreen</button>
+</div>
+</div>
+<div style="font-size:11px;color:#5c7a8c;margin-bottom:14px">Solid = forecast · Dashed = real-time actual (stops at current hour) · Click legend to toggle · Hover for values · Right axis = HSL outages</div>
+<div style="position:relative;height:520px" id="chart-container">
 <canvas id="outlook-canvas"></canvas>
 </div>
 <div id="chart-error" style="font-size:12px;color:#e0584f;margin-top:10px;display:none"></div>
@@ -608,12 +613,19 @@ function showTab(name, btn) {{
   btn.classList.add("active");
   if (name === 'chart' && !window.chartLoaded) {{
     window.chartLoaded = true;
-    loadOutlookChart();
+    if (typeof Chart === 'undefined') {{
+      window._chartPending = true;  // onload callback will fire loadOutlookChart when ready
+    }} else {{
+      loadOutlookChart();
+    }}
   }}
 }}
 
+let outlookChart = null;
+
 async function loadOutlookChart() {{
   const errEl = document.getElementById('chart-error');
+  errEl.style.display = 'none';
   try {{
     if (typeof Chart === 'undefined') throw new Error('chart.umd.min.js did not load — is the file in the repo root?');
     const resp = await fetch('chart_data.json?t=' + Date.now());
@@ -622,28 +634,62 @@ async function loadOutlookChart() {{
     document.getElementById('chart-updated').textContent = 'updated ' + data.generated_at;
     const pts = data.points;
     const labels = pts.map(p => p.date.slice(5) + ' HE' + p.he);
-    const mkSeries = (key, label, color, dashed) => ({{
-      label, data: pts.map(p => p[key] != null ? Math.round(p[key]) : null),
-      borderColor: color, backgroundColor: color + '22',
+
+    // Find "now" index — first point where load_act goes null (future)
+    const nowIdx = pts.findIndex(p => p.load_act === null && p.load_fcst !== null);
+
+    // Annotation plugin not available without CDN so we draw "now" as a custom plugin
+    const nowPlugin = {{
+      id: 'nowLine',
+      afterDraw(chart) {{
+        if (nowIdx < 0) return;
+        const {{ctx, chartArea, scales}} = chart;
+        const x = scales.x.getPixelForIndex(nowIdx);
+        ctx.save();
+        ctx.strokeStyle = 'rgba(224,88,79,0.6)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5,4]);
+        ctx.beginPath();
+        ctx.moveTo(x, chartArea.top);
+        ctx.lineTo(x, chartArea.bottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#e0584f';
+        ctx.font = 'bold 9px Inter, sans-serif';
+        ctx.fillText('now', x + 4, chartArea.top + 14);
+        ctx.restore();
+      }}
+    }};
+
+    const mkS = (key, label, color, dashed, yAxis) => ({{
+      label, yAxisID: yAxis || 'y',
+      data: pts.map(p => p[key] != null ? Math.round(p[key]) : null),
+      borderColor: color,
+      backgroundColor: color + '18',
       borderDash: dashed ? [5,4] : [],
-      pointRadius: 0, pointHoverRadius: 4,
-      borderWidth: dashed ? 1.5 : 2,
-      tension: 0.1, spanGaps: false,
+      pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: color,
+      borderWidth: dashed ? 1.5 : 2.5,
+      tension: 0.1,
+      spanGaps: !dashed,   // forecast lines bridge gaps; actual lines break at null (end at "now")
+      fill: false,
     }});
-    new Chart(document.getElementById('outlook-canvas'), {{
+
+    if (outlookChart) outlookChart.destroy();
+    outlookChart = new Chart(document.getElementById('outlook-canvas'), {{
       type: 'line',
+      plugins: [nowPlugin],
       data: {{
         labels,
         datasets: [
-          mkSeries('load_fcst',    'Total load — fcst',   '#ff6fd8', false),
-          mkSeries('load_act',     'Total load — actual', '#ff6fd8', true),
-          mkSeries('net_load_fcst','Net load — fcst',     '#eef4f8', false),
-          mkSeries('net_load_act', 'Net load — actual',   '#eef4f8', true),
-          mkSeries('solar_fcst',   'Solar — fcst',        '#facc15', false),
-          mkSeries('solar_act',    'Solar — actual',      '#facc15', true),
-          mkSeries('wind_fcst',    'Wind — fcst',         '#9b7fe0', false),
-          mkSeries('wind_act',     'Wind — actual',       '#9b7fe0', true),
-          mkSeries('hsl_outage',   'HSL outages',         '#4fcf8a', false),
+          mkS('load_fcst',     'Total load — fcst',    '#ff6fd8', false),
+          mkS('load_act',      'Total load — actual',  '#ff80e0', true),
+          mkS('net_load_fcst', 'Net load — fcst',      '#94a3b8', false),
+          mkS('net_load_act',  'Net load — actual',    '#e2e8f0', true),
+          mkS('solar_fcst',    'Solar — fcst',         '#facc15', false),
+          mkS('solar_act',     'Solar — actual',       '#fde68a', true),
+          mkS('wind_fcst',     'Wind — fcst',          '#9b7fe0', false),
+          mkS('wind_act',      'Wind — actual',        '#c4b5fd', true),
+          mkS('hsl_outage',    'HSL outages',          '#4fcf8a', false, 'y2'),
         ]
       }},
       options: {{
@@ -652,32 +698,61 @@ async function loadOutlookChart() {{
         plugins: {{
           legend: {{
             position: 'top',
-            labels: {{ color: '#7ea8bc', boxWidth: 14, font: {{ size: 11 }}, padding: 16 }}
+            labels: {{ color: '#7ea8bc', boxWidth: 16, font: {{ size: 11 }}, padding: 14,
+              filter: item => true
+            }}
           }},
           tooltip: {{
-            backgroundColor: '#0c131e',
-            borderColor: 'rgba(75,172,198,0.3)',
+            backgroundColor: '#0a1622',
+            borderColor: 'rgba(75,172,198,0.4)',
             borderWidth: 1,
             titleColor: '#4BACC6',
             bodyColor: '#c8d8e8',
-            padding: 10,
+            padding: 12,
+            itemSort: (a, b) => b.raw - a.raw,
             callbacks: {{
               title: items => labels[items[0].dataIndex],
-              label: item => ` ${{item.dataset.label}}: ${{item.raw != null ? (item.raw/1000).toFixed(1) + 'k MW' : 'n/a'}}`
+              label: item => {{
+                if (item.raw == null) return null;
+                const isOutage = item.dataset.yAxisID === 'y2';
+                const val = isOutage
+                  ? item.raw.toLocaleString() + ' MW'
+                  : (item.raw / 1000).toFixed(1) + 'k MW';
+                return ` ${{item.dataset.label}}: ${{val}}`;
+              }},
+              filter: item => item.raw != null,
             }}
           }}
         }},
         scales: {{
           x: {{
-            ticks: {{ color: '#3d5a70', maxTicksLimit: 16, font: {{ size: 9 }}, maxRotation: 0 }},
-            grid: {{ color: 'rgba(148,184,200,0.08)' }}
+            ticks: {{
+              color: '#3d5a70', maxTicksLimit: 10,
+              font: {{ size: 9 }}, maxRotation: 0,
+              callback: (val, idx) => {{
+                const p = pts[idx];
+                return p && p.he === 12 ? p.date.slice(5) : (p && p.he === 1 ? '│' : '');
+              }}
+            }},
+            grid: {{ color: 'rgba(148,184,200,0.06)' }}
           }},
           y: {{
+            position: 'left',
+            title: {{ display: true, text: 'MW (load / solar / wind)', color: '#3d5a70', font: {{ size: 10 }} }},
             ticks: {{
               color: '#3d5a70', font: {{ size: 10 }},
-              callback: v => (v/1000).toFixed(0) + 'k'
+              callback: v => (v / 1000).toFixed(0) + 'k'
             }},
-            grid: {{ color: 'rgba(148,184,200,0.08)' }}
+            grid: {{ color: 'rgba(148,184,200,0.06)' }}
+          }},
+          y2: {{
+            position: 'right',
+            title: {{ display: true, text: 'MW (HSL outages)', color: '#4fcf8a', font: {{ size: 10 }} }},
+            ticks: {{
+              color: '#4fcf8a', font: {{ size: 10 }},
+              callback: v => (v / 1000).toFixed(1) + 'k'
+            }},
+            grid: {{ drawOnChartArea: false }}
           }}
         }}
       }}
@@ -685,6 +760,32 @@ async function loadOutlookChart() {{
   }} catch (err) {{
     errEl.style.display = 'block';
     errEl.textContent = 'Could not load chart: ' + err.message;
+  }}
+}}
+
+async function refreshChart() {{
+  if (outlookChart) {{ outlookChart.destroy(); outlookChart = null; }}
+  document.getElementById('chart-updated').textContent = 'refreshing...';
+  await loadOutlookChart();
+}}
+
+function toggleFullscreen() {{
+  const el = document.getElementById('chart-card');
+  const btn = document.getElementById('fs-btn');
+  if (!document.fullscreenElement) {{
+    el.requestFullscreen().then(() => {{
+      el.style.background = '#05080d';
+      el.style.padding = '1rem';
+      btn.textContent = '✕ Exit fullscreen';
+      if (outlookChart) outlookChart.resize();
+    }});
+  }} else {{
+    document.exitFullscreen().then(() => {{
+      el.style.background = '';
+      el.style.padding = '';
+      btn.textContent = '⛶ Fullscreen';
+      if (outlookChart) outlookChart.resize();
+    }});
   }}
 }}
 
