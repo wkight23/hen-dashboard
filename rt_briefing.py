@@ -671,7 +671,7 @@ async function loadOutlookChart() {{
       pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: color,
       borderWidth: dashed ? 1.5 : 2.5,
       tension: 0.1,
-      spanGaps: !dashed,   // forecast lines bridge gaps; actual lines break at null (end at "now")
+      spanGaps: true,  // keep both forecast and actual lines continuous
       fill: false,
     }});
 
@@ -710,9 +710,9 @@ async function loadOutlookChart() {{
             titleColor: '#4BACC6',
             bodyColor: '#c8d8e8',
             padding: 12,
-            itemSort: (a, b) => b.raw - a.raw,
+            
             callbacks: {{
-              title: items => labels[items[0].dataIndex],
+              title: items => `${pts[items[0].dataIndex].date} HE${pts[items[0].dataIndex].he}`,
               label: item => {{
                 if (item.raw == null) return null;
                 const isOutage = item.dataset.yAxisID === 'y2';
