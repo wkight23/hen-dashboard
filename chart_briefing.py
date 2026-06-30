@@ -106,7 +106,8 @@ def fetch_outages():
     return out
 
 # ─── Load: forecast (7-day, system total) + actual (system total) ───
-# np3-565-cd returns multiple model forecasts per hour - must filter to inUseFlag=True
+# np3-565-cd returns forecasts by zone per model. systemTotal is unreliable — sum zones instead.
+LOAD_ZONE_FIELDS = {"coast","east","farWest","north","northCentral","southCentral","southern","west"}
 print("Fetching load forecast...")
 load_fcst = {}
 try:
@@ -122,21 +123,25 @@ try:
         rows = d.get("data",[])
         if page == 1:
             print(f"Load forecast: fields = {[f.get('name') for f in fields]}")
-        date_col = next((f["cardinality"]-1 for f in fields if "deliverydate" in f.get("name","").lower()), 1)
-        hour_col = next((f["cardinality"]-1 for f in fields if "hour" in f.get("name","").lower()), 2)
-        total_col = next((f["cardinality"]-1 for f in fields if "systemtotal" in f.get("name","").lower()), None)
+        date_col  = next((f["cardinality"]-1 for f in fields if "deliverydate" in f.get("name","").lower()), 1)
+        hour_col  = next((f["cardinality"]-1 for f in fields if "hour" in f.get("name","").lower()), 2)
         flag_col  = next((f["cardinality"]-1 for f in fields if "inuse" in f.get("name","").lower()), None)
+        zone_cols = [f["cardinality"]-1 for f in fields if f.get("name","") in LOAD_ZONE_FIELDS]
+        sample_printed = False
         for row in rows:
             if not isinstance(row, list): continue
             try:
-                # Only store rows where inUseFlag is True (the active model)
                 if flag_col is not None and flag_col < len(row):
                     flag = str(row[flag_col]).strip().lower()
                     if flag not in ("true","1","yes"): continue
                 d_str = str(row[date_col])[:10]
                 he = parse_he(row[hour_col]) if hour_col < len(row) else 0
-                if total_col is not None and total_col < len(row) and row[total_col] not in (None,""):
-                    load_fcst[(d_str, he)] = {"load": float(row[total_col])}
+                total_mw = sum(float(row[i]) for i in zone_cols if i < len(row) and row[i] not in (None,""))
+                if total_mw > 0:
+                    load_fcst[(d_str, he)] = {"load": total_mw}
+                    if not sample_printed and page == 1:
+                        print(f"Load forecast sample: date={d_str} HE{he} zone_sum={total_mw:.0f} MW (zones: {[round(float(row[i]),0) for i in zone_cols if i < len(row)]})")
+                        sample_printed = True
             except: continue
         if len(rows) < 5000: break
 except Exception as e:
