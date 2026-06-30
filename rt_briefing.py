@@ -525,7 +525,7 @@ input:focus{{outline:none;border-color:#4BACC6}}
 <div class="tab-bar">
 <button class="tab-btn active" onclick="showTab('outlook',this)">Outlook — HE16–24 + tomorrow AM</button>
 <button class="tab-btn" onclick="showTab('overnight',this)">Historical — HE1–15</button>
-<button class="tab-btn" onclick="showTab('chart',this)">7-day outlook</button>
+<button class="tab-btn" onclick="showTab('chart',this)">Charts</button>
 </div>
 
 <div class="tab-panel active" id="tab-outlook">
@@ -583,18 +583,34 @@ input:focus{{outline:none;border-color:#4BACC6}}
 
 <div class="tab-panel" id="tab-chart">
 
+<div class="card" style="padding:1.25rem;margin-bottom:1.25rem">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+<div style="width:3px;height:14px;background:#e0584f;border-radius:1px"></div>
+<div class="eyebrow" style="color:#e0584f">Today + tomorrow — RT actuals vs forecast</div>
+<span class="livedot" style="margin-left:6px"></span>
+<div style="margin-left:auto;display:flex;gap:8px">
+<button class="btn" onclick="refreshChart()" style="background:#111f30;border:0.5px solid rgba(75,172,198,0.3);color:#4BACC6;padding:5px 12px;font-size:11px">↺ Refresh</button>
+<button class="btn" onclick="toggleFullscreen('today-card')" style="background:#111f30;border:0.5px solid rgba(75,172,198,0.3);color:#4BACC6;padding:5px 12px;font-size:11px">⛶</button>
+</div>
+</div>
+<div style="font-size:11px;color:#5c7a8c;margin-bottom:14px">Solid = forecast · Dashed = RT actual · Red line = now · Click legend items to show/hide · Hover for exact values</div>
+<div style="position:relative;height:400px" id="today-card">
+<canvas id="today-canvas"></canvas>
+</div>
+<div id="today-error" style="font-size:12px;color:#e0584f;margin-top:10px;display:none"></div>
+</div>
+
 <div class="card" style="padding:1.25rem;margin-bottom:1.25rem" id="chart-card">
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
 <div style="width:3px;height:14px;background:#4BACC6;border-radius:1px"></div>
-<div class="eyebrow">ERCOT system outlook — yesterday through 7 days ahead</div>
+<div class="eyebrow">7-day outlook — load / solar / wind / net load</div>
 <span class="mono" style="font-size:10px;color:#3d5a70;margin-left:6px" id="chart-updated">loading...</span>
-<div style="margin-left:auto;display:flex;gap:8px">
-<button class="btn" onclick="refreshChart()" style="background:#111f30;border:0.5px solid rgba(75,172,198,0.3);color:#4BACC6;padding:5px 12px;font-size:11px">↺ Refresh</button>
-<button class="btn" onclick="toggleFullscreen()" style="background:#111f30;border:0.5px solid rgba(75,172,198,0.3);color:#4BACC6;padding:5px 12px;font-size:11px" id="fs-btn">⛶ Fullscreen</button>
+<div style="margin-left:auto">
+<button class="btn" onclick="toggleFullscreen('chart-card')" style="background:#111f30;border:0.5px solid rgba(75,172,198,0.3);color:#4BACC6;padding:5px 12px;font-size:11px">⛶</button>
 </div>
 </div>
-<div style="font-size:11px;color:#5c7a8c;margin-bottom:14px">Solid = forecast · Dashed = real-time actual (stops at current hour) · Click legend to toggle · Hover for values · Right axis = HSL outages</div>
-<div style="position:relative;height:520px" id="chart-container">
+<div style="font-size:11px;color:#5c7a8c;margin-bottom:14px">Solid = forecast · Dashed = RT actual · Click legend to toggle · Hover for values</div>
+<div style="position:relative;height:460px" id="chart-container">
 <canvas id="outlook-canvas"></canvas>
 </div>
 <div id="chart-error" style="font-size:12px;color:#e0584f;margin-top:10px;display:none"></div>
@@ -622,118 +638,131 @@ function showTab(name, btn) {{
 }}
 
 let outlookChart = null;
+let todayChart = null;
+
+function makeNowPlugin(nowIdx) {{
+  return {{
+    id: 'nowLine',
+    afterDraw(chart) {{
+      if (nowIdx < 0) return;
+      const {{ctx, chartArea, scales}} = chart;
+      const x = scales.x.getPixelForValue(nowIdx);
+      ctx.save();
+      ctx.strokeStyle = 'rgba(224,88,79,0.7)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([5,4]);
+      ctx.beginPath(); ctx.moveTo(x, chartArea.top); ctx.lineTo(x, chartArea.bottom); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#e0584f';
+      ctx.font = 'bold 10px Inter, sans-serif';
+      ctx.fillText('now', x + 4, chartArea.top + 14);
+      ctx.restore();
+    }}
+  }};
+}}
+
+function chartOptions(pts, nowIdx, tooltipExtra) {{
+  return {{
+    responsive: true, maintainAspectRatio: false,
+    interaction: {{ mode: 'index', intersect: false }},
+    plugins: {{
+      legend: {{ position: 'top', labels: {{ color: '#94a3b8', boxWidth: 16, font: {{ size: 11 }}, padding: 14 }} }},
+      tooltip: {{
+        backgroundColor: '#0a1622', borderColor: 'rgba(75,172,198,0.4)', borderWidth: 1,
+        titleColor: '#4BACC6', bodyColor: '#c8d8e8', padding: 12,
+        callbacks: {{
+          title: items => pts[items[0].dataIndex].date + ' HE' + pts[items[0].dataIndex].he,
+          label: item => item.raw != null ? ' ' + item.dataset.label + ': ' + (item.raw/1000).toFixed(1) + 'k MW' : null,
+          filter: item => item.raw != null,
+        }}
+      }}
+    }},
+    scales: {{
+      x: {{ ticks: {{ color: '#7ea8bc', font: {{ size: 10 }}, maxRotation: 0, autoSkip: false }}, grid: {{ color: 'rgba(148,184,200,0.06)' }} }},
+      y: {{ beginAtZero: false, ticks: {{ color: '#3d5a70', font: {{ size: 10 }}, callback: v => (v/1000).toFixed(0)+'k' }}, grid: {{ color: 'rgba(148,184,200,0.06)' }} }}
+    }}
+  }};
+}}
 
 async function loadOutlookChart() {{
   const errEl = document.getElementById('chart-error');
-  errEl.style.display = 'none';
+  const todayErrEl = document.getElementById('today-error');
+  errEl.style.display = 'none'; todayErrEl.style.display = 'none';
   try {{
     if (typeof Chart === 'undefined') throw new Error('chart.umd.min.js did not load — is the file in the repo root?');
     const resp = await fetch('chart_data.json?t=' + Date.now());
-    if (!resp.ok) throw new Error('chart_data.json not found (status ' + resp.status + ') — has the Chart Data Update workflow run yet?');
+    if (!resp.ok) throw new Error('chart_data.json not found — has the Chart Data Update workflow run yet?');
     const data = await resp.json();
     document.getElementById('chart-updated').textContent = 'updated ' + data.generated_at;
-    const pts = data.points;
-    // Show the date at HE1 of each day, blank elsewhere — simple and reliable
-    const labels = pts.map(p => p.he === 1 ? p.date.slice(5) : '');
+    const allPts = data.points;
+    const nowDate = data.now_date;
+    const nowHe = data.now_he;
 
-    // Find "now" index — first point where load_act goes null (future)
-    const nowIdx = pts.findIndex(p => p.load_act === null && p.load_fcst !== null);
+    // ── Today + Tomorrow chart ──────────────────────────────────────────
+    const tomorrow = new Date(nowDate); tomorrow.setDate(tomorrow.getDate()+1);
+    const tmrStr = tomorrow.toISOString().slice(0,10);
+    const todayPts = allPts.filter(p => p.date === nowDate || p.date === tmrStr);
+    const todayNowIdx = todayPts.findIndex(p => p.date === nowDate && p.he === nowHe);
+    const todayLabels = todayPts.map(p => p.he === 1 ? p.date.slice(5) : (p.he % 6 === 0 ? 'HE'+p.he : ''));
 
-    // Annotation plugin not available without CDN so we draw "now" as a custom plugin
-    const nowPlugin = {{
-      id: 'nowLine',
-      afterDraw(chart) {{
-        if (nowIdx < 0) return;
-        const {{ctx, chartArea, scales}} = chart;
-        const x = scales.x.getPixelForValue(nowIdx);
-        ctx.save();
-        ctx.strokeStyle = 'rgba(224,88,79,0.6)';
-        ctx.lineWidth = 1.5;
-        ctx.setLineDash([5,4]);
-        ctx.beginPath();
-        ctx.moveTo(x, chartArea.top);
-        ctx.lineTo(x, chartArea.bottom);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.fillStyle = '#e0584f';
-        ctx.font = 'bold 9px Inter, sans-serif';
-        ctx.fillText('now', x + 4, chartArea.top + 14);
-        ctx.restore();
-      }}
-    }};
-
-    const mkS = (key, label, color, dashed) => ({{
-      label,
-      data: pts.map(p => p[key] != null ? Math.round(p[key]) : null),
-      borderColor: color,
-      backgroundColor: 'transparent',
+    const mkT = (key, label, color, dashed) => ({{
+      label, data: todayPts.map(p => p[key] != null ? Math.round(p[key]) : null),
+      borderColor: color, backgroundColor: 'transparent',
       borderDash: dashed ? [5,4] : [],
       pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: color,
-      borderWidth: dashed ? 1.5 : 2.5,
-      tension: 0.1,
-      spanGaps: true,
-      fill: false,
+      borderWidth: dashed ? 1.5 : 2.5, tension: 0.1, spanGaps: true, fill: false,
+    }});
+
+    if (todayChart) todayChart.destroy();
+    const todayOpts = chartOptions(todayPts, todayNowIdx);
+    todayOpts.scales.x.ticks.callback = (val, idx) => todayLabels[idx] || '';
+    todayChart = new Chart(document.getElementById('today-canvas'), {{
+      type: 'line', plugins: [makeNowPlugin(todayNowIdx)],
+      data: {{ labels: todayPts.map((p,i)=>i), datasets: [
+        mkT('load_fcst','Total load — fcst','#f472b6',false),
+        mkT('load_act','Total load — actual','#f472b6',true),
+        mkT('net_load_fcst','Net load — fcst','#94a3b8',false),
+        mkT('net_load_act','Net load — actual','#e2e8f0',true),
+        mkT('solar_fcst','Solar — fcst','#fbbf24',false),
+        mkT('solar_act','Solar — actual','#fde68a',true),
+        mkT('wind_fcst','Wind — fcst','#a78bfa',false),
+        mkT('wind_act','Wind — actual','#c4b5fd',true),
+      ]}},
+      options: todayOpts,
+    }});
+
+    // ── Weekly outlook chart ────────────────────────────────────────────
+    const pts = allPts;
+    const nowIdx = pts.findIndex(p => p.date === nowDate && p.he === nowHe);
+    const labels = pts.map(p => p.he === 1 ? p.date.slice(5) : '');
+
+    const mkS = (key, label, color, dashed) => ({{
+      label, data: pts.map(p => p[key] != null ? Math.round(p[key]) : null),
+      borderColor: color, backgroundColor: 'transparent',
+      borderDash: dashed ? [5,4] : [],
+      pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: color,
+      borderWidth: dashed ? 1.5 : 2.5, tension: 0.1, spanGaps: true, fill: false,
     }});
 
     if (outlookChart) outlookChart.destroy();
+    const weekOpts = chartOptions(pts, nowIdx);
+    weekOpts.scales.x.ticks.callback = (val, idx) => labels[idx] || '';
     outlookChart = new Chart(document.getElementById('outlook-canvas'), {{
-      type: 'line',
-      plugins: [nowPlugin],
-      data: {{
-        labels,
-        datasets: [
-          mkS('load_fcst',     'Total load — fcst',    '#f472b6', false),
-          mkS('load_act',      'Total load — actual',  '#f472b6', true),
-          mkS('net_load_fcst', 'Net load — fcst',      '#94a3b8', false),
-          mkS('net_load_act',  'Net load — actual',    '#e2e8f0', true),
-          mkS('solar_fcst',    'Solar — fcst',         '#fbbf24', false),
-          mkS('solar_act',     'Solar — actual',       '#fde68a', true),
-          mkS('wind_fcst',     'Wind — fcst',          '#a78bfa', false),
-          mkS('wind_act',      'Wind — actual',        '#c4b5fd', true),
-          mkS('hsl_outage',    'HSL outages',          '#34d399', false),
-        ]
-      }},
-      options: {{
-        responsive: true, maintainAspectRatio: false,
-        interaction: {{ mode: 'index', intersect: false }},
-        plugins: {{
-          legend: {{
-            position: 'top',
-            labels: {{ color: '#94a3b8', boxWidth: 16, font: {{ size: 11 }}, padding: 16 }}
-          }},
-          tooltip: {{
-            backgroundColor: '#0a1622',
-            borderColor: 'rgba(75,172,198,0.4)',
-            borderWidth: 1,
-            titleColor: '#4BACC6',
-            bodyColor: '#c8d8e8',
-            padding: 12,
-            callbacks: {{
-              title: items => pts[items[0].dataIndex].date + ' HE' + pts[items[0].dataIndex].he,
-              label: item => {{
-                if (item.raw == null) return null;
-                return ' ' + item.dataset.label + ': ' + (item.raw / 1000).toFixed(1) + 'k MW';
-              }},
-              filter: item => item.raw != null,
-            }}
-          }}
-        }},
-        scales: {{
-          x: {{
-            ticks: {{ color: '#7ea8bc', font: {{ size: 10 }}, maxRotation: 0, autoSkip: false }},
-            grid: {{ color: 'rgba(148,184,200,0.06)' }}
-          }},
-          y: {{
-            beginAtZero: false,
-            ticks: {{
-              color: '#3d5a70', font: {{ size: 10 }},
-              callback: v => (v / 1000).toFixed(0) + 'k'
-            }},
-            grid: {{ color: 'rgba(148,184,200,0.06)' }}
-          }}
-        }}
-      }}
+      type: 'line', plugins: [makeNowPlugin(nowIdx)],
+      data: {{ labels: pts.map((p,i)=>i), datasets: [
+        mkS('load_fcst','Total load — fcst','#f472b6',false),
+        mkS('load_act','Total load — actual','#f472b6',true),
+        mkS('net_load_fcst','Net load — fcst','#94a3b8',false),
+        mkS('net_load_act','Net load — actual','#e2e8f0',true),
+        mkS('solar_fcst','Solar — fcst','#fbbf24',false),
+        mkS('solar_act','Solar — actual','#fde68a',true),
+        mkS('wind_fcst','Wind — fcst','#a78bfa',false),
+        mkS('wind_act','Wind — actual','#c4b5fd',true),
+        mkS('hsl_outage','HSL outages','#34d399',false),
+      ]}},
+      options: weekOpts,
     }});
+
   }} catch (err) {{
     errEl.style.display = 'block';
     errEl.textContent = 'Could not load chart: ' + err.message;
@@ -742,26 +771,25 @@ async function loadOutlookChart() {{
 
 async function refreshChart() {{
   if (outlookChart) {{ outlookChart.destroy(); outlookChart = null; }}
+  if (todayChart) {{ todayChart.destroy(); todayChart = null; }}
   document.getElementById('chart-updated').textContent = 'refreshing...';
   await loadOutlookChart();
 }}
 
-function toggleFullscreen() {{
-  const el = document.getElementById('chart-card');
-  const btn = document.getElementById('fs-btn');
+function toggleFullscreen(elId) {{
+  const el = document.getElementById(elId);
   if (!document.fullscreenElement) {{
     el.requestFullscreen().then(() => {{
       el.style.background = '#05080d';
       el.style.padding = '1rem';
-      btn.textContent = '✕ Exit fullscreen';
       if (outlookChart) outlookChart.resize();
+      if (todayChart) todayChart.resize();
     }});
   }} else {{
     document.exitFullscreen().then(() => {{
-      el.style.background = '';
-      el.style.padding = '';
-      btn.textContent = '⛶ Fullscreen';
+      el.style.background = ''; el.style.padding = '';
       if (outlookChart) outlookChart.resize();
+      if (todayChart) todayChart.resize();
     }});
   }}
 }}
