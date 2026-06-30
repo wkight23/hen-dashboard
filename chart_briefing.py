@@ -32,7 +32,6 @@ def fetch_series(endpoint, label, want_cols, extra_params=None):
     base_params = {"deliveryDateFrom":START_DATE,"deliveryDateTo":END_DATE,"page":1,"size":5000}
     if extra_params:
         base_params.update(extra_params)
-    # Strip out None values — don't send them as literal "None" strings
     base_params = {k:v for k,v in base_params.items() if v is not None}
     for page in range(1, 6):
         try:
@@ -46,8 +45,9 @@ def fetch_series(endpoint, label, want_cols, extra_params=None):
             rows = d.get("data",[])
             if page == 1:
                 print(f"{label}: fields = {[f.get('name') for f in fields]}")
+            # Date column: handle deliveryDate, operatingDay, operatingDate
             date_col = next((f["cardinality"]-1 for f in fields
-                            if f.get("name","").lower() in ("deliverydate","date")), 1)
+                            if f.get("name","").lower() in ("deliverydate","operatingday","operatingdate","date")), 1)
             hour_col = next((f["cardinality"]-1 for f in fields
                             if "hour" in f.get("name","").lower()), 2)
             col_map = {}
@@ -73,67 +73,63 @@ def fetch_series(endpoint, label, want_cols, extra_params=None):
     print(f"{label}: {len(out)} hourly rows parsed")
     return out
 
+def fetch_outages():
+    """Fetch hourly resource outage capacity and sum all four ERCOT zone columns."""
+    out = {}
+    ZONE_COLS = ["totalResourceMWZoneSouth","totalResourceMWZoneNorth",
+                 "totalResourceMWZoneWest","totalResourceMWZoneHouston"]
+    try:
+        r = requests.get(BASE+"/np3-233-cd/hourly_res_outage_cap",
+            params={"size":5000}, headers=hdrs, timeout=30)
+        if not r.ok:
+            print(f"HSL outages: request failed with status {r.status_code}")
+            return out
+        d = r.json()
+        fields = d.get("fields",[])
+        rows = d.get("data",[])
+        print(f"HSL outages: fields = {[f.get('name') for f in fields]}")
+        date_col = next((f["cardinality"]-1 for f in fields
+                        if f.get("name","").lower() in ("operatingdate","operatingday","deliverydate")), 1)
+        hour_col = next((f["cardinality"]-1 for f in fields if "hour" in f.get("name","").lower()), 2)
+        zone_col_idxs = [f["cardinality"]-1 for f in fields if f.get("name","") in ZONE_COLS]
+        for row in rows:
+            if not isinstance(row, list): continue
+            try:
+                d_str = str(row[date_col])[:10]
+                he = parse_he(row[hour_col]) if hour_col < len(row) else 0
+                total_mw = sum(float(row[i]) for i in zone_col_idxs if i < len(row) and row[i] not in (None,""))
+                if total_mw: out[(d_str, he)] = {"mw": total_mw}
+            except: continue
+    except Exception as e:
+        print(f"HSL outages: error {e}")
+    print(f"HSL outages: {len(out)} hourly rows parsed")
+    return out
+
 # ─── Load: forecast (7-day, system total) + actual (system total) ───
-# np3-565-cd = Seven-Day Load Forecast by Model and Weather Zone (updated hourly)
-# The total system load column is "systemTotal" — confirmed via gridstatus docs
 load_fcst = fetch_series(
     "/np3-565-cd/lf_by_model_weather_zone",
     "Load forecast",
     {"load": ["system", "total"]}
 )
-if not any("load" in v for v in load_fcst.values()):
-    load_fcst = fetch_series(
-        "/np3-565-cd/lf_by_model_weather_zone",
-        "Load forecast (retry broader)",
-        {"load": ["total"]}
-    )
 
-# np6-345-cd = Actual System Load by Weather Zone
-# This endpoint uses deliveryDate (singular) and only covers current day + 5 days back
-# Narrowing the date range avoids the 400 error
+# Actual load uses operatingDay (not deliveryDate) — fetch last 5 days + today
 load_act = fetch_series(
     "/np6-345-cd/act_sys_load_by_wzn",
     "Load actual",
     {"load": ["total"]},
-    extra_params={"deliveryDateFrom":(TODAY - timedelta(days=2)).isoformat(), "deliveryDateTo":TODAY.isoformat()}
+    extra_params={"deliveryDateFrom":None,"deliveryDateTo":None}
 )
-if not any("load" in v for v in load_act.values()):
-    # Fallback: try without any date filter — let the endpoint return what it has
-    load_act = fetch_series(
-        "/np6-345-cd/act_sys_load_by_wzn",
-        "Load actual (no date filter)",
-        {"load": ["total"]},
-        extra_params={"deliveryDateFrom":None, "deliveryDateTo":None}
-    )
 
-# ─── Solar: one endpoint carries both actual and forecast (STPPF) columns ───
-# Confirmed from run log: genSystemWide = actual, STPPFSystemWide = forecast
+# ─── Solar: genSystemWide = actual, STPPFSystemWide = forecast (confirmed) ───
 solar = fetch_series("/np4-737-cd/spp_hrly_avrg_actl_fcast", "Solar actual+forecast",
     {"actual": ["genSystemWide"], "forecast": ["STPPFSystemWide"]})
 
-# ─── Wind: same shape as solar ───
-# Confirmed from run log: genSystemWide = actual, STWPFSystemWide = forecast
+# ─── Wind: genSystemWide = actual, STWPFSystemWide = forecast (confirmed) ───
 wind = fetch_series("/np4-732-cd/wpp_hrly_avrg_actl_fcast", "Wind actual+forecast",
     {"actual": ["genSystemWide"], "forecast": ["STWPFSystemWide"]})
 
-# ─── HSL outages: hourly resource outage capacity ───
-# This endpoint is sourced from Outage Scheduler and covers next 7 days forward only
-# It uses SCEDTimestamp-style params, not deliveryDate - fetch without date filter
-outages = fetch_series(
-    "/np3-233-cd/hourly_res_outage_cap",
-    "HSL outages",
-    {"mw": ["total"]},
-    extra_params={"deliveryDateFrom":None, "deliveryDateTo":None}
-)
-if not any("mw" in v for v in outages.values()):
-    # Some versions use hourEnding instead of delivery-date style params
-    print("HSL outages: trying with today forward only")
-    outages = fetch_series(
-        "/np3-233-cd/hourly_res_outage_cap",
-        "HSL outages (today+7)",
-        {"mw": ["total"]},
-        extra_params={"deliveryDateFrom":TODAY.isoformat(), "deliveryDateTo":END_DATE}
-    )
+# ─── HSL outages: sum all four zone columns ───
+outages = fetch_outages()
 
 # ─── Assemble one combined hourly series ───
 all_keys = set(load_fcst) | set(load_act) | set(solar) | set(wind) | set(outages)
