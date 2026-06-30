@@ -1,0 +1,205 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>HEN RT Analysis 2026-06-30</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',-apple-system,sans-serif;background:#05080d;color:#eef4f8;min-height:100vh}
+.mono{font-family:'JetBrains Mono',monospace}
+.btn{cursor:pointer;border:none;border-radius:6px;font-weight:600;transition:opacity 0.2s}
+.btn:hover{opacity:0.85}
+.btn:disabled{opacity:0.4;cursor:not-allowed}
+input{background:#111f30;border:1px solid rgba(75,172,198,0.3);border-radius:6px;color:#eef4f8;padding:8px 12px;font-size:13px}
+input:focus{outline:none;border-color:#4BACC6}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.25}}
+.livedot{width:6px;height:6px;border-radius:50%;background:#e0584f;animation:pulse 1.6s ease-in-out infinite;display:inline-block}
+.card{background:#0c131e;border:0.5px solid rgba(148,184,200,0.12);border-radius:10px}
+.eyebrow{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#4BACC6}
+.lbl{font-size:9px;color:#3d5a70;text-transform:uppercase;letter-spacing:0.04em}
+.tab-bar{display:inline-flex;background:#0c131e;border:0.5px solid rgba(148,184,200,0.15);border-radius:8px;padding:3px;margin-bottom:1.25rem}
+.tab-btn{background:none;border:none;color:#7ea8bc;font-size:12px;font-weight:600;padding:9px 16px;cursor:pointer;border-radius:6px}
+.tab-btn.active{color:#05080d;background:#4BACC6}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+</style></head><body>
+
+<div style="background:#0a1622;border-bottom:0.5px solid rgba(148,184,200,0.12);padding:0 1.5rem;height:50px;display:flex;align-items:center;justify-content:space-between">
+<div style="display:flex;align-items:center;gap:10px">
+<svg fill="#4BACC6" width="18" height="18" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+<strong style="font-size:13px;font-weight:600">HEN RT Dispatch Analysis</strong></div>
+<div style="display:flex;align-items:center;gap:16px">
+<div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#7ea8bc"><span class="livedot"></span><span class="mono">HE13 · 12:42 CDT</span></div>
+<a href="results.html" style="font-size:11px;color:#4BACC6;text-decoration:none;border:0.5px solid rgba(75,172,198,0.25);padding:4px 10px;border-radius:5px">← Bid prep</a></div></div>
+
+<div style="max-width:960px;margin:0 auto;padding:1.5rem 1.5rem 3rem">
+
+<div class="card" style="padding:1rem 1.25rem;margin-bottom:1.25rem">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+<div>
+<div class="eyebrow" style="margin-bottom:4px">Run analysis</div>
+<div style="font-size:11px;color:#7ea8bc">Anyone on the team can trigger a fresh pull. Your GitHub token stays in your browser only.</div>
+</div>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+<input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="width:200px" />
+<button class="btn" onclick="saveToken()" style="background:#111f30;border:0.5px solid rgba(75,172,198,0.3);color:#4BACC6;padding:8px 14px;font-size:12px">Save</button>
+<button class="btn" id="run-btn" onclick="runAnalysis()" style="background:#e0584f;color:white;padding:8px 18px;font-size:12px;white-space:nowrap">⚡ Run analysis</button>
+</div>
+</div>
+<div id="token-status" style="font-size:11px;color:#3d5a70;margin-top:8px"></div>
+<div id="status-msg" style="font-size:11px;color:#7ea8bc;margin-top:4px;min-height:16px"></div>
+<div id="progress-bar" style="display:none;margin-top:8px">
+<div style="background:#111f30;border-radius:4px;height:3px;overflow:hidden"><div id="progress-fill" style="background:#4BACC6;height:100%;width:0%;transition:width 1s linear"></div></div>
+</div>
+</div>
+
+<div style="background:#0c131e;border:0.5px solid rgba(224,88,79,0.35);border-left:3px solid #e0584f;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem">
+<div>
+<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#e0584f;margin-bottom:4px">Top signal · right now</div>
+<div style="font-size:18px;font-weight:600;letter-spacing:-0.01em">Dispatch — Fort Duncan</div>
+<div style="font-size:12px;color:#7ea8bc;margin-top:3px">Best RT value across zones and premium nodes right now</div>
+</div>
+<div style="text-align:right;flex-shrink:0">
+<div class="lbl">RT now</div>
+<div class="mono" style="font-size:24px;font-weight:600;color:#e0584f">$55.6</div>
+</div></div>
+
+<div class="tab-bar">
+<button class="tab-btn active" onclick="showTab('outlook',this)">Outlook — HE16–24 + tomorrow AM</button>
+<button class="tab-btn" onclick="showTab('overnight',this)">Historical — HE1–15</button>
+</div>
+
+<div class="tab-panel active" id="tab-outlook">
+
+<div class="card" style="padding:1.25rem;margin-bottom:1.25rem">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+<div style="width:3px;height:14px;background:#4BACC6;border-radius:1px"></div>
+<div class="eyebrow">Claude dispatch analysis</div>
+<span class="mono" style="font-size:10px;color:#3d5a70;margin-left:auto">2026-06-30</span></div>
+<div style='font-size:12px;font-weight:600;color:#4BACC6;margin:12px 0 4px'>1.</div><div style='font-size:13px;color:#c8d8e8;line-height:1.65;margin-bottom:8px'>Houston is showing the best RT value on the fleet right now, with negative DART favoring dispatch. Fort Duncan (Premium) is running hot at $55.6/MWh, well above its South home zone average - dispatch this node specifically. West Texas is negative, a clear charging signal.</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:12px 0 4px'>2.</div><div style='font-size:13px;color:#c8d8e8;line-height:1.65;margin-bottom:8px'>Watch the CRDSW-OLNEY and NVKSW-ANARN constraints which are already binding today and bound heavily yesterday too - if they stack again tonight expect RT spikes at Houston/South during the evening ramp.</div><div style='font-size:12px;font-weight:600;color:#4BACC6;margin:12px 0 4px'>3.</div><div style='font-size:13px;color:#c8d8e8;line-height:1.65;margin-bottom:8px'>West Texas sites should charge overnight given the negative LMP; DA solar window pricing elsewhere doesn't justify giving up today's ramp discharge.</div>
+</div>
+
+<div class="eyebrow" style="margin-bottom:8px;display:block">By zone</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem">
+<div class='card' style='padding:0.9rem;'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>West Texas</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#4fcf8a;margin-bottom:8px'>$-4.75</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$27.0</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$33.0</span></div></div><div class='card' style='padding:0.9rem;'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>North Texas</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#eef4f8;margin-bottom:8px'>$23.18</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$32.0</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$38.0</span></div></div><div class='card' style='padding:0.9rem;'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Coastal</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#eef4f8;margin-bottom:8px'>$17.0</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$29.0</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$35.0</span></div></div><div class='card' style='padding:0.9rem;'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Mainland (Houston zone)</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#4BACC622;color:#4BACC6'>monitor</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#eef4f8;margin-bottom:8px'>$37.49</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$35.0</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$41.0</span></div></div>
+</div>
+
+<div class="eyebrow" style="margin-bottom:8px;display:block">Premium nodes (RT-volatile, watched individually)</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem">
+<div class='card' style='padding:0.9rem;border-color:rgba(224,88,79,0.4)'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Catarina</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#4BACC622;color:#4BACC6'>monitor</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#eef4f8;margin-bottom:8px'>$41.2</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$29.0</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$35.0</span></div></div><div class='card' style='padding:0.9rem;border-color:rgba(224,88,79,0.4)'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Holcomb</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#eef4f8;margin-bottom:8px'>$12.5</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$29.0</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$35.0</span></div></div><div class='card' style='padding:0.9rem;border-color:rgba(224,88,79,0.4)'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Hamilton</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#eef4f8;margin-bottom:8px'>$19.8</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$29.0</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$35.0</span></div></div><div class='card' style='padding:0.9rem;border-color:rgba(224,88,79,0.4)'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Junction</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#4fcf8a;margin-bottom:8px'>$-2.1</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$27.0</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$33.0</span></div></div><div class='card' style='padding:0.9rem;border-color:rgba(224,88,79,0.4)'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Russek</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6a83f22;color:#d6a83f'>hold</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#4fcf8a;margin-bottom:8px'>$-3.4</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$27.0</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$33.0</span></div></div><div class='card' style='padding:0.9rem;border-color:rgba(224,88,79,0.4)'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'><span style='font-size:12px;font-weight:600'>Fort Duncan</span><span style='font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:#e0584f22;color:#e0584f'>dispatch</span></div><div class='mono' style='font-size:18px;font-weight:600;color:#e0584f;margin-bottom:8px'>$55.6</div><div style='display:flex;justify-content:space-between'><span class='lbl'>DA solar avg</span><span class='mono' style='color:#7ea8bc;font-size:10px'>$29.0</span></div><div style='display:flex;justify-content:space-between;margin-top:3px'><span class='lbl'>DA peak HE21</span><span class='mono' style='color:#c8b87a;font-size:10px'>$35.0</span></div></div>
+</div>
+
+</div>
+
+<div class="tab-panel" id="tab-overnight">
+
+<div class="card" style="padding:1.25rem;margin-bottom:1.25rem">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+<div style="width:3px;height:14px;background:#4BACC6;border-radius:1px"></div>
+<div class="eyebrow">Congestion debrief</div>
+<span class="mono" style="font-size:10px;color:#3d5a70;margin-left:auto">2026-06-29 – 2026-06-30 HE13</span></div>
+<div style='font-size:12px;font-weight:600;color:#4BACC6;margin:12px 0 4px'>4.</div><div style='font-size:13px;color:#c8d8e8;line-height:1.65;margin-bottom:8px'>CRDSW-OLNEY 69KV 6830__B bound well above its historical norm today, consistent with its typical evening peak. Olney saw stacked exposure across two constraints today, a bigger risk than either alone. MYSTERY-NEWLINE 69KV NEW__1 isn't in the shift-factor workbook yet - likely a new topology change worth adding to the spreadsheet.</div>
+</div>
+
+<div class="card" style="padding:1.25rem;margin-bottom:1.25rem;border-color:rgba(224,88,79,0.25)">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+<div style="width:3px;height:14px;background:#e0584f;border-radius:1px"></div><span class="livedot"></span>
+<div class="eyebrow" style="color:#e0584f">RT congestion — live</div>
+<span class="mono" style="font-size:10px;color:#3d5a70;margin-left:auto">today · HE1–13 · 7 intervals · 5 constraints</span></div>
+<div style="font-size:11px;color:#5c7a8c;margin-bottom:12px">Partial day, ranked by total shadow price. HEN-relevant matches use the real shift-factor workbook when available (green name badge); falls back to a name-based guess if a constraint isn't in the workbook yet.</div>
+<div style='font-size:11px;color:#e0584f;margin-bottom:10px'>⚠ Stacked congestion: Olney, Russek, Hamilton each appear in 2+ binding constraints today.</div>
+<table style='width:100%;border-collapse:collapse'><thead><tr><th style='text-align:left;font-size:9px;color:#3d5a70;padding:0 10px 6px;border-bottom:0.5px solid rgba(255,255,255,0.06)'>From → to</th><th style='text-align:left;font-size:9px;color:#3d5a70;padding:0 10px 6px;border-bottom:0.5px solid rgba(255,255,255,0.06)'>Constraint</th><th style='text-align:left;font-size:9px;color:#3d5a70;padding:0 10px 6px;border-bottom:0.5px solid rgba(255,255,255,0.06)'>Avg $/MWh</th><th style='text-align:left;font-size:9px;color:#3d5a70;padding:0 10px 6px;border-bottom:0.5px solid rgba(255,255,255,0.06)'>Max $/MWh</th><th style='text-align:left;font-size:9px;color:#3d5a70;padding:0 10px 6px;border-bottom:0.5px solid rgba(255,255,255,0.06)'>Min $/MWh</th><th style='text-align:left;font-size:9px;color:#3d5a70;padding:0 10px 6px;border-bottom:0.5px solid rgba(255,255,255,0.06)'>Intervals</th><th style='text-align:left;font-size:9px;color:#3d5a70;padding:0 10px 6px;border-bottom:0.5px solid rgba(255,255,255,0.06)'>Peak HEs</th></tr></thead><tbody><tr style='background:rgba(214,168,63,0.07)'><td style='padding:6px 10px;font-size:12px;font-weight:600;color:#eef4f8;border-bottom:0.5px solid rgba(255,255,255,0.04)'>1. NVKSW → ANARN<span style='font-size:9px;font-weight:600;color:#4fcf8a;margin-left:6px'>Olney</span></td><td class='mono' style='padding:6px 10px;font-size:10px;color:#5c7a8c;border-bottom:0.5px solid rgba(255,255,255,0.04)'>NVKSW-ANARN 69KV 6840__B</td><td class='mono' style='padding:6px 10px;font-size:12px;font-weight:600;color:#d6a83f;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$74.5</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$92.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$57.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>2</td><td class='mono' style='padding:6px 10px;font-size:10px;color:#4BACC6;border-bottom:0.5px solid rgba(255,255,255,0.04)'>HE2 HE7</td></tr><tr style='background:rgba(214,168,63,0.07)'><td style='padding:6px 10px;font-size:12px;font-weight:600;color:#eef4f8;border-bottom:0.5px solid rgba(255,255,255,0.04)'>2. CRDSW → OLNEY<span style='font-size:9px;font-weight:600;color:#4fcf8a;margin-left:6px'>Olney</span></td><td class='mono' style='padding:6px 10px;font-size:10px;color:#5c7a8c;border-bottom:0.5px solid rgba(255,255,255,0.04)'>CRDSW-OLNEY 69KV 6830__B</td><td class='mono' style='padding:6px 10px;font-size:12px;font-weight:600;color:#d6a83f;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$67.5</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$85.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$50.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>2</td><td class='mono' style='padding:6px 10px;font-size:10px;color:#4BACC6;border-bottom:0.5px solid rgba(255,255,255,0.04)'>HE1 HE6</td></tr><tr style='background:rgba(214,168,63,0.07)'><td style='padding:6px 10px;font-size:12px;font-weight:600;color:#eef4f8;border-bottom:0.5px solid rgba(255,255,255,0.04)'>3. HARGRO → TWINBU<span style='font-size:9px;font-weight:600;color:#4fcf8a;margin-left:6px'>Russek/Hamilton</span></td><td class='mono' style='padding:6px 10px;font-size:10px;color:#5c7a8c;border-bottom:0.5px solid rgba(255,255,255,0.04)'>TWINBU-HARGROVE 138KV HARGRO_TWINBU1_1</td><td class='mono' style='padding:6px 10px;font-size:12px;font-weight:600;color:#d6a83f;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$71.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$71.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$71.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>1</td><td class='mono' style='padding:6px 10px;font-size:10px;color:#4BACC6;border-bottom:0.5px solid rgba(255,255,255,0.04)'>HE4</td></tr><tr style='background:rgba(214,168,63,0.07)'><td style='padding:6px 10px;font-size:12px;font-weight:600;color:#eef4f8;border-bottom:0.5px solid rgba(255,255,255,0.04)'>4. JUDKINS → SADDLEBK<span style='font-size:9px;font-weight:600;color:#4fcf8a;margin-left:6px'>Russek/Catarina</span></td><td class='mono' style='padding:6px 10px;font-size:10px;color:#5c7a8c;border-bottom:0.5px solid rgba(255,255,255,0.04)'>WESTEX</td><td class='mono' style='padding:6px 10px;font-size:12px;font-weight:600;color:#d6a83f;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$64.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$64.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$64.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>1</td><td class='mono' style='padding:6px 10px;font-size:10px;color:#4BACC6;border-bottom:0.5px solid rgba(255,255,255,0.04)'>HE3</td></tr><tr style='background:rgba(214,168,63,0.07)'><td style='padding:6px 10px;font-size:12px;font-weight:600;color:#eef4f8;border-bottom:0.5px solid rgba(255,255,255,0.04)'>5. MYSTERY → NEWLINE</td><td class='mono' style='padding:6px 10px;font-size:10px;color:#5c7a8c;border-bottom:0.5px solid rgba(255,255,255,0.04)'>MYSTERY-NEWLINE 69KV NEW__1</td><td class='mono' style='padding:6px 10px;font-size:12px;font-weight:600;color:#d6a83f;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$78.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$78.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$78.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>1</td><td class='mono' style='padding:6px 10px;font-size:10px;color:#4BACC6;border-bottom:0.5px solid rgba(255,255,255,0.04)'>HE5</td></tr></tbody></table>
+</div>
+
+<div class="card" style="padding:1.25rem;opacity:0.78">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+<div style="width:3px;height:14px;background:#3d5a70;border-radius:1px"></div>
+<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#7ea8bc">Yesterday's binding constraints</div>
+<span class="mono" style="font-size:10px;color:#3d5a70;margin-left:auto">2026-06-29 · 18 intervals · 5 constraints</span></div>
+<div style="font-size:11px;color:#5c7a8c;margin-bottom:12px">Full-day reference — use to anticipate where today's live congestion is headed.</div>
+<table style='width:100%;border-collapse:collapse'><thead><tr><th style='text-align:left;font-size:9px;color:#3d5a70;padding:0 10px 6px;border-bottom:0.5px solid rgba(255,255,255,0.06)'>From → to</th><th style='text-align:left;font-size:9px;color:#3d5a70;padding:0 10px 6px;border-bottom:0.5px solid rgba(255,255,255,0.06)'>Constraint</th><th style='text-align:left;font-size:9px;color:#3d5a70;padding:0 10px 6px;border-bottom:0.5px solid rgba(255,255,255,0.06)'>Avg $/MWh</th><th style='text-align:left;font-size:9px;color:#3d5a70;padding:0 10px 6px;border-bottom:0.5px solid rgba(255,255,255,0.06)'>Max $/MWh</th><th style='text-align:left;font-size:9px;color:#3d5a70;padding:0 10px 6px;border-bottom:0.5px solid rgba(255,255,255,0.06)'>Min $/MWh</th><th style='text-align:left;font-size:9px;color:#3d5a70;padding:0 10px 6px;border-bottom:0.5px solid rgba(255,255,255,0.06)'>Intervals</th><th style='text-align:left;font-size:9px;color:#3d5a70;padding:0 10px 6px;border-bottom:0.5px solid rgba(255,255,255,0.06)'>Peak HEs</th></tr></thead><tbody><tr style='background:rgba(224,88,79,0.08)'><td style='padding:6px 10px;font-size:12px;font-weight:600;color:#eef4f8;border-bottom:0.5px solid rgba(255,255,255,0.04)'>1. JUDKINS → SADDLEBK<span style='font-size:9px;font-weight:600;color:#4fcf8a;margin-left:6px'>Russek/Catarina</span></td><td class='mono' style='padding:6px 10px;font-size:10px;color:#5c7a8c;border-bottom:0.5px solid rgba(255,255,255,0.04)'>WESTEX</td><td class='mono' style='padding:6px 10px;font-size:12px;font-weight:600;color:#e0584f;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$116.5</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$169.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$64.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>4</td><td class='mono' style='padding:6px 10px;font-size:10px;color:#4BACC6;border-bottom:0.5px solid rgba(255,255,255,0.04)'>HE3 HE8 HE13</td></tr><tr style='background:rgba(224,88,79,0.08)'><td style='padding:6px 10px;font-size:12px;font-weight:600;color:#eef4f8;border-bottom:0.5px solid rgba(255,255,255,0.04)'>2. NVKSW → ANARN<span style='font-size:9px;font-weight:600;color:#4fcf8a;margin-left:6px'>Olney</span></td><td class='mono' style='padding:6px 10px;font-size:10px;color:#5c7a8c;border-bottom:0.5px solid rgba(255,255,255,0.04)'>NVKSW-ANARN 69KV 6840__B</td><td class='mono' style='padding:6px 10px;font-size:12px;font-weight:600;color:#e0584f;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$109.5</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$162.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$57.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>4</td><td class='mono' style='padding:6px 10px;font-size:10px;color:#4BACC6;border-bottom:0.5px solid rgba(255,255,255,0.04)'>HE2 HE7 HE12</td></tr><tr style='background:rgba(224,88,79,0.08)'><td style='padding:6px 10px;font-size:12px;font-weight:600;color:#eef4f8;border-bottom:0.5px solid rgba(255,255,255,0.04)'>3. CRDSW → OLNEY<span style='font-size:9px;font-weight:600;color:#4fcf8a;margin-left:6px'>Olney</span></td><td class='mono' style='padding:6px 10px;font-size:10px;color:#5c7a8c;border-bottom:0.5px solid rgba(255,255,255,0.04)'>CRDSW-OLNEY 69KV 6830__B</td><td class='mono' style='padding:6px 10px;font-size:12px;font-weight:600;color:#e0584f;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$102.5</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$155.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$50.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>4</td><td class='mono' style='padding:6px 10px;font-size:10px;color:#4BACC6;border-bottom:0.5px solid rgba(255,255,255,0.04)'>HE1 HE6 HE11</td></tr><tr style='background:rgba(224,88,79,0.08)'><td style='padding:6px 10px;font-size:12px;font-weight:600;color:#eef4f8;border-bottom:0.5px solid rgba(255,255,255,0.04)'>4. HARGRO → TWINBU<span style='font-size:9px;font-weight:600;color:#4fcf8a;margin-left:6px'>Russek/Hamilton</span></td><td class='mono' style='padding:6px 10px;font-size:10px;color:#5c7a8c;border-bottom:0.5px solid rgba(255,255,255,0.04)'>TWINBU-HARGROVE 138KV HARGRO_TWINBU1_1</td><td class='mono' style='padding:6px 10px;font-size:12px;font-weight:600;color:#e0584f;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$106.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$141.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$71.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>3</td><td class='mono' style='padding:6px 10px;font-size:10px;color:#4BACC6;border-bottom:0.5px solid rgba(255,255,255,0.04)'>HE4 HE9 HE14</td></tr><tr style='background:rgba(224,88,79,0.08)'><td style='padding:6px 10px;font-size:12px;font-weight:600;color:#eef4f8;border-bottom:0.5px solid rgba(255,255,255,0.04)'>5. MYSTERY → NEWLINE</td><td class='mono' style='padding:6px 10px;font-size:10px;color:#5c7a8c;border-bottom:0.5px solid rgba(255,255,255,0.04)'>MYSTERY-NEWLINE 69KV NEW__1</td><td class='mono' style='padding:6px 10px;font-size:12px;font-weight:600;color:#e0584f;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$113.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$148.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>$78.0</td><td class='mono' style='padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04)'>3</td><td class='mono' style='padding:6px 10px;font-size:10px;color:#4BACC6;border-bottom:0.5px solid rgba(255,255,255,0.04)'>HE5 HE10 HE15</td></tr></tbody></table>
+</div>
+
+</div>
+
+<div style="text-align:center;font-size:10px;color:#3d5a70;padding:16px 0 0">Data: ERCOT SCED 2026-06-30 (live) + 2026-06-29 (full day) · RT prices 2026-06-30 HE13 · DA prices 2026-07-01</div>
+</div>
+
+<script>
+function showTab(name, btn) {
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById("tab-"+name).classList.add("active");
+  btn.classList.add("active");
+}
+
+const OWNER = 'wkight23';
+const REPO = 'hen-dashboard';
+const WORKFLOW = 'rt-analysis.yml';
+
+function saveToken() {
+  const t = document.getElementById('gh-token').value.trim();
+  if (!t.startsWith('ghp_') && !t.startsWith('github_pat_')) {
+    document.getElementById('token-status').textContent = 'Token should start with ghp_ or github_pat_';
+    document.getElementById('token-status').style.color = '#e0584f';
+    return;
+  }
+  sessionStorage.setItem('gh_token', t);
+  document.getElementById('token-status').textContent = '✓ Token saved for this session';
+  document.getElementById('token-status').style.color = '#4fcf8a';
+  document.getElementById('gh-token').value = '';
+}
+
+async function runAnalysis() {
+  const token = sessionStorage.getItem('gh_token');
+  if (!token) { alert('Please enter your GitHub token first.'); return; }
+  const btn = document.getElementById('run-btn');
+  const status = document.getElementById('status-msg');
+  const progress = document.getElementById('progress-bar');
+  const fill = document.getElementById('progress-fill');
+  btn.disabled = true; btn.textContent = '⚡ Triggering...';
+  progress.style.display = 'block'; fill.style.width = '5%';
+  try {
+    const triggerResp = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW}/dispatches`,
+      {method:'POST', headers:{'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'}, body: JSON.stringify({ref:'main'})});
+    if (!triggerResp.ok) throw new Error(`Trigger failed: ${triggerResp.status}`);
+    status.textContent = 'Workflow triggered. Waiting for it to start...'; fill.style.width = '15%';
+    await new Promise(r => setTimeout(r, 5000)); fill.style.width = '25%';
+    let elapsed = 0;
+    while (elapsed < 180) {
+      await new Promise(r => setTimeout(r, 5000)); elapsed += 5;
+      const runsResp = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW}/runs?per_page=1`,
+        {headers:{'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json'}});
+      const runsData = await runsResp.json();
+      const run = runsData.workflow_runs && runsData.workflow_runs[0];
+      if (run) {
+        const pct = Math.min(90, 30 + (elapsed/180)*60);
+        fill.style.width = `${pct}%`;
+        status.textContent = `Running... ${elapsed}s elapsed (${run.status})`;
+        if (run.status === 'completed') {
+          if (run.conclusion === 'success') {
+            fill.style.width = '100%'; fill.style.background = '#4fcf8a';
+            status.textContent = '✓ Analysis complete! Reloading...';
+            setTimeout(() => { window.location.href = 'rt.html?t=' + Date.now(); }, 2000);
+          } else {
+            fill.style.background = '#e0584f';
+            status.textContent = `Run ended with: ${run.conclusion}. Check GitHub Actions for details.`;
+            btn.disabled = false; btn.textContent = '⚡ Run analysis';
+          }
+          return;
+        }
+      }
+    }
+    status.textContent = 'Timed out waiting. Check GitHub Actions tab for status.';
+    btn.disabled = false; btn.textContent = '⚡ Run analysis';
+  } catch (err) {
+    status.textContent = 'Error: ' + err.message; status.style.color = '#e0584f';
+    btn.disabled = false; btn.textContent = '⚡ Run analysis';
+  }
+}
+
+if (sessionStorage.getItem('gh_token')) {
+  document.getElementById('token-status').textContent = '✓ Token loaded from session';
+  document.getElementById('token-status').style.color = '#4fcf8a';
+}
+</script>
+</body></html>
