@@ -159,21 +159,49 @@ except Exception as e:
     print(f"Load forecast: error {e}")
 print(f"Load forecast: {len(load_fcst)} hourly rows parsed")
 
-# Actual load uses operatingDay (not deliveryDate) — fetch last 5 days + today
+# Actual load — trying np6-235-cd (System Wide Actuals) for potentially more frequent updates
+# Falls back to hourly np6-345-cd if this endpoint fails or returns no data
 load_act = fetch_series(
-    "/np6-345-cd/act_sys_load_by_wzn",
-    "Load actual",
+    "/np6-235-cd/act_sys_load_by_wzn",
+    "Load actual (np6-235-cd)",
     {"load": ["total"]},
     extra_params={"deliveryDateFrom":None,"deliveryDateTo":None}
 )
+if not any("load" in v for v in load_act.values()):
+    print("np6-235-cd returned no load data — falling back to np6-345-cd")
+    load_act = fetch_series(
+        "/np6-345-cd/act_sys_load_by_wzn",
+        "Load actual (np6-345-cd fallback)",
+        {"load": ["total"]},
+        extra_params={"deliveryDateFrom":None,"deliveryDateTo":None}
+    )
 
 # ─── Solar: genSystemWide = actual, STPPFSystemWide = forecast (confirmed) ───
 solar = fetch_series("/np4-737-cd/spp_hrly_avrg_actl_fcast", "Solar actual+forecast",
     {"actual": ["genSystemWide"], "forecast": ["STPPFSystemWide"]})
 
-# ─── Wind: genSystemWide = actual, STWPFSystemWide = forecast (confirmed) ───
-wind = fetch_series("/np4-732-cd/wpp_hrly_avrg_actl_fcast", "Wind actual+forecast",
-    {"actual": ["genSystemWide"], "forecast": ["STWPFSystemWide"]})
+# ─── Wind: hourly forecast from np4-732-cd + 5-minute actuals from np4-743-cd ───
+# np4-743-cd publishes 5-minute averaged actual wind by geographical region
+# We fetch it without date filter and let the assembly step handle date windowing
+wind_5min = fetch_series(
+    "/np4-743-cd/wpp_5min_avrg_actl_fcast",
+    "Wind actual (5-min, np4-743-cd)",
+    {"actual": ["genSystemWide"]},
+    extra_params={"deliveryDateFrom":None,"deliveryDateTo":None}
+)
+wind_fcst = fetch_series("/np4-732-cd/wpp_hrly_avrg_actl_fcast", "Wind forecast (hourly)",
+    {"forecast": ["STWPFSystemWide"]})
+# Merge: use 5-min actuals where available, hourly forecast always
+wind = {}
+for key in set(wind_fcst) | set(wind_5min):
+    entry = {}
+    if key in wind_fcst and "forecast" in wind_fcst[key]:
+        entry["forecast"] = wind_fcst[key]["forecast"]
+    if key in wind_5min and "actual" in wind_5min[key]:
+        entry["actual"] = wind_5min[key]["actual"]
+    elif key in wind_fcst and "actual" in wind_fcst.get(key, {}):
+        entry["actual"] = wind_fcst[key]["actual"]
+    if entry: wind[key] = entry
 
 # ─── HSL outages: sum all four zone columns ───
 outages = fetch_outages()
