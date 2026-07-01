@@ -54,10 +54,21 @@ def fetch_series(endpoint, label, want_cols, extra_params=None):
             for key, needles in want_cols.items():
                 col_map[key] = next((f["cardinality"]-1 for f in fields
                                     if all(n.lower() in f.get("name","").lower() for n in needles)), None)
+            sample_printed = False
             for row in rows:
                 if not isinstance(row, list): continue
                 try:
-                    d_str = str(row[date_col])[:10]
+                    raw_date = str(row[date_col])
+                    # Normalize: handle both YYYY-MM-DD and MM/DD/YYYY formats
+                    if len(raw_date) >= 10 and raw_date[2] == '/' and raw_date[5] == '/':
+                        # MM/DD/YYYY → YYYY-MM-DD
+                        parts = raw_date[:10].split('/')
+                        d_str = f"{parts[2]}-{parts[0]:0>2}-{parts[1]:0>2}"
+                    else:
+                        d_str = raw_date[:10]
+                    if not sample_printed and page == 1:
+                        print(f"{label} date sample: raw={raw_date!r} → normalized={d_str!r}")
+                        sample_printed = True
                     he = parse_he(row[hour_col]) if hour_col < len(row) else 0
                     key = (d_str, he)
                     entry = out.setdefault(key, {})
@@ -196,7 +207,12 @@ for d_str, he in sorted(all_keys):
         "hsl_outage": out_mw,
     })
 
-chart_data = {"generated_at": CDT.strftime("%Y-%m-%d %H:%M CDT"), "points": points}
+chart_data = {
+    "generated_at": CDT.strftime("%Y-%m-%d %H:%M CDT"),
+    "now_date": TODAY.isoformat(),
+    "now_he": CDT.hour + 1,
+    "points": points
+}
 with open("chart_data.json", "w") as f:
     json.dump(chart_data, f)
 print(f"Done. {len(points)} hourly points written to chart_data.json")
