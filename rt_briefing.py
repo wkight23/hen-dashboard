@@ -73,7 +73,87 @@ def load_shift_factor_data(path="Congestion_Proj_heatmap.xlsx"):
 
 SF_DATA = load_shift_factor_data()
 
+def load_playbook(path="HEN_NOC_Congestion_Playbook.xlsx"):
+    """Load the HEN NOC Congestion Playbook Line Lookup tab into a searchable dict.
+    Keys are normalized uppercase tokens from the line name for fuzzy matching."""
+    playbook = {}
+    try:
+        df = pd.read_excel(path, sheet_name="📋 Line Lookup", header=2)
+        SKIP = {"line / constraint","legend:","🟢  active","🟡  watch","⚫  low priority"}
+        for _, row in df.iterrows():
+            name = str(row.get("Line / Constraint","")).strip()
+            if not name or name.lower()[:20] in SKIP or any(s in name.lower() for s in ["active —","watch —","low priority —","legend:"]): continue
+            priority = str(row.get("Priority","")).strip()
+            if not priority or priority == "nan": continue
+            driver = str(row.get("Gen Level Trigger\n(What Drives It)","")).strip()
+            if driver == "nan": driver = ""
+            strategy = str(row.get("Hold Strategy /\nDischarge Timing","")).strip()
+            if strategy == "nan": strategy = ""
+            notes = str(row.get("Operator Notes","")).strip()
+            if notes == "nan": notes = ""
+            other = str(row.get("Other Active\nNodes (SF)","")).strip()
+            if other == "nan": other = ""
+            peak_he = str(row.get("Peak HE\n(Active Hrs)","")).strip()
+            if peak_he == "nan": peak_he = ""
+            entry = {
+                "line": name,
+                "priority": priority,
+                "season": str(row.get("Season","")).replace("nan","").strip(),
+                "peak_he": peak_he,
+                "driver": driver,
+                "primary_node": str(row.get("Primary Node","")).replace("nan","—").strip(),
+                "sf": row.get("Shift\nFactor"),
+                "mcc_500": row.get("MCC @\n$500 SP"),
+                "mcc_1000": row.get("MCC @\n$1,000 SP"),
+                "mcc_2000": row.get("MCC @\n$2,000 SP"),
+                "other_nodes": other,
+                "strategy": strategy,
+                "notes": notes,
+            }
+            # Store under normalized tokens for fuzzy matching
+            tokens = name.upper().replace(" ","").replace("-","").replace("_","").replace("138KV","").replace("345KV","").replace("69KV","").replace("115KV","").replace("1KV","")
+            playbook[name.upper()] = entry   # exact key (uppercase)
+            playbook[tokens] = entry          # tokenized key
+        print(f"Playbook loaded: {len([e for e in playbook.values() if '🟢' in e['priority']])} Active, "
+              f"{len([e for e in playbook.values() if '🟡' in e['priority']])} Watch lines")
+    except FileNotFoundError:
+        print("Playbook not found — skipping (upload HEN_NOC_Congestion_Playbook.xlsx to repo root)")
+    except Exception as e:
+        print(f"Playbook load error: {e}")
+    return playbook
+
+PLAYBOOK = load_playbook()
+
 def hen_match_sf(name):
+    """Real HEN-relevance check using the shift factor workbook, keyed by exact constraint name."""
+    entry = SF_DATA.get(name)
+    if not entry: return None
+    hits = []
+    for site_key, val in entry["sf"].items():
+        if abs(val) >= 0.05:
+            site_code = SF_TO_SP.get(site_key)
+            hits.append(SITE_NAMES.get(site_code, site_key))
+    return hits
+
+def match_playbook(constraint_name, from_st, to_st):
+    """Match a SCED constraint to its playbook entry using exact then fuzzy station matching."""
+    if not PLAYBOOK: return None
+    # 1. Direct constraint name match
+    cn = constraint_name.upper()
+    if cn in PLAYBOOK: return PLAYBOOK[cn]
+    # 2. Tokenized constraint name match
+    tok = cn.replace(" ","").replace("-","").replace("_","")
+    if tok in PLAYBOOK: return PLAYBOOK[tok]
+    # 3. Station name matching — find entries where both from/to appear in the line name
+    f = str(from_st).upper()[:6]
+    t = str(to_st).upper()[:6]
+    for key, entry in PLAYBOOK.items():
+        lname = entry["line"].upper()
+        if len(f) >= 4 and len(t) >= 4 and f[:4] in lname and t[:4] in lname:
+            return entry
+    return None
+
+
     """Real HEN-relevance check using the shift factor workbook, keyed by exact constraint name."""
     entry = SF_DATA.get(name)
     if not entry: return None
@@ -156,6 +236,7 @@ def fetch_sced_constraints(ts_from, ts_to, label):
         sf_hits = hen_match_sf(name)
         hits = sf_hits if sf_hits is not None else hen_match(data["from_st"], data["to_st"])
         sf_entry = SF_DATA.get(name)
+        pb = match_playbook(name, data["from_st"], data["to_st"])
         out.append({
             "name": name,
             "avg_sp": round(avg_sp, 2),
@@ -168,6 +249,7 @@ def fetch_sced_constraints(ts_from, ts_to, label):
             "hen_sites": hits,
             "hist_total": sf_entry["total"] if sf_entry else None,
             "hist_peak_he": sf_entry["peak_he"] if sf_entry else None,
+            "playbook": pb,
         })
     # HEN-relevant constraints bubble to the top, then by impact (avg_sp x hours_binding)
     out.sort(key=lambda x: (0 if x["hen_sites"] else 1, -(x["avg_sp"] * x["hours_binding"])))
@@ -332,6 +414,26 @@ for c in top_constraints[:10]:
     hist = f" | historically totals ${c['hist_total']:,.0f}, typically peaking HE{c['hist_peak_he']}" if c.get("hist_total") else ""
     prompt_data += f"{c['from_st']} -> {c['to_st']} ({c['name']}): avg ${c['avg_sp']} min ${c['min_sp']} max ${c['max_sp']}/MWh, {c['hours_binding']} intervals, peak HEs {c['peak_hours'][:3]}{flag}{hist}\n"
 
+# ─── Playbook context for all binding constraints (today + yesterday) ───
+all_seen = {c["name"]: c for c in top_today_constraints + top_constraints}
+playbook_context = []
+for cname, c in all_seen.items():
+    pb = c.get("playbook")
+    if pb and pb.get("driver"):
+        playbook_context.append(
+            f"  {pb['line']} [{pb['priority'].replace('🟢','Active').replace('🟡','Watch').replace('⚫','Low')}]:\n"
+            f"    Driver: {pb['driver']}\n"
+            f"    Season: {pb['season']} | Historical peak HEs: {pb['peak_he']}\n"
+            f"    Primary node: {pb['primary_node']} | MCC@$1k: ${pb['mcc_1000']}\n"
+            + (f"    Strategy: {pb['strategy']}\n" if pb.get("strategy") else "")
+            + (f"    Notes: {pb['notes']}\n" if pb.get("notes") else "")
+        )
+if playbook_context:
+    prompt_data += "\n=== NOC PLAYBOOK — KNOWN DRIVERS FOR BINDING CONSTRAINTS ===\n"
+    prompt_data += "\n".join(playbook_context)
+    prompt_data += "\nUse this to assess: (a) do current conditions match the known driver? (b) does the forecast suggest this constraint will repeat tonight?\n"
+
+
 prompt_data += "\n=== RT vs DA ZONE SIGNALS ===\n"
 for zone, m in rt_vs_da.items():
     prompt_data += f"{ZONE_LABELS[zone]}: RT now ${m['rt_now']}/MWh | DA solar avg ${m['da_solar_avg']}/MWh | DA peak HE{m['da_peak_he']} ${m['da_peak_price']}/MWh | Signal: {m['signal']}\n"
@@ -354,7 +456,7 @@ Answer four questions clearly:
 1. WHAT IS HAPPENING RIGHT NOW — Are current RT prices favorable for dispatch? Which zones or premium nodes specifically?
 2. WHAT TO EXPECT LATER TODAY/TONIGHT — Based on today's live constraint pattern, yesterday's full-day pattern, and current RT, what should operators watch for?
 3. TOMORROW SOLAR WINDOW CHARGING DECISION — Should we charge overnight/early morning to be full for tomorrow's solar window? Is DA during HE9-14 high enough to justify it, or is the overnight charging opportunity better used elsewhere?
-4. YESTERDAY & TODAY CONGESTION DEBRIEF — A short, plain-language recap of what the binding constraints actually did (not a repeat of the table). Call out: any constraint binding well above or below its historical pattern (using the "historically totals" and "typically peaking" figures given), any stacked congestion on a single HEN node, and any constraint that's new or unusually large relative to its history. This is for someone reviewing overnight activity in the morning - keep it short, factual, and skip anything not notable.
+4. YESTERDAY & TODAY CONGESTION DEBRIEF — A short, plain-language recap of what the binding constraints actually did. For each constraint that has a playbook entry, explicitly state whether the observed conditions (wind/load levels) appear consistent with the known driver, or whether the constraint behaved unexpectedly. Call out stacked congestion on a single HEN node. Flag any constraint with no playbook match as a potential new topology event worth tracking. Keep it tight — one sentence per notable constraint, skip anything not commercially relevant to HEN.
 
 Be direct and actionable. Use zone names (West Texas, North Texas, Coastal) and premium node names when relevant. Reference specific HEs and dollar amounts. Keep each section tight - the whole response under 500 words."""
 
@@ -392,8 +494,38 @@ def constraint_row(c, i):
     bg = "rgba(224,88,79,0.08)" if c["avg_sp"] > 100 else "rgba(214,168,63,0.07)" if c["avg_sp"] > 30 else ""
     col = "#e0584f" if c["avg_sp"] > 100 else "#d6a83f" if c["avg_sp"] > 30 else "#4BACC6"
     hen_badge = f"<span style={Q}font-size:9px;font-weight:600;color:#4fcf8a;margin-left:6px{Q}>{'/'.join(c['hen_sites'][:2])}</span>" if c.get("hen_sites") else ""
-    return (f"<tr style={Q}background:{bg}{Q}>"
-        f"<td style={Q}padding:6px 10px;font-size:12px;font-weight:600;color:#eef4f8;border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>{i}. {c['from_st']} → {c['to_st']}{hen_badge}</td>"
+    pb = c.get("playbook")
+    pb_badge = ""
+    pb_row = ""
+    if pb:
+        pri_col = "#4fcf8a" if "🟢" in pb["priority"] else "#d6a83f" if "🟡" in pb["priority"] else "#5c7a8c"
+        pri_label = "Active" if "🟢" in pb["priority"] else "Watch" if "🟡" in pb["priority"] else "Low"
+        rid = f"pb_{i}"
+        pb_badge = (f"<button onclick={Q}togglePb('{rid}'){Q} style={Q}font-size:8px;font-weight:600;"
+                    f"color:{pri_col};background:rgba(0,0,0,0.3);border:0.5px solid {pri_col};"
+                    f"border-radius:3px;padding:1px 5px;margin-left:6px;cursor:pointer{Q}>"
+                    f"📋 {pri_label}</button>")
+        driver_text = pb.get("driver","").replace("'","&#39;")
+        strategy_text = pb.get("strategy","")
+        notes_text = pb.get("notes","")
+        peak_he_text = pb.get("peak_he","")
+        season_text = pb.get("season","")
+        mcc_1k = pb.get("mcc_1000","")
+        primary = pb.get("primary_node","")
+        pb_row = (f"<tr id={Q}{rid}{Q} style={Q}display:none{Q}>"
+            f"<td colspan={Q}7{Q} style={Q}padding:8px 16px 12px;background:rgba(75,172,198,0.04);"
+            f"border-bottom:0.5px solid rgba(148,184,200,0.12){Q}>"
+            f"<div style={Q}font-size:11px;color:#7ea8bc;line-height:1.7{Q}>"
+            f"<strong style={Q}color:#4BACC6{Q}>Driver:</strong> {driver_text}<br>"
+            f"<strong style={Q}color:#4BACC6{Q}>Season:</strong> {season_text} &nbsp;|&nbsp; "
+            f"<strong style={Q}color:#4BACC6{Q}>Historical peak HEs:</strong> {peak_he_text} &nbsp;|&nbsp; "
+            f"<strong style={Q}color:#4BACC6{Q}>Primary node:</strong> {primary}"
+            + (f" &nbsp;|&nbsp; <strong style={Q}color:#4BACC6{Q}>MCC@$1k:</strong> ${mcc_1k}" if mcc_1k else "")
+            + (f"<br><strong style={Q}color:#d6a83f{Q}>Strategy:</strong> {strategy_text}" if strategy_text else "")
+            + (f"<br><strong style={Q}color:#5c7a8c{Q}>Notes:</strong> {notes_text}" if notes_text else "")
+            + f"</div></td></tr>")
+    main_row = (f"<tr style={Q}background:{bg}{Q}>"
+        f"<td style={Q}padding:6px 10px;font-size:12px;font-weight:600;color:#eef4f8;border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>{i}. {c['from_st']} → {c['to_st']}{hen_badge}{pb_badge}</td>"
         f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:10px;color:#5c7a8c;border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>{c['name']}</td>"
         f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:12px;font-weight:600;color:{col};border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>${c['avg_sp']}</td>"
         f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>${c['max_sp']}</td>"
@@ -401,6 +533,7 @@ def constraint_row(c, i):
         f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>{c['hours_binding']}</td>"
         f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:10px;color:#4BACC6;border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>{' '.join(['HE'+str(h) for h in c['peak_hours'][:3]])}</td>"
         "</tr>")
+    return main_row + pb_row
 
 def constraint_table(rows, header_color="#4BACC6"):
     return (f"<table style={Q}width:100%;border-collapse:collapse{Q}><thead><tr>"
@@ -622,6 +755,11 @@ input:focus{{outline:none;border-color:#4BACC6}}
 </div>
 
 <script>
+function togglePb(id) {{
+  const el = document.getElementById(id);
+  if (el) el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
+}}
+
 function showTab(name, btn) {{
   document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
@@ -710,7 +848,7 @@ async function loadOutlookChart() {{
       borderColor: color, backgroundColor: 'transparent',
       borderDash: dashed ? [5,4] : [],
       pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: color,
-      borderWidth: dashed ? 1.5 : 2.5, tension: 0.1, spanGaps: true, fill: false,
+      borderWidth: dashed ? 1.5 : 2.5, tension: 0.4, spanGaps: true, fill: false,
     }});
 
     if (todayChart) todayChart.destroy();
@@ -741,7 +879,7 @@ async function loadOutlookChart() {{
       borderColor: color, backgroundColor: 'transparent',
       borderDash: dashed ? [5,4] : [],
       pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: color,
-      borderWidth: dashed ? 1.5 : 2.5, tension: 0.1, spanGaps: true, fill: false,
+      borderWidth: dashed ? 1.5 : 2.5, tension: 0.4, spanGaps: true, fill: false,
     }});
 
     if (outlookChart) outlookChart.destroy();
