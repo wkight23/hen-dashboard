@@ -508,7 +508,7 @@ def constraint_row(c, i, prefix="r"):
         strategy = pb.get("strategy","")
         notes = pb.get("notes","")
         # Button uses nextElementSibling — no ID/quote nesting issues
-        toggle_js = "var r=this.closest('tr').nextElementSibling;r.style.display=r.style.display==='none'?'table-row':'none';this.textContent=this.textContent.includes('View')?'Hide Analysis':'View Analysis'"
+        toggle_js = 'var r=this.closest("tr").nextElementSibling;r.style.display=r.style.display==="none"?"table-row":"none";this.textContent=this.textContent.includes("View")?"Hide Analysis":"View Analysis"'
         pb_btn = (f"<button onclick={Q}{toggle_js}{Q} "
                   f"style={Q}font-size:10px;color:{pri_col};background:none;border:none;"
                   f"border-bottom:1px solid {pri_col};padding:0;margin-left:10px;"
