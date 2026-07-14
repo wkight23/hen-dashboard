@@ -495,38 +495,38 @@ def constraint_row(c, i, prefix="r"):
     col = "#e0584f" if c["avg_sp"] > 100 else "#d6a83f" if c["avg_sp"] > 30 else "#4BACC6"
     hen_badge = f"<span style={Q}font-size:9px;font-weight:600;color:#4fcf8a;margin-left:6px{Q}>{'/'.join(c['hen_sites'][:2])}</span>" if c.get("hen_sites") else ""
     pb = c.get("playbook")
-    pb_badge = ""
-    pb_row = ""
-    if pb:
+
+    # Build the first-cell content: line name + HEN badge + playbook info always visible
+    driver_line = ""
+    meta_line = ""
+    strategy_line = ""
+    if pb and pb.get("driver"):
         pri_col = "#4fcf8a" if "🟢" in pb["priority"] else "#d6a83f" if "🟡" in pb["priority"] else "#5c7a8c"
         pri_label = "Active" if "🟢" in pb["priority"] else "Watch" if "🟡" in pb["priority"] else "Low"
-        rid = f"pb_{prefix}_{i}"
-        DQ = chr(34)
-        pb_badge = (f"<button onclick={DQ}togglePb('{rid}'){DQ} style={Q}font-size:8px;font-weight:600;"
-                    f"color:{pri_col};background:rgba(0,0,0,0.3);border:0.5px solid {pri_col};"
-                    f"border-radius:3px;padding:1px 5px;margin-left:6px;cursor:pointer{Q}>"
-                    f"\U0001f4cb {pri_label}</button>")
-        driver_text = pb.get("driver","").replace("'","&#39;")
-        strategy_text = pb.get("strategy","")
-        notes_text = pb.get("notes","")
-        peak_he_text = pb.get("peak_he","")
-        season_text = pb.get("season","")
-        mcc_1k = pb.get("mcc_1000","")
-        primary = pb.get("primary_node","")
-        pb_row = (f"<tr id={Q}{rid}{Q} style={Q}display:none{Q}>"
-            f"<td colspan={Q}7{Q} style={Q}padding:8px 16px 12px;background:rgba(75,172,198,0.04);"
-            f"border-bottom:0.5px solid rgba(148,184,200,0.12){Q}>"
-            f"<div style={Q}font-size:11px;color:#7ea8bc;line-height:1.7{Q}>"
-            f"<strong style={Q}color:#4BACC6{Q}>Driver:</strong> {driver_text}<br>"
-            f"<strong style={Q}color:#4BACC6{Q}>Season:</strong> {season_text} &nbsp;|&nbsp; "
-            f"<strong style={Q}color:#4BACC6{Q}>Historical peak HEs:</strong> {peak_he_text} &nbsp;|&nbsp; "
-            f"<strong style={Q}color:#4BACC6{Q}>Primary node:</strong> {primary}"
-            + (f" &nbsp;|&nbsp; <strong style={Q}color:#4BACC6{Q}>MCC@$1k:</strong> ${mcc_1k}" if mcc_1k else "")
-            + (f"<br><strong style={Q}color:#d6a83f{Q}>Strategy:</strong> {strategy_text}" if strategy_text else "")
-            + (f"<br><strong style={Q}color:#5c7a8c{Q}>Notes:</strong> {notes_text}" if notes_text else "")
-            + f"</div></td></tr>")
+        driver_short = pb["driver"][:120] + ("…" if len(pb["driver"]) > 120 else "")
+        season = pb.get("season","")
+        peak_he = pb.get("peak_he","")
+        strategy = pb.get("strategy","")
+        driver_line = (f"<div style={Q}font-size:10px;color:#7ea8bc;margin-top:3px;line-height:1.4{Q}>"
+                       f"<span style={Q}font-size:9px;font-weight:600;padding:1px 5px;border-radius:2px;"
+                       f"background:{pri_col}22;color:{pri_col};margin-right:5px{Q}>{pri_label}</span>"
+                       f"{driver_short}</div>")
+        parts = []
+        if season: parts.append(season)
+        if peak_he: parts.append(f"Peak: {peak_he}")
+        if pb.get("primary_node","—") != "—": parts.append(pb["primary_node"])
+        if parts:
+            meta_line = (f"<div style={Q}font-size:9px;color:#3d5a70;margin-top:2px{Q}>"
+                         + " &nbsp;·&nbsp; ".join(parts) + "</div>")
+        if strategy:
+            strategy_line = (f"<div style={Q}font-size:9px;color:#d6a83f;margin-top:2px;"
+                             f"font-style:italic{Q}>{strategy}</div>")
+
     main_row = (f"<tr style={Q}background:{bg}{Q}>"
-        f"<td style={Q}padding:6px 10px;font-size:12px;font-weight:600;color:#eef4f8;border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>{i}. {c['from_st']} → {c['to_st']}{hen_badge}{pb_badge}</td>"
+        f"<td style={Q}padding:6px 10px;border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>"
+        f"<div style={Q}font-size:12px;font-weight:600;color:#eef4f8{Q}>{i}. {c['from_st']} → {c['to_st']}{hen_badge}</div>"
+        f"{driver_line}{meta_line}{strategy_line}"
+        f"</td>"
         f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:10px;color:#5c7a8c;border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>{c['name']}</td>"
         f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:12px;font-weight:600;color:{col};border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>${c['avg_sp']}</td>"
         f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>${c['max_sp']}</td>"
@@ -534,7 +534,7 @@ def constraint_row(c, i, prefix="r"):
         f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>{c['hours_binding']}</td>"
         f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:10px;color:#4BACC6;border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>{' '.join(['HE'+str(h) for h in c['peak_hours'][:3]])}</td>"
         "</tr>")
-    return main_row + pb_row
+    return main_row
 
 def constraint_table(rows, header_color="#4BACC6"):
     return (f"<table style={Q}width:100%;border-collapse:collapse{Q}><thead><tr>"
@@ -756,11 +756,6 @@ input:focus{{outline:none;border-color:#4BACC6}}
 </div>
 
 <script>
-function togglePb(id) {{
-  const el = document.getElementById(id);
-  if (el) el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
-}}
-
 function showTab(name, btn) {{
   document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
