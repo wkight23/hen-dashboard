@@ -501,10 +501,11 @@ def constraint_row(c, i, prefix="r"):
         pri_col = "#4fcf8a" if "🟢" in pb["priority"] else "#d6a83f" if "🟡" in pb["priority"] else "#5c7a8c"
         pri_label = "Active" if "🟢" in pb["priority"] else "Watch" if "🟡" in pb["priority"] else "Low"
         rid = f"pb_{prefix}_{i}"
-        pb_badge = (f"<button onclick={Q}togglePb('{rid}'){Q} style={Q}font-size:8px;font-weight:600;"
+        DQ = chr(34)
+        pb_badge = (f"<button onclick={DQ}togglePb('{rid}'){DQ} style={Q}font-size:8px;font-weight:600;"
                     f"color:{pri_col};background:rgba(0,0,0,0.3);border:0.5px solid {pri_col};"
                     f"border-radius:3px;padding:1px 5px;margin-left:6px;cursor:pointer{Q}>"
-                    f"📋 {pri_label}</button>")
+                    f"\U0001f4cb {pri_label}</button>")
         driver_text = pb.get("driver","").replace("'","&#39;")
         strategy_text = pb.get("strategy","")
         notes_text = pb.get("notes","")
