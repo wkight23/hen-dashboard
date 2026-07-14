@@ -493,48 +493,52 @@ def zone_card(label, m, highlight=False):
 def constraint_row(c, i, prefix="r"):
     bg = "rgba(224,88,79,0.08)" if c["avg_sp"] > 100 else "rgba(214,168,63,0.07)" if c["avg_sp"] > 30 else ""
     col = "#e0584f" if c["avg_sp"] > 100 else "#d6a83f" if c["avg_sp"] > 30 else "#4BACC6"
-    hen_badge = f"<span style={Q}font-size:9px;font-weight:600;color:#4fcf8a;margin-left:6px{Q}>{'/'.join(c['hen_sites'][:2])}</span>" if c.get("hen_sites") else ""
+    hen_badge = f"<span style={Q}font-size:9px;font-weight:600;color:#4fcf8a;margin-left:8px{Q}>{'/'.join(c['hen_sites'][:2])}</span>" if c.get("hen_sites") else ""
     pb = c.get("playbook")
-
-    # Build the first-cell content: line name + HEN badge + playbook info always visible
-    driver_line = ""
-    meta_line = ""
-    strategy_line = ""
+    pb_btn = ""
+    pb_row = ""
     if pb and pb.get("driver"):
         pri_col = "#4fcf8a" if "🟢" in pb["priority"] else "#d6a83f" if "🟡" in pb["priority"] else "#5c7a8c"
         pri_label = "Active" if "🟢" in pb["priority"] else "Watch" if "🟡" in pb["priority"] else "Low"
-        driver_short = pb["driver"][:120] + ("…" if len(pb["driver"]) > 120 else "")
+        driver_text = pb.get("driver","")
         season = pb.get("season","")
         peak_he = pb.get("peak_he","")
+        primary = pb.get("primary_node","—")
+        mcc_1k = pb.get("mcc_1000","")
         strategy = pb.get("strategy","")
-        driver_line = (f"<div style={Q}font-size:10px;color:#7ea8bc;margin-top:3px;line-height:1.4{Q}>"
-                       f"<span style={Q}font-size:9px;font-weight:600;padding:1px 5px;border-radius:2px;"
-                       f"background:{pri_col}22;color:{pri_col};margin-right:5px{Q}>{pri_label}</span>"
-                       f"{driver_short}</div>")
-        parts = []
-        if season: parts.append(season)
-        if peak_he: parts.append(f"Peak: {peak_he}")
-        if pb.get("primary_node","—") != "—": parts.append(pb["primary_node"])
-        if parts:
-            meta_line = (f"<div style={Q}font-size:9px;color:#3d5a70;margin-top:2px{Q}>"
-                         + " &nbsp;·&nbsp; ".join(parts) + "</div>")
-        if strategy:
-            strategy_line = (f"<div style={Q}font-size:9px;color:#d6a83f;margin-top:2px;"
-                             f"font-style:italic{Q}>{strategy}</div>")
-
-    main_row = (f"<tr style={Q}background:{bg}{Q}>"
-        f"<td style={Q}padding:6px 10px;border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>"
-        f"<div style={Q}font-size:12px;font-weight:600;color:#eef4f8{Q}>{i}. {c['from_st']} → {c['to_st']}{hen_badge}</div>"
-        f"{driver_line}{meta_line}{strategy_line}"
-        f"</td>"
+        notes = pb.get("notes","")
+        # Button uses nextElementSibling — no ID/quote nesting issues
+        toggle_js = "var r=this.closest('tr').nextElementSibling;r.style.display=r.style.display==='none'?'table-row':'none';this.textContent=this.textContent.includes('View')?'Hide Analysis':'View Analysis'"
+        pb_btn = (f"<button onclick={Q}{toggle_js}{Q} "
+                  f"style={Q}font-size:10px;color:{pri_col};background:none;border:none;"
+                  f"border-bottom:1px solid {pri_col};padding:0;margin-left:10px;"
+                  f"cursor:pointer;font-family:inherit{Q}>View Analysis</button>")
+        meta_parts = []
+        if season: meta_parts.append(f"<strong>Season:</strong> {season}")
+        if peak_he: meta_parts.append(f"<strong>Peak HEs:</strong> {peak_he}")
+        if primary and primary != "—": meta_parts.append(f"<strong>Primary node:</strong> {primary}")
+        if mcc_1k: meta_parts.append(f"<strong>MCC @ $1k SP:</strong> ${mcc_1k}")
+        meta_html = " &nbsp;·&nbsp; ".join(meta_parts)
+        pb_row = (f"<tr style={Q}display:none{Q}>"
+            f"<td colspan={Q}7{Q} style={Q}padding:10px 16px 14px 24px;"
+            f"background:rgba(75,172,198,0.03);border-bottom:0.5px solid rgba(148,184,200,0.12){Q}>"
+            f"<div style={Q}font-size:11px;color:#7ea8bc;line-height:1.8{Q}>"
+            f"<span style={Q}font-size:9px;font-weight:700;padding:2px 6px;border-radius:2px;"
+            f"background:{pri_col}22;color:{pri_col};margin-right:6px;letter-spacing:0.05em{Q}>{pri_label.upper()}</span>"
+            f"<strong style={Q}color:#eef4f8{Q}>Driver:</strong> {driver_text}"
+            + (f"<br><span style={Q}color:#5c7a8c;font-size:10px{Q}>{meta_html}</span>" if meta_html else "")
+            + (f"<br><span style={Q}color:#d6a83f{Q}><strong>Strategy:</strong> {strategy}</span>" if strategy else "")
+            + (f"<br><span style={Q}color:#5c7a8c;font-size:10px{Q}><strong>Notes:</strong> {notes}</span>" if notes else "")
+            + f"</div></td></tr>")
+    return (f"<tr style={Q}background:{bg}{Q}>"
+        f"<td style={Q}padding:6px 10px;font-size:12px;font-weight:600;color:#eef4f8;border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>{i}. {c['from_st']} → {c['to_st']}{hen_badge}{pb_btn}</td>"
         f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:10px;color:#5c7a8c;border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>{c['name']}</td>"
         f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:12px;font-weight:600;color:{col};border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>${c['avg_sp']}</td>"
         f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>${c['max_sp']}</td>"
         f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>${c['min_sp']}</td>"
         f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:11px;color:#7ea8bc;border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>{c['hours_binding']}</td>"
         f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:10px;color:#4BACC6;border-bottom:0.5px solid rgba(255,255,255,0.04){Q}>{' '.join(['HE'+str(h) for h in c['peak_hours'][:3]])}</td>"
-        "</tr>")
-    return main_row
+        f"</tr>") + pb_row
 
 def constraint_table(rows, header_color="#4BACC6"):
     return (f"<table style={Q}width:100%;border-collapse:collapse{Q}><thead><tr>"
