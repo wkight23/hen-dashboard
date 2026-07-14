@@ -490,7 +490,7 @@ def zone_card(label, m, highlight=False):
     out += "</div>"
     return out
 
-def constraint_row(c, i):
+def constraint_row(c, i, prefix="r"):
     bg = "rgba(224,88,79,0.08)" if c["avg_sp"] > 100 else "rgba(214,168,63,0.07)" if c["avg_sp"] > 30 else ""
     col = "#e0584f" if c["avg_sp"] > 100 else "#d6a83f" if c["avg_sp"] > 30 else "#4BACC6"
     hen_badge = f"<span style={Q}font-size:9px;font-weight:600;color:#4fcf8a;margin-left:6px{Q}>{'/'.join(c['hen_sites'][:2])}</span>" if c.get("hen_sites") else ""
@@ -500,7 +500,7 @@ def constraint_row(c, i):
     if pb:
         pri_col = "#4fcf8a" if "🟢" in pb["priority"] else "#d6a83f" if "🟡" in pb["priority"] else "#5c7a8c"
         pri_label = "Active" if "🟢" in pb["priority"] else "Watch" if "🟡" in pb["priority"] else "Low"
-        rid = f"pb_{i}"
+        rid = f"pb_{prefix}_{i}"
         pb_badge = (f"<button onclick={Q}togglePb('{rid}'){Q} style={Q}font-size:8px;font-weight:600;"
                     f"color:{pri_col};background:rgba(0,0,0,0.3);border:0.5px solid {pri_col};"
                     f"border-radius:3px;padding:1px 5px;margin-left:6px;cursor:pointer{Q}>"
@@ -549,8 +549,8 @@ def constraint_table(rows, header_color="#4BACC6"):
 geo_cards = "".join([zone_card(ZONE_LABELS[z], rt_vs_da[z]) for z in ["WEST_TEXAS","NORTH_TEXAS","COASTAL"]])
 geo_cards += zone_card("Mainland (Houston zone)", coastal_secondary)
 premium_cards = "".join([zone_card(SITE_NAMES.get(n,n), premium_metrics[n], highlight=True) for n in PREMIUM_NODES])
-today_rows = "".join([constraint_row(c,i+1) for i,c in enumerate(top_today_constraints)])
-yesterday_rows = "".join([constraint_row(c,i+1) for i,c in enumerate(top_constraints)])
+today_rows = "".join([constraint_row(c,i+1,"t") for i,c in enumerate(top_today_constraints)])
+yesterday_rows = "".join([constraint_row(c,i+1,"y") for i,c in enumerate(top_constraints)])
 
 stacked_html = ""
 if stacked_sites:
