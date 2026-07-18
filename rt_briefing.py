@@ -63,8 +63,19 @@ def load_shift_factor_data(path="Congestion_Proj_heatmap.xlsx"):
                     if val: sf[site] = val
                 except: continue
             peak_he = [h+1 for h,_ in sorted(enumerate(hourly), key=lambda x:-x[1])[:3]]
-            sf_data[name] = {"sf": sf, "total": total, "hourly": hourly, "peak_he": peak_he}
-        print(f"Loaded shift factor data: {len(sf_data)} constraints from {path}")
+            entry = {"sf": sf, "total": total, "hourly": hourly, "peak_he": peak_he}
+            # Index under full heatmap name
+            sf_data[name] = entry
+            # Also index under the extracted constraint code (last space-separated token)
+            # and normalize double underscores → single so SCED names like 6635_G
+            # match heatmap entries stored as 6635__G
+            tokens = name.split()
+            if len(tokens) > 1:
+                code = tokens[-1]
+                code_norm = code.replace("__", "_")
+                sf_data[code] = entry        # raw code e.g. 6635__G
+                sf_data[code_norm] = entry   # normalized e.g. 6635_G
+        print(f"Loaded shift factor data: {len(sf_data)} entries ({len(sf_data)//3 if len(sf_data) > 0 else 0} constraints) from {path}")
     except FileNotFoundError:
         print(f"No shift factor workbook found at {path} - skipping (heuristic HEN matching will be used instead)")
     except Exception as e:
@@ -125,15 +136,20 @@ def load_playbook(path="HEN_NOC_Congestion_Playbook.xlsx"):
 PLAYBOOK = load_playbook()
 
 def hen_match_sf(name):
-    """Real HEN-relevance check using the shift factor workbook, keyed by exact constraint name."""
-    entry = SF_DATA.get(name)
-    if not entry: return None
-    hits = []
-    for site_key, val in entry["sf"].items():
-        if abs(val) >= 0.05:
-            site_code = SF_TO_SP.get(site_key)
-            hits.append(SITE_NAMES.get(site_code, site_key))
-    return hits
+    """Real HEN-relevance check using the shift factor workbook.
+    Tries exact name, normalized (double→single underscore), and uppercased variants."""
+    # Try exact, then normalized (6635_G → matches 6635__G stored as 6635_G key),
+    # then uppercase (WESTEX), then with double underscore (inverse normalization)
+    for key in [name, name.replace("_","__"), name.upper(), name.upper().replace("_","__")]:
+        entry = SF_DATA.get(key)
+        if entry:
+            hits = []
+            for site_key, val in entry["sf"].items():
+                if abs(val) >= 0.05:
+                    site_code = SF_TO_SP.get(site_key)
+                    hits.append(SITE_NAMES.get(site_code, site_key))
+            return hits if hits else None
+    return None
 
 def match_playbook(constraint_name, from_st, to_st):
     """Match a SCED constraint to its playbook entry using exact then fuzzy station matching."""
@@ -262,6 +278,11 @@ top_constraints = constraint_list_y[:15]
 ts_to_today = CDT.strftime("%Y-%m-%dT%H:%M:%S")
 sced_rows_t, constraint_list_t = fetch_sced_constraints(TODAY+"T00:00:00", ts_to_today, "today, live")
 top_today_constraints = constraint_list_t[:10]
+
+# Debug: report SF crosswalk match rate
+sf_matched = sum(1 for c in constraint_list_y if c.get("hen_sites") is not None)
+sf_heuristic = sum(1 for c in constraint_list_y if c.get("hen_sites") is not None and hen_match_sf(c["name"]) is None)
+print(f"SF crosswalk: {sf_matched}/{len(constraint_list_y)} yesterday constraints matched | {sf_heuristic} using heuristic fallback")
 
 # Flag stacked congestion: a HEN node showing up in 2+ of today's binding constraints
 site_hit_counts = {}
