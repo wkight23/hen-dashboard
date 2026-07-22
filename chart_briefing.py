@@ -222,10 +222,11 @@ solar = fetch_series("/np4-737-cd/spp_hrly_avrg_actl_fcast", "Solar actual+forec
 wind = fetch_series("/np4-732-cd/wpp_hrly_avrg_actl_fcast", "Wind actual+forecast",
     {"actual": ["genSystemWide"], "forecast": ["STWPFSystemWide"]})
 
-# np4-742-cd: Wind by Geographical Region — Panhandle/North, West, South/Houston
-# Field names printed on first run so we can confirm column matches
-print("Fetching regional wind (np4-742-cd)...")
-wind_geo = {}
+# np4-742-cd: Wind by Geographical Region (hourly) — confirmed fields:
+# genPanhandle, STWPFPanhandle, genCoastal, STWPFCoastal, genSouth, STWPFSouth,
+# genWest, STWPFWest, genNorth, STWPFNorth
+print("Fetching regional wind hourly (np4-742-cd)...")
+wind_geo_fcst = {}
 try:
     r = requests.get(BASE+"/np4-742-cd/wpp_hrly_actual_fcast_geo",
         params={"deliveryDateFrom":START_DATE,"deliveryDateTo":END_DATE,"size":5000},
@@ -234,38 +235,90 @@ try:
         d = r.json()
         fields = d.get("fields",[])
         rows = d.get("data",[])
-        print(f"Wind geo: fields = {[f.get('name') for f in fields]}")
+        print(f"Wind geo hourly: fields = {[f.get('name') for f in fields]}")
         date_col = next((f["cardinality"]-1 for f in fields if "deliverydate" in f.get("name","").lower()), 1)
         hour_col = next((f["cardinality"]-1 for f in fields if "hour" in f.get("name","").lower()), 2)
-        # Try to find columns for each region — print all field names to log so we can verify
-        def find_col(fields, *keywords):
-            kw = [k.lower() for k in keywords]
-            return next((f["cardinality"]-1 for f in fields if all(k in f.get("name","").lower() for k in kw)), None)
-        cols = {
-            "pan_act":  find_col(fields, "panhandle", "gen"),
-            "pan_fcst": find_col(fields, "panhandle", "stwpf"),
-            "west_act": find_col(fields, "west", "gen"),
-            "west_fcst":find_col(fields, "west", "stwpf"),
-            "sh_act":   find_col(fields, "south", "gen"),
-            "sh_fcst":  find_col(fields, "south", "stwpf"),
+        # Confirmed field names from ERCOT API spec
+        WIND_GEO_COLS = {
+            "pan_fcst": "STWPFPanhandle", "pan_act": "genPanhandle",
+            "coastal_fcst": "STWPFCoastal", "coastal_act": "genCoastal",
+            "south_fcst": "STWPFSouth", "south_act": "genSouth",
+            "west_fcst": "STWPFWest", "west_act": "genWest",
+            "north_fcst": "STWPFNorth", "north_act": "genNorth",
         }
-        print(f"Wind geo col matches: {cols}")
+        col_idxs = {k: next((f["cardinality"]-1 for f in fields if f.get("name","") == v), None)
+                    for k, v in WIND_GEO_COLS.items()}
+        print(f"Wind geo hourly col matches: {col_idxs}")
         for row in rows:
             if not isinstance(row, list): continue
             try:
                 d_str = str(row[date_col])[:10]
                 he = parse_he(row[hour_col]) if hour_col < len(row) else 0
                 entry = {}
-                for key, col in cols.items():
+                for key, col in col_idxs.items():
                     if col is not None and col < len(row) and row[col] not in (None,""):
                         entry[key] = float(row[col])
-                if entry: wind_geo[(d_str, he)] = entry
+                if entry: wind_geo_fcst[(d_str, he)] = entry
             except: continue
-        print(f"Wind geo: {len(wind_geo)} hourly rows parsed")
+        print(f"Wind geo hourly: {len(wind_geo_fcst)} hourly rows parsed")
     else:
-        print(f"Wind geo: request failed with status {r.status_code}")
+        print(f"Wind geo hourly: request failed with status {r.status_code}")
 except Exception as e:
-    print(f"Wind geo: error {e}")
+    print(f"Wind geo hourly: error {e}")
+
+# np4-743-cd: Wind 5-minute actual values by geographical region
+# Uses postedDatetimeFrom (not deliveryDateFrom) and intervalEnding (not hourEnding)
+# Same geographical regions as np4-742-cd
+print("Fetching regional wind 5-min actual (np4-743-cd)...")
+wind_geo_5min = {}
+try:
+    # Fetch last 24 hours of 5-minute data for today's actuals
+    ts_from = (CDT - timedelta(days=1)).strftime("%Y-%m-%dT00:00:00")
+    r = requests.get(BASE+"/np4-743-cd/wpp_actual_5min_avg_values_geo",
+        params={"postedDatetimeFrom":ts_from,"size":5000},
+        headers=hdrs, timeout=30)
+    if r.ok:
+        d = r.json()
+        fields = d.get("fields",[])
+        rows = d.get("data",[])
+        print(f"Wind geo 5min: fields = {[f.get('name') for f in fields]}")
+        ts_col = next((f["cardinality"]-1 for f in fields if "interval" in f.get("name","").lower() or "posted" in f.get("name","").lower()), 0)
+        # 5-min endpoint has actual generation only (no forecast)
+        WIND_5MIN_COLS = {
+            "pan_act": "genPanhandle", "coastal_act": "genCoastal",
+            "south_act": "genSouth", "west_act": "genWest", "north_act": "genNorth",
+        }
+        col_idxs_5m = {k: next((f["cardinality"]-1 for f in fields if f.get("name","") == v), None)
+                       for k, v in WIND_5MIN_COLS.items()}
+        print(f"Wind geo 5min col matches: {col_idxs_5m}")
+        sample_printed = False
+        for row in rows:
+            if not isinstance(row, list): continue
+            try:
+                # 5-min data uses interval timestamps — extract date and 5-min interval
+                ts = str(row[ts_col]) if ts_col < len(row) else ""
+                if "T" in ts:
+                    d_str = ts[:10]
+                    time_part = ts[11:16]  # HH:MM
+                    h, m = int(time_part[:2]), int(time_part[3:5])
+                    interval_key = (d_str, h, m)  # store at 5-min granularity
+                else:
+                    continue
+                entry = {}
+                for key, col in col_idxs_5m.items():
+                    if col is not None and col < len(row) and row[col] not in (None,""):
+                        entry[key] = float(row[col])
+                if entry:
+                    wind_geo_5min[interval_key] = entry
+                    if not sample_printed:
+                        print(f"Wind geo 5min sample: {interval_key} = {entry}")
+                        sample_printed = True
+            except: continue
+        print(f"Wind geo 5min: {len(wind_geo_5min)} 5-minute intervals parsed")
+    else:
+        print(f"Wind geo 5min: request failed with status {r.status_code}")
+except Exception as e:
+    print(f"Wind geo 5min: error {e}")
 
 # ─── HSL outages: sum all four zone columns ───
 outages = fetch_outages()
@@ -274,7 +327,7 @@ outages = fetch_outages()
 CHART_START = (TODAY - timedelta(days=1)).isoformat()  # yesterday
 CHART_END = END_DATE                                    # 7 days ahead
 
-all_keys = set(load_fcst) | set(load_act) | set(solar) | set(wind) | set(outages) | set(wind_geo)
+all_keys = set(load_fcst) | set(load_act) | set(solar) | set(wind) | set(outages) | set(wind_geo_fcst)
 points = []
 for d_str, he in sorted(all_keys):
     if d_str < CHART_START or d_str > CHART_END:
@@ -289,7 +342,19 @@ for d_str, he in sorted(all_keys):
     out_mw = outages.get((d_str,he), {}).get("mw")
     reg_f = load_fcst_reg.get((d_str,he), {})
     reg_a = load_act_reg.get((d_str,he), {})
-    wg = wind_geo.get((d_str,he), {})
+    wg = wind_geo_fcst.get((d_str,he), {})
+
+    # For wind actuals, prefer the most recent 5-minute reading within the hour
+    # Find the latest 5-min interval within this hour
+    def best_5min(region_key):
+        best = None
+        for m in [55,50,45,40,35,30,25,20,15,10,5,0]:
+            v = wind_geo_5min.get((d_str, he-1, m))  # he-1 because interval ends at :mm within the hour
+            if v is None: v = wind_geo_5min.get((d_str, he if he < 24 else 0, m))
+            if v and region_key in v:
+                best = v[region_key]; break
+        return best
+
     net_fcst = (lf - sf - wf) if (lf is not None and sf is not None and wf is not None) else None
     net_act = (la - sa - wa) if (not is_future and la is not None and sa is not None and wa is not None) else None
     points.append({
@@ -300,18 +365,26 @@ for d_str, he in sorted(all_keys):
         "wind_fcst": wf, "wind_act": None if is_future else wa,
         "net_load_fcst": net_fcst, "net_load_act": net_act,
         "hsl_outage": out_mw,
-        # Regional load (forecast)
+        # Regional load forecast
         "load_north_fcst": reg_f.get("north"), "load_south_fcst": reg_f.get("south"),
         "load_west_fcst":  reg_f.get("west"),  "load_houston_fcst": reg_f.get("houston"),
-        # Regional load (actual — only past hours)
+        # Regional load actual
         "load_north_act":   None if is_future else reg_a.get("north"),
         "load_south_act":   None if is_future else reg_a.get("south"),
         "load_west_act":    None if is_future else reg_a.get("west"),
         "load_houston_act": None if is_future else reg_a.get("houston"),
-        # Regional wind (from np4-742-cd)
-        "wind_pan_fcst":  wg.get("pan_fcst"), "wind_pan_act":  None if is_future else wg.get("pan_act"),
-        "wind_west_fcst": wg.get("west_fcst"),"wind_west_act": None if is_future else wg.get("west_act"),
-        "wind_sh_fcst":   wg.get("sh_fcst"),  "wind_sh_act":   None if is_future else wg.get("sh_act"),
+        # Regional wind forecast (hourly, from np4-742-cd)
+        "wind_pan_fcst":     wg.get("pan_fcst"),
+        "wind_coastal_fcst": wg.get("coastal_fcst"),
+        "wind_south_fcst":   wg.get("south_fcst"),
+        "wind_west_fcst":    wg.get("west_fcst"),
+        "wind_north_fcst":   wg.get("north_fcst"),
+        # Regional wind actual — 5-min where available, hourly hourly as fallback
+        "wind_pan_act":     None if is_future else (best_5min("pan_act") or wg.get("pan_act")),
+        "wind_coastal_act": None if is_future else (best_5min("coastal_act") or wg.get("coastal_act")),
+        "wind_south_act":   None if is_future else (best_5min("south_act") or wg.get("south_act")),
+        "wind_west_act":    None if is_future else (best_5min("west_act") or wg.get("west_act")),
+        "wind_north_act":   None if is_future else (best_5min("north_act") or wg.get("north_act")),
     })
 
 chart_data = {
