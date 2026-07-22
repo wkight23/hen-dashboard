@@ -787,6 +787,38 @@ input:focus{{outline:none;border-color:#4BACC6}}
 <div id="chart-error" style="font-size:12px;color:#e0584f;margin-top:10px;display:none"></div>
 </div>
 
+<div class="card" style="padding:1.25rem;margin-bottom:1.25rem" id="regional-load-card">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+<div style="width:3px;height:14px;background:#4BACC6;border-radius:1px"></div>
+<div class="eyebrow">Regional load — North / South / West / Houston</div>
+<span class="mono" style="font-size:10px;color:#3d5a70;margin-left:6px" id="reg-load-updated"></span>
+<div style="margin-left:auto">
+<button class="btn" onclick="toggleFullscreen('regional-load-card')" style="background:#111f30;border:0.5px solid rgba(75,172,198,0.3);color:#4BACC6;padding:5px 12px;font-size:11px">⛶</button>
+</div>
+</div>
+<div style="font-size:11px;color:#5c7a8c;margin-bottom:14px">Solid = forecast · Dashed = actual · North (north+northCentral) · South (southCentral+southern) · West (farWest+west) · Houston (coast+east)</div>
+<div style="position:relative;height:380px">
+<canvas id="regional-load-canvas"></canvas>
+</div>
+<div id="regional-load-error" style="font-size:12px;color:#e0584f;margin-top:10px;display:none"></div>
+</div>
+
+<div class="card" style="padding:1.25rem;margin-bottom:1.25rem" id="regional-wind-card">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+<div style="width:3px;height:14px;background:#a78bfa;border-radius:1px"></div>
+<div class="eyebrow" style="color:#a78bfa">Regional wind — Panhandle/North · West · South/Houston</div>
+<span class="mono" style="font-size:10px;color:#3d5a70;margin-left:6px" id="reg-wind-updated"></span>
+<div style="margin-left:auto">
+<button class="btn" onclick="toggleFullscreen('regional-wind-card')" style="background:#111f30;border:0.5px solid rgba(75,172,198,0.3);color:#4BACC6;padding:5px 12px;font-size:11px">⛶</button>
+</div>
+</div>
+<div style="font-size:11px;color:#5c7a8c;margin-bottom:14px">Solid = STWPF forecast · Dashed = actual generation · Source: ERCOT np4-742-cd</div>
+<div style="position:relative;height:380px">
+<canvas id="regional-wind-canvas"></canvas>
+</div>
+<div id="regional-wind-error" style="font-size:12px;color:#e0584f;margin-top:10px;display:none"></div>
+</div>
+
 </div>
 
 <div style="text-align:center;font-size:10px;color:#3d5a70;padding:16px 0 0">Data: ERCOT SCED {TODAY} (live) + {YESTERDAY} (full day) · RT prices {TODAY} HE{cur_he} · DA prices {TOMORROW}</div>
@@ -810,6 +842,8 @@ function showTab(name, btn) {{
 
 let outlookChart = null;
 let todayChart = null;
+let regionalLoadChart = null;
+let regionalWindChart = null;
 
 function makeNowPlugin(nowIdx) {{
   return {{
@@ -934,6 +968,61 @@ async function loadOutlookChart() {{
       options: weekOpts,
     }});
 
+    // ── Regional Load chart ──────────────────────────────────────
+    const regLoadOpts = chartOptions(pts, nowIdx);
+    regLoadOpts.scales.x.ticks.callback = (val, idx) => labels[idx] || '';
+    const mkL = (key, label, color, dashed) => ({{
+      label, data: pts.map(p => p[key] != null ? Math.round(p[key]) : null),
+      borderColor: color, backgroundColor: 'transparent',
+      borderDash: dashed ? [5,4] : [], pointRadius: 0, pointHoverRadius: 5,
+      borderWidth: dashed ? 1.5 : 2.5, tension: 0.4, spanGaps: true, fill: false,
+    }});
+    if (regionalLoadChart) regionalLoadChart.destroy();
+    document.getElementById('reg-load-updated').textContent = 'updated ' + data.generated_at;
+    regionalLoadChart = new Chart(document.getElementById('regional-load-canvas'), {{
+      type: 'line', plugins: [makeNowPlugin(nowIdx)],
+      data: {{ labels: pts.map((p,i)=>i), datasets: [
+        mkL('load_north_fcst', 'North — fcst',   '#60a5fa', false),
+        mkL('load_north_act',  'North — actual',  '#93c5fd', true),
+        mkL('load_south_fcst', 'South — fcst',    '#f472b6', false),
+        mkL('load_south_act',  'South — actual',  '#f9a8d4', true),
+        mkL('load_west_fcst',  'West — fcst',     '#fbbf24', false),
+        mkL('load_west_act',   'West — actual',   '#fde68a', true),
+        mkL('load_houston_fcst','Houston — fcst',  '#34d399', false),
+        mkL('load_houston_act', 'Houston — actual','#86efac', true),
+      ]}}, options: regLoadOpts,
+    }});
+
+    // ── Regional Wind chart ──────────────────────────────────────
+    const regWindOpts = chartOptions(pts, nowIdx);
+    regWindOpts.scales.x.ticks.callback = (val, idx) => labels[idx] || '';
+    regWindOpts.scales.y.title = {{ display: true, text: 'MW', color: '#3d5a70', font: {{ size: 10 }} }};
+    const mkW = (key, label, color, dashed) => ({{
+      label, data: pts.map(p => p[key] != null ? Math.round(p[key]) : null),
+      borderColor: color, backgroundColor: 'transparent',
+      borderDash: dashed ? [5,4] : [], pointRadius: 0, pointHoverRadius: 5,
+      borderWidth: dashed ? 1.5 : 2.5, tension: 0.4, spanGaps: true, fill: false,
+    }});
+    if (regionalWindChart) regionalWindChart.destroy();
+    document.getElementById('reg-wind-updated').textContent = 'updated ' + data.generated_at;
+    const hasWindGeo = pts.some(p => p.wind_pan_fcst != null || p.wind_west_fcst != null);
+    if (hasWindGeo) {{
+      regionalWindChart = new Chart(document.getElementById('regional-wind-canvas'), {{
+        type: 'line', plugins: [makeNowPlugin(nowIdx)],
+        data: {{ labels: pts.map((p,i)=>i), datasets: [
+          mkW('wind_pan_fcst',  'Panhandle/North — fcst', '#c4b5fd', false),
+          mkW('wind_pan_act',   'Panhandle/North — actual','#ede9fe', true),
+          mkW('wind_west_fcst', 'West — fcst',             '#fbbf24', false),
+          mkW('wind_west_act',  'West — actual',            '#fde68a', true),
+          mkW('wind_sh_fcst',   'South/Houston — fcst',    '#34d399', false),
+          mkW('wind_sh_act',    'South/Houston — actual',  '#86efac', true),
+        ]}}, options: regWindOpts,
+      }});
+    }} else {{
+      document.getElementById('regional-wind-error').style.display = 'block';
+      document.getElementById('regional-wind-error').textContent = 'Regional wind data not yet available — check log for np4-742-cd field names';
+    }}
+
   }} catch (err) {{
     errEl.style.display = 'block';
     errEl.textContent = 'Could not load chart: ' + err.message;
@@ -943,6 +1032,8 @@ async function loadOutlookChart() {{
 async function refreshChart() {{
   if (outlookChart) {{ outlookChart.destroy(); outlookChart = null; }}
   if (todayChart) {{ todayChart.destroy(); todayChart = null; }}
+  if (regionalLoadChart) {{ regionalLoadChart.destroy(); regionalLoadChart = null; }}
+  if (regionalWindChart) {{ regionalWindChart.destroy(); regionalWindChart = null; }}
   document.getElementById('chart-updated').textContent = 'refreshing...';
   await loadOutlookChart();
 }}
