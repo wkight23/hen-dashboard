@@ -806,13 +806,13 @@ input:focus{{outline:none;border-color:#4BACC6}}
 <div class="card" style="padding:1.25rem;margin-bottom:1.25rem" id="regional-wind-card">
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
 <div style="width:3px;height:14px;background:#a78bfa;border-radius:1px"></div>
-<div class="eyebrow" style="color:#a78bfa">Regional wind — Panhandle/North · West · South/Houston</div>
+<div class="eyebrow" style="color:#a78bfa">Regional wind — Panhandle · North · West · South · Coastal</div>
 <span class="mono" style="font-size:10px;color:#3d5a70;margin-left:6px" id="reg-wind-updated"></span>
 <div style="margin-left:auto">
 <button class="btn" onclick="toggleFullscreen('regional-wind-card')" style="background:#111f30;border:0.5px solid rgba(75,172,198,0.3);color:#4BACC6;padding:5px 12px;font-size:11px">⛶</button>
 </div>
 </div>
-<div style="font-size:11px;color:#5c7a8c;margin-bottom:14px">Solid = STWPF forecast · Dashed = actual generation · Source: ERCOT np4-742-cd</div>
+<div style="font-size:11px;color:#5c7a8c;margin-bottom:14px">Solid = STWPF hourly forecast (np4-742-cd) · Dashed = actual (5-min from np4-743-cd where available, hourly fallback)</div>
 <div style="position:relative;height:380px">
 <canvas id="regional-wind-canvas"></canvas>
 </div>
@@ -1010,12 +1010,16 @@ async function loadOutlookChart() {{
       regionalWindChart = new Chart(document.getElementById('regional-wind-canvas'), {{
         type: 'line', plugins: [makeNowPlugin(nowIdx)],
         data: {{ labels: pts.map((p,i)=>i), datasets: [
-          mkW('wind_pan_fcst',  'Panhandle/North — fcst', '#c4b5fd', false),
-          mkW('wind_pan_act',   'Panhandle/North — actual','#ede9fe', true),
-          mkW('wind_west_fcst', 'West — fcst',             '#fbbf24', false),
-          mkW('wind_west_act',  'West — actual',            '#fde68a', true),
-          mkW('wind_sh_fcst',   'South/Houston — fcst',    '#34d399', false),
-          mkW('wind_sh_act',    'South/Houston — actual',  '#86efac', true),
+          mkW('wind_pan_fcst',     'Panhandle — fcst',    '#c4b5fd', false),
+          mkW('wind_pan_act',      'Panhandle — actual',  '#ede9fe', true),
+          mkW('wind_north_fcst',   'North — fcst',        '#60a5fa', false),
+          mkW('wind_north_act',    'North — actual',      '#93c5fd', true),
+          mkW('wind_west_fcst',    'West — fcst',         '#fbbf24', false),
+          mkW('wind_west_act',     'West — actual',       '#fde68a', true),
+          mkW('wind_south_fcst',   'South — fcst',        '#f472b6', false),
+          mkW('wind_south_act',    'South — actual',      '#f9a8d4', true),
+          mkW('wind_coastal_fcst', 'Coastal — fcst',      '#34d399', false),
+          mkW('wind_coastal_act',  'Coastal — actual',    '#86efac', true),
         ]}}, options: regWindOpts,
       }});
     }} else {{
