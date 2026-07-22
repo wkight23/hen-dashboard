@@ -454,6 +454,18 @@ if playbook_context:
     prompt_data += "\n".join(playbook_context)
     prompt_data += "\nUse this to assess: (a) do current conditions match the known driver? (b) does the forecast suggest this constraint will repeat tonight?\n"
 
+# Untracked constraints — not in heatmap, no shift factor data
+untracked = []
+for cname, c in all_seen.items():
+    if hen_match_sf(cname) is None and not c.get("playbook"):
+        untracked.append(c)
+if untracked:
+    prompt_data += "\n=== UNTRACKED CONSTRAINTS (not in HEN heatmap — no shift factor data) ===\n"
+    for c in untracked:
+        prompt_data += (f"  {c['from_st']} -> {c['to_st']} ({c['name']}): "
+                        f"avg ${c['avg_sp']}/MWh max ${c['max_sp']}/MWh, "
+                        f"{c['hours_binding']} intervals, peak HEs {c['peak_hours'][:3]}\n")
+    prompt_data += "These are not in the HEN shift factor workbook. Briefly note each one in the debrief (when it appeared and shadow pricing seen) so the operator can decide whether to add it.\n"
 
 prompt_data += "\n=== RT vs DA ZONE SIGNALS ===\n"
 for zone, m in rt_vs_da.items():
@@ -477,7 +489,7 @@ Answer four questions clearly:
 1. WHAT IS HAPPENING RIGHT NOW — Are current RT prices favorable for dispatch? Which zones or premium nodes specifically?
 2. WHAT TO EXPECT LATER TODAY/TONIGHT — Based on today's live constraint pattern, yesterday's full-day pattern, and current RT, what should operators watch for?
 3. TOMORROW SOLAR WINDOW CHARGING DECISION — Should we charge overnight/early morning to be full for tomorrow's solar window? Is DA during HE9-14 high enough to justify it, or is the overnight charging opportunity better used elsewhere?
-4. YESTERDAY & TODAY CONGESTION DEBRIEF — A short, plain-language recap of what the binding constraints actually did. For each constraint that has a playbook entry, explicitly state whether the observed conditions (wind/load levels) appear consistent with the known driver, or whether the constraint behaved unexpectedly. Call out stacked congestion on a single HEN node. Flag any constraint with no playbook match as a potential new topology event worth tracking. Keep it tight — one sentence per notable constraint, skip anything not commercially relevant to HEN.
+4. YESTERDAY & TODAY CONGESTION DEBRIEF — A short, plain-language recap of what the binding constraints actually did. For each constraint with a playbook entry, state whether observed conditions match the known driver. For untracked constraints (listed under UNTRACKED CONSTRAINTS above), briefly note each one in one sentence: when it appeared, what shadow pricing was seen, and flag it as not yet in the HEN heatmap — the operator will use this to decide whether to add it. Call out any stacked congestion on a single HEN node. Keep it tight — one sentence per constraint.
 
 Be direct and actionable. Use zone names (West Texas, North Texas, Coastal) and premium node names when relevant. Reference specific HEs and dollar amounts. Keep each section tight - the whole response under 500 words."""
 
