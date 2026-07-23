@@ -283,14 +283,16 @@ try:
         rows = d.get("data",[])
         print(f"Wind geo 5min: fields = {[f.get('name') for f in fields]}")
         ts_col = next((f["cardinality"]-1 for f in fields if "interval" in f.get("name","").lower() or "posted" in f.get("name","").lower()), 0)
-        # 5-min endpoint has actual generation only (no forecast)
+        # 5-min endpoint uses lowercase region names without "gen" prefix
         WIND_5MIN_COLS = {
-            "pan_act": "genPanhandle", "coastal_act": "genCoastal",
-            "south_act": "genSouth", "west_act": "genWest", "north_act": "genNorth",
+            "pan_act": "panhandle", "coastal_act": "coastal",
+            "south_act": "south", "west_act": "west", "north_act": "north",
         }
         col_idxs_5m = {k: next((f["cardinality"]-1 for f in fields if f.get("name","") == v), None)
                        for k, v in WIND_5MIN_COLS.items()}
-        print(f"Wind geo 5min col matches: {col_idxs_5m}")
+        # Use intervalEnding (not postedDatetime) for the interval timestamp
+        ts_col = next((f["cardinality"]-1 for f in fields if "intervalending" in f.get("name","").lower()),
+                      next((f["cardinality"]-1 for f in fields if "interval" in f.get("name","").lower()), 0))
         sample_printed = False
         for row in rows:
             if not isinstance(row, list): continue
@@ -341,9 +343,18 @@ DA_DATE_FROM = TODAY.isoformat()
 DA_DATE_TO   = (TODAY + timedelta(days=1)).isoformat()
 
 print(f"Fetching DA prices for {len(DA_NODES)} settlement points ({DA_DATE_FROM} + {DA_DATE_TO})...")
-da_prices = {}   # {node: {date_str: {he: price}}}
+da_prices = {}
 da_fetched = 0
-for node in DA_NODES:
+da_failed = []
+for idx, node in enumerate(DA_NODES):
+    # Re-authenticate every 15 nodes to keep the token fresh during long runs
+    if idx > 0 and idx % 15 == 0:
+        try:
+            auth_resp2 = requests.post(AUTH_URL, data={"username":ERCOT_USER,"password":ERCOT_PASS,"grant_type":"password","scope":"openid fec253ea-0d06-4272-a5e6-b478baeecd70 offline_access","client_id":"fec253ea-0d06-4272-a5e6-b478baeecd70","response_type":"id_token"})
+            token2 = auth_resp2.json().get("id_token","")
+            if token2: hdrs["Authorization"] = "Bearer " + token2
+            print(f"Re-authenticated at node #{idx}")
+        except: pass
     try:
         r = requests.get(BASE+"/np4-190-cd/dam_stlmnt_pnt_prices",
             params={"settlementPoint":node,"deliveryDateFrom":DA_DATE_FROM,"deliveryDateTo":DA_DATE_TO,"size":50},
@@ -368,10 +379,18 @@ for node in DA_NODES:
             if node_data:
                 da_prices[node] = node_data
                 da_fetched += 1
-        time.sleep(0.15)   # gentle rate-limiting
+            else:
+                da_failed.append(node)
+        else:
+            da_failed.append(node)
+        time.sleep(0.5)   # 0.5s delay — ERCOT API rate limits at ~30 req/min
     except Exception as e:
-        print(f"DA prices {node}: error {e}")
-print(f"DA prices: {da_fetched}/{len(DA_NODES)} nodes fetched")
+        da_failed.append(node)
+        time.sleep(0.5)
+if da_failed:
+    print(f"DA prices: {da_fetched}/{len(DA_NODES)} fetched. Failed nodes: {da_failed[:5]}{'...' if len(da_failed)>5 else ''}")
+else:
+    print(f"DA prices: {da_fetched}/{len(DA_NODES)} nodes fetched successfully")
 
 # ─── Assemble one combined hourly series ───
 CHART_START = (TODAY - timedelta(days=1)).isoformat()  # yesterday
