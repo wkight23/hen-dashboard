@@ -993,24 +993,17 @@ async function loadOutlookChart() {{
       ]}}, options: regLoadOpts,
     }});
 
-    // ── Regional Wind chart ──────────────────────────────────────
+    // ── Regional Wind chart — single axis so West correctly dominates ──
     const regWindOpts = chartOptions(pts, nowIdx);
     regWindOpts.scales.x.ticks.callback = (val, idx) => labels[idx] || '';
-    // West Texas wind is 3-4x larger than other regions — give it its own right axis
     regWindOpts.scales.y = {{
       position: 'left', beginAtZero: true,
-      title: {{ display: true, text: 'MW — Panhandle / North / South / Coastal', color: '#3d5a70', font: {{ size: 10 }} }},
-      ticks: {{ color: '#3d5a70', font: {{ size: 10 }}, callback: v => (v/1000).toFixed(1)+'k' }},
+      title: {{ display: true, text: 'MW — click legend to hide regions', color: '#3d5a70', font: {{ size: 10 }} }},
+      ticks: {{ color: '#3d5a70', font: {{ size: 10 }}, callback: v => (v/1000).toFixed(0)+'k' }},
       grid: {{ color: 'rgba(148,184,200,0.06)' }}
     }};
-    regWindOpts.scales.y2 = {{
-      position: 'right', beginAtZero: true,
-      title: {{ display: true, text: 'MW — West Texas', color: '#fbbf24', font: {{ size: 10 }} }},
-      ticks: {{ color: '#fbbf24', font: {{ size: 10 }}, callback: v => (v/1000).toFixed(0)+'k' }},
-      grid: {{ drawOnChartArea: false }}
-    }};
-    const mkW = (key, label, color, dashed, yAxis) => ({{
-      label, yAxisID: yAxis || 'y',
+    const mkW = (key, label, color, dashed) => ({{
+      label,
       data: pts.map(p => p[key] != null ? Math.round(p[key]) : null),
       borderColor: color, backgroundColor: 'transparent',
       borderDash: dashed ? [5,4] : [],
@@ -1024,12 +1017,12 @@ async function loadOutlookChart() {{
       regionalWindChart = new Chart(document.getElementById('regional-wind-canvas'), {{
         type: 'line', plugins: [makeNowPlugin(nowIdx)],
         data: {{ labels: pts.map((p,i)=>i), datasets: [
+          mkW('wind_west_fcst',    'West — fcst',         '#b45309', false),
+          mkW('wind_west_act',     'West — actual',       '#fbbf24', true),
           mkW('wind_pan_fcst',     'Panhandle — fcst',    '#7c3aed', false),
           mkW('wind_pan_act',      'Panhandle — actual',  '#c4b5fd', true),
           mkW('wind_north_fcst',   'North — fcst',        '#1d4ed8', false),
           mkW('wind_north_act',    'North — actual',      '#60a5fa', true),
-          mkW('wind_west_fcst',    'West — fcst',         '#b45309', false, 'y2'),
-          mkW('wind_west_act',     'West — actual',       '#fbbf24', true,  'y2'),
           mkW('wind_south_fcst',   'South — fcst',        '#be185d', false),
           mkW('wind_south_act',    'South — actual',      '#f472b6', true),
           mkW('wind_coastal_fcst', 'Coastal — fcst',      '#065f46', false),
