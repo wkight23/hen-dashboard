@@ -769,11 +769,12 @@ input:focus{{outline:none;border-color:#4BACC6}}
 <div style="width:3px;height:14px;background:#e0584f;border-radius:1px"></div>
 <div class="eyebrow" style="color:#e0584f">DA Settlement Prices — zone hubs + premium nodes · today + tomorrow</div>
 <span class="mono" style="font-size:10px;color:#3d5a70;margin-left:6px" id="da-updated">loading...</span>
-<div style="margin-left:auto">
+<div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+<button onclick="toggleAllNodes()" id="nodes-toggle-btn" style="font-size:10px;color:#4BACC6;background:none;border:0.5px solid rgba(75,172,198,0.3);border-radius:4px;padding:4px 10px;cursor:pointer">Show all nodes</button>
 <button class="btn" onclick="toggleFullscreen('da-card')" style="background:#111f30;border:0.5px solid rgba(75,172,198,0.3);color:#4BACC6;padding:5px 12px;font-size:11px">⛶</button>
 </div>
 </div>
-<div style="font-size:11px;color:#5c7a8c;margin-bottom:14px">Non-premium batteries settle at their load zone hub price in the DA market. Premium nodes have individually registered settlement points. Hover for exact $/MWh.</div>
+<div style="font-size:11px;color:#5c7a8c;margin-bottom:14px">Thick lines = zone hubs · Colored lines = premium nodes · Default hides individual zone nodes — click "Show all nodes" to reveal · Click legend to toggle</div>
 <div style="position:relative;height:420px" id="da-container">
 <canvas id="da-canvas"></canvas>
 </div>
@@ -975,34 +976,73 @@ async function loadOutlookChart() {{
     }}
     document.getElementById('da-updated').textContent = 'updated ' + data.generated_at;
 
-    const DA_SERIES = [
-      {{node:'LZ_WEST',    label:'West Hub',     color:'#fbbf24', width:2.5}},
-      {{node:'LZ_NORTH',   label:'North Hub',    color:'#60a5fa', width:2.5}},
-      {{node:'LZ_SOUTH',   label:'South Hub',    color:'#f472b6', width:2.5}},
-      {{node:'LZ_HOUSTON', label:'Houston Hub',  color:'#34d399', width:2.5}},
-      {{node:'CATARINA_B1',label:'Catarina',     color:'#e0584f', width:2.0}},
-      {{node:'HOLCOMB_RN1',label:'Holcomb',      color:'#a78bfa', width:2.0}},
-      {{node:'HAMI_BESS_RN',label:'Hamilton',    color:'#fb923c', width:2.0}},
-      {{node:'JUNCTION_RN',label:'Junction',     color:'#22d3ee', width:2.0}},
-      {{node:'RUSSEKST_RN',label:'Russek',       color:'#ec4899', width:2.0}},
-      {{node:'FTDUNCAN_RN',label:'Fort Duncan',  color:'#84cc16', width:2.0}},
+    // Zone hub lines (thick) + premium nodes (colored) shown by default
+    // Zone node lines (thin, same color family) hidden by default — toggle with button
+    const DA_HUBS = [
+      {{node:'LZ_WEST',    label:'West Hub',    color:'#d97706', width:2.5, hidden:false}},
+      {{node:'LZ_NORTH',   label:'North Hub',   color:'#2563eb', width:2.5, hidden:false}},
+      {{node:'LZ_SOUTH',   label:'South Hub',   color:'#db2777', width:2.5, hidden:false}},
+      {{node:'LZ_HOUSTON', label:'Houston Hub', color:'#059669', width:2.5, hidden:false}},
+    ];
+    const DA_PREMIUM = [
+      {{node:'CATARINA_B1', label:'Catarina',   color:'#e0584f', width:2.0, hidden:false}},
+      {{node:'HOLCOMB_RN1', label:'Holcomb',    color:'#a78bfa', width:2.0, hidden:false}},
+      {{node:'HAMI_BESS_RN',label:'Hamilton',   color:'#fb923c', width:2.0, hidden:false}},
+      {{node:'JUNCTION_RN', label:'Junction',   color:'#22d3ee', width:2.0, hidden:false}},
+      {{node:'RUSSEKST_RN', label:'Russek',     color:'#f472b6', width:2.0, hidden:false}},
+      {{node:'FTDUNCAN_RN', label:'Ft Duncan',  color:'#84cc16', width:2.0, hidden:false}},
+    ];
+    const DA_ZONE_NODES = [
+      // West Texas nodes — amber family
+      {{node:'TOYAH_RN',     label:'Toyah',       color:'#fbbf24', width:1.0, hidden:true}},
+      {{node:'SADLBACK_RN',  label:'Saddleback',  color:'#fcd34d', width:1.0, hidden:true}},
+      {{node:'FAULKNER_RN',  label:'Faulkner',    color:'#f59e0b', width:1.0, hidden:true}},
+      {{node:'COYOTSPR_RN',  label:'Coyote',      color:'#d97706', width:1.0, hidden:true}},
+      {{node:'LONESTAR_RN',  label:'Lonestar',    color:'#b45309', width:1.0, hidden:true}},
+      {{node:'RTLSNAKE_BT',  label:'Rattlesnake', color:'#92400e', width:1.0, hidden:true}},
+      {{node:'CEDRVALE_RN',  label:'Cedarvale',   color:'#fbbf24', width:1.0, hidden:true}},
+      {{node:'SBEAN_BESS',   label:'Screwbean',   color:'#fcd34d', width:1.0, hidden:true}},
+      {{node:'GOMZ_RN',      label:'Gomez',       color:'#f59e0b', width:1.0, hidden:true}},
+      {{node:'GRDNE_ESR_RN', label:'Garden City', color:'#d97706', width:1.0, hidden:true}},
+      {{node:'JDKNS_RN',     label:'Judkins',     color:'#b45309', width:1.0, hidden:true}},
+      {{node:'SANDLAKE_RN',  label:'Sandlake',    color:'#92400e', width:1.0, hidden:true}},
+      // North Texas nodes — blue family
+      {{node:'OLNEYTN_RN',   label:'Olney',       color:'#60a5fa', width:1.0, hidden:true}},
+      {{node:'DIBOL_RN',     label:'Diboll',      color:'#93c5fd', width:1.0, hidden:true}},
+      {{node:'FRMRSVLW_RN',  label:'Farmersville',color:'#3b82f6', width:1.0, hidden:true}},
+      {{node:'MNWL_BESS_RN', label:'Mineral Wells',color:'#2563eb',width:1.0, hidden:true}},
+      {{node:'LFSTH_RN',     label:'Lufkin South',color:'#1d4ed8', width:1.0, hidden:true}},
+      {{node:'PAULN_RN',     label:'Pauline',     color:'#1e40af', width:1.0, hidden:true}},
+      {{node:'CISC_RN',      label:'Cisco',       color:'#60a5fa', width:1.0, hidden:true}},
+      // Coastal nodes — green family
+      {{node:'MV_VALV4_RN',  label:'Val Verde',   color:'#34d399', width:1.0, hidden:true}},
+      {{node:'WLTC_ESR_RN',  label:'Weil Tract',  color:'#6ee7b7', width:1.0, hidden:true}},
+      {{node:'MAINLAND_RN',  label:'Mainland',    color:'#10b981', width:1.0, hidden:true}},
+      {{node:'FALFUR_RN',    label:'Falfurrias',  color:'#059669', width:1.0, hidden:true}},
+      {{node:'PAVLOV_BT_RN', label:'Pavlov',      color:'#047857', width:1.0, hidden:true}},
+      {{node:'POTEETS_RN',   label:'Poteet',      color:'#065f46', width:1.0, hidden:true}},
+      {{node:'TYNAN_RN',     label:'Tynan',       color:'#34d399', width:1.0, hidden:true}},
     ];
 
-    function mkDaSeries(node, label, color, width) {{
-      const prices = daPrices[node] || {{}};
+    function mkDaSeries(s) {{
+      const prices = daPrices[s.node] || {{}};
       return {{
-        label,
+        label: s.label, hidden: s.hidden,
         data: daHours.map(h => {{
           const d = prices[h.date] || {{}};
           return d[h.he] != null ? d[h.he] : null;
         }}),
-        borderColor: color, backgroundColor: 'transparent',
-        borderWidth: width, pointRadius: 0, pointHoverRadius: 4,
+        borderColor: s.color, backgroundColor: 'transparent',
+        borderWidth: s.width, pointRadius: 0, pointHoverRadius: 4,
         tension: 0.3, spanGaps: false,
       }};
     }}
 
-    const daDatasets = DA_SERIES.map(s => mkDaSeries(s.node, s.label, s.color, s.width));
+    const daDatasets = [
+      ...DA_HUBS.map(s => mkDaSeries(s)),
+      ...DA_PREMIUM.map(s => mkDaSeries(s)),
+      ...DA_ZONE_NODES.map(s => mkDaSeries(s)),
+    ];
 
     if (daChart) daChart.destroy();
     daChart = new Chart(document.getElementById('da-canvas'), {{
@@ -1193,6 +1233,17 @@ async function loadOutlookChart() {{
     errEl.style.display = 'block';
     errEl.textContent = 'Could not load chart: ' + err.message;
   }}
+}}
+
+function toggleAllNodes() {{
+  if (!daChart) return;
+  const btn = document.getElementById('nodes-toggle-btn');
+  const showing = btn.textContent.includes('Show');
+  daChart.data.datasets.forEach((ds, i) => {{
+    if (i >= 10) ds.hidden = showing ? false : true;  // indices 0-9 are hubs+premium, 10+ are zone nodes
+  }});
+  daChart.update();
+  btn.textContent = showing ? 'Hide zone nodes' : 'Show all nodes';
 }}
 
 async function refreshChart() {{
