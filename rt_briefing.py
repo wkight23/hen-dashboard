@@ -719,6 +719,16 @@ input:focus{{outline:none;border-color:#4BACC6}}
 {premium_cards}
 </div>
 
+<div class="card" style="padding:1.25rem;margin-bottom:1.25rem">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+<div style="width:3px;height:14px;background:#4BACC6;border-radius:1px"></div>
+<div class="eyebrow">DA prices by zone — today + tomorrow</div>
+<span class="mono" style="font-size:10px;color:#3d5a70;margin-left:auto" id="da-zone-note">loads from chart data</span>
+</div>
+<div style="font-size:11px;color:#5c7a8c;margin-bottom:10px">Zone hub DA prices for each hour. Click the Charts tab for full node-level detail.</div>
+<div id="da-zone-table" style="font-size:11px;color:#7ea8bc">Loading DA zone profile...</div>
+</div>
+
 </div>
 
 <div class="tab-panel" id="tab-overnight">
@@ -753,6 +763,23 @@ input:focus{{outline:none;border-color:#4BACC6}}
 </div>
 
 <div class="tab-panel" id="tab-chart">
+
+<div class="card" style="padding:1.25rem;margin-bottom:1.25rem" id="da-card">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+<div style="width:3px;height:14px;background:#e0584f;border-radius:1px"></div>
+<div class="eyebrow" style="color:#e0584f">DA Settlement Prices — all 32 nodes · today + tomorrow</div>
+<span class="mono" style="font-size:10px;color:#3d5a70;margin-left:6px" id="da-updated">loading...</span>
+<div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+<button onclick="toggleAllNodes()" id="nodes-toggle-btn" style="font-size:10px;color:#4BACC6;background:none;border:0.5px solid rgba(75,172,198,0.3);border-radius:4px;padding:4px 10px;cursor:pointer">Show all nodes</button>
+<button class="btn" onclick="toggleFullscreen('da-card')" style="background:#111f30;border:0.5px solid rgba(75,172,198,0.3);color:#4BACC6;padding:5px 12px;font-size:11px">⛶</button>
+</div>
+</div>
+<div style="font-size:11px;color:#5c7a8c;margin-bottom:14px">Thick lines = zone hubs · Thin lines = individual nodes (same color family) · Bright colors = premium nodes · Click legend to toggle</div>
+<div style="position:relative;height:420px" id="da-container">
+<canvas id="da-canvas"></canvas>
+</div>
+<div id="da-error" style="font-size:12px;color:#e0584f;margin-top:10px;display:none"></div>
+</div>
 
 <div class="card" style="padding:1.25rem;margin-bottom:1.25rem">
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
@@ -844,6 +871,7 @@ let outlookChart = null;
 let todayChart = null;
 let regionalLoadChart = null;
 let regionalWindChart = null;
+let daChart = null;
 
 function makeNowPlugin(nowIdx) {{
   return {{
@@ -902,6 +930,138 @@ async function loadOutlookChart() {{
     const allPts = data.points;
     const nowDate = data.now_date;
     const nowHe = data.now_he;
+    const daToday = data.da_today;
+    const daTomorrow = data.da_tomorrow;
+    const daPrices = data.da_prices || {{}};
+
+    // ── DA Prices chart ────────────────────────────────────────────────
+    // Node zone assignments for color grouping
+    const DA_ZONES = {{
+      'LZ_WEST':'hub','LZ_NORTH':'hub','LZ_SOUTH':'hub','LZ_HOUSTON':'hub',
+      'TOYAH_RN':'west','SADLBACK_RN':'west','FAULKNER_RN':'west','COYOTSPR_RN':'west',
+      'LONESTAR_RN':'west','RTLSNAKE_BT':'west','CEDRVALE_RN':'west','SBEAN_BESS':'west',
+      'GOMZ_RN':'west','GRDNE_ESR_RN':'west','JDKNS_RN':'west','SANDLAKE_RN':'west',
+      'OLNEYTN_RN':'north','DIBOL_RN':'north','FRMRSVLW_RN':'north','MNWL_BESS_RN':'north',
+      'LFSTH_RN':'north','PAULN_RN':'north','CISC_RN':'north',
+      'MV_VALV4_RN':'coastal','WLTC_ESR_RN':'coastal','MAINLAND_RN':'coastal',
+      'FALFUR_RN':'coastal','PAVLOV_BT_RN':'coastal','POTEETS_RN':'coastal','TYNAN_RN':'coastal',
+      'CATARINA_B1':'premium','HOLCOMB_RN1':'premium','HAMI_BESS_RN':'premium',
+      'JUNCTION_RN':'premium','RUSSEKST_RN':'premium','FTDUNCAN_RN':'premium',
+    }};
+    const DA_COLORS = {{
+      hub:     {{ west:'#fbbf24', north:'#60a5fa', south:'#f472b6', houston:'#34d399' }},
+      west:    '#92400e', north: '#1e3a5f', coastal: '#064e3b',
+      premium: ['#e0584f','#a78bfa','#fb923c','#22d3ee','#f472b6','#84cc16'],
+    }};
+    const DA_NAMES = {{
+      'LZ_WEST':'West Hub','LZ_NORTH':'North Hub','LZ_SOUTH':'South Hub','LZ_HOUSTON':'Houston Hub',
+      'TOYAH_RN':'Toyah','SADLBACK_RN':'Saddleback','FAULKNER_RN':'Faulkner','COYOTSPR_RN':'Coyote',
+      'LONESTAR_RN':'Lonestar','RTLSNAKE_BT':'Rattlesnake','CEDRVALE_RN':'Cedarvale','SBEAN_BESS':'Screwbean',
+      'GOMZ_RN':'Gomez','GRDNE_ESR_RN':'Garden City','JDKNS_RN':'Judkins','SANDLAKE_RN':'Sandlake',
+      'OLNEYTN_RN':'Olney','DIBOL_RN':'Diboll','FRMRSVLW_RN':'Farmersville','MNWL_BESS_RN':'Mineral Wells',
+      'LFSTH_RN':'Lufkin South','PAULN_RN':'Pauline','CISC_RN':'Cisco',
+      'MV_VALV4_RN':'Val Verde','WLTC_ESR_RN':'Weil Tract','MAINLAND_RN':'Mainland',
+      'FALFUR_RN':'Falfurrias','PAVLOV_BT_RN':'Pavlov','POTEETS_RN':'Poteet','TYNAN_RN':'Tynan',
+      'CATARINA_B1':'Catarina','HOLCOMB_RN1':'Holcomb','HAMI_BESS_RN':'Hamilton',
+      'JUNCTION_RN':'Junction','RUSSEKST_RN':'Russek','FTDUNCAN_RN':'Fort Duncan',
+    }};
+    // Build 48-hour labels and per-node series
+    const daLabels = [];
+    const daHours = [];
+    for (const d of [daToday, daTomorrow]) {{
+      for (let h=1; h<=24; h++) {{
+        daLabels.push((d||'').slice(5) + ' HE' + h);
+        daHours.push({{date:d, he:h}});
+      }}
+    }}
+    document.getElementById('da-updated').textContent = 'updated ' + data.generated_at;
+
+    const HUB_NODES = ['LZ_WEST','LZ_NORTH','LZ_SOUTH','LZ_HOUSTON'];
+    const HUB_COLORS = ['#fbbf24','#60a5fa','#f472b6','#34d399'];
+    const PREMIUM_NODES_DA = ['CATARINA_B1','HOLCOMB_RN1','HAMI_BESS_RN','JUNCTION_RN','RUSSEKST_RN','FTDUNCAN_RN'];
+    const PREM_COLORS_DA = ['#e0584f','#a78bfa','#fb923c','#22d3ee','#ec4899','#84cc16'];
+    const ZONE_COLORS = {{west:'#92400e', north:'#1e3a5f', coastal:'#064e3b'}};
+    const ZONE_NODE_KEYS = {{
+      west:  ['TOYAH_RN','SADLBACK_RN','FAULKNER_RN','COYOTSPR_RN','LONESTAR_RN','RTLSNAKE_BT','CEDRVALE_RN','SBEAN_BESS','GOMZ_RN','GRDNE_ESR_RN','JDKNS_RN','SANDLAKE_RN'],
+      north: ['OLNEYTN_RN','DIBOL_RN','FRMRSVLW_RN','MNWL_BESS_RN','LFSTH_RN','PAULN_RN','CISC_RN'],
+      coastal:['MV_VALV4_RN','WLTC_ESR_RN','MAINLAND_RN','FALFUR_RN','PAVLOV_BT_RN','POTEETS_RN','TYNAN_RN'],
+    }};
+
+    function mkDaSeries(node, label, color, width, hidden) {{
+      const prices = daPrices[node] || {{}};
+      return {{
+        label, hidden,
+        data: daHours.map(h => {{
+          const d = prices[h.date] || {{}};
+          return d[h.he] != null ? d[h.he] : null;
+        }}),
+        borderColor: color, backgroundColor: 'transparent',
+        borderWidth: width, pointRadius: 0, pointHoverRadius: 4,
+        tension: 0.3, spanGaps: false,
+      }};
+    }}
+
+    // Default: show hubs + premium nodes only (hidden = true for zone nodes)
+    const daDatasets = [];
+    HUB_NODES.forEach((n,i) => daDatasets.push(mkDaSeries(n, DA_NAMES[n], HUB_COLORS[i], 2.5, false)));
+    PREMIUM_NODES_DA.forEach((n,i) => daDatasets.push(mkDaSeries(n, DA_NAMES[n], PREM_COLORS_DA[i], 2.0, false)));
+    Object.entries(ZONE_NODE_KEYS).forEach(([zone, nodes]) => {{
+      nodes.forEach(n => daDatasets.push(mkDaSeries(n, DA_NAMES[n], ZONE_COLORS[zone], 1.0, true)));
+    }});
+
+    if (daChart) daChart.destroy();
+    daChart = new Chart(document.getElementById('da-canvas'), {{
+      type: 'line',
+      data: {{ labels: daLabels, datasets: daDatasets }},
+      options: {{
+        responsive: true, maintainAspectRatio: false,
+        interaction: {{ mode: 'index', intersect: false }},
+        plugins: {{
+          legend: {{ position: 'top', labels: {{ color: '#94a3b8', boxWidth: 14, font: {{ size: 10 }}, padding: 10 }} }},
+          tooltip: {{
+            backgroundColor: '#0a1622', borderColor: 'rgba(75,172,198,0.4)', borderWidth: 1,
+            titleColor: '#4BACC6', bodyColor: '#c8d8e8', padding: 10,
+            callbacks: {{
+              title: items => daLabels[items[0].dataIndex],
+              label: item => item.raw != null ? ' ' + item.dataset.label + ': $' + item.raw.toFixed(2) + '/MWh' : null,
+              filter: item => item.raw != null,
+            }}
+          }}
+        }},
+        scales: {{
+          x: {{ ticks: {{ color: '#7ea8bc', font: {{ size: 9 }}, maxRotation: 45, autoSkip: true, maxTicksLimit: 24 }}, grid: {{ color: 'rgba(148,184,200,0.06)' }} }},
+          y: {{ beginAtZero: false, ticks: {{ color: '#3d5a70', font: {{ size: 10 }}, callback: v => '$' + v.toFixed(0) }}, grid: {{ color: 'rgba(148,184,200,0.06)' }} }}
+        }}
+      }}
+    }});
+
+    // Outlook tab: compact DA zone table
+    const zoneHubMap = {{ 'LZ_WEST':'West','LZ_NORTH':'North','LZ_SOUTH':'South','LZ_HOUSTON':'Houston' }};
+    const zoneColors2 = {{ 'LZ_WEST':'#fbbf24','LZ_NORTH':'#60a5fa','LZ_SOUTH':'#f472b6','LZ_HOUSTON':'#34d399' }};
+    let zoneTableHtml = '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">';
+    for (const [hub, label] of Object.entries(zoneHubMap)) {{
+      const todayPrices = (daPrices[hub]||{{}})[daToday] || {{}};
+      const tmrPrices   = (daPrices[hub]||{{}})[daTomorrow] || {{}};
+      const peakHEs = [17,18,19,20,21];
+      const todayPeak = peakHEs.map(h => todayPrices[h]).filter(v => v!=null);
+      const tmrPeak   = peakHEs.map(h => tmrPrices[h]).filter(v => v!=null);
+      const todayAvg  = todayPeak.length ? (todayPeak.reduce((a,b)=>a+b,0)/todayPeak.length).toFixed(2) : '--';
+      const tmrAvg    = tmrPeak.length  ? (tmrPeak.reduce((a,b)=>a+b,0)/tmrPeak.length).toFixed(2)   : '--';
+      const tmrMax    = tmrPeak.length  ? Math.max(...tmrPeak).toFixed(2) : '--';
+      const tmrMaxHE  = tmrPeak.length  ? peakHEs[tmrPeak.indexOf(Math.max(...tmrPeak))] : '--';
+      const col = zoneColors2[hub];
+      zoneTableHtml += `<div style="background:#0c131e;border:0.5px solid rgba(148,184,200,0.12);border-radius:8px;padding:10px">
+        <div style="font-size:10px;font-weight:700;color:${{col}};margin-bottom:8px">${{label}}</div>
+        <div style="font-size:9px;color:#3d5a70;margin-bottom:2px">Today ramp avg (HE17-21)</div>
+        <div style="font-size:14px;font-weight:600;color:#eef4f8;font-family:monospace;margin-bottom:8px">$${{todayAvg}}</div>
+        <div style="font-size:9px;color:#3d5a70;margin-bottom:2px">Tomorrow ramp avg</div>
+        <div style="font-size:14px;font-weight:600;color:${{col}};font-family:monospace;margin-bottom:4px">$${{tmrAvg}}</div>
+        <div style="font-size:9px;color:#5c7a8c">Peak: $${{tmrMax}} @ HE${{tmrMaxHE}}</div>
+      </div>`;
+    }}
+    zoneTableHtml += '</div>';
+    const zoneTableEl = document.getElementById('da-zone-table');
+    if (zoneTableEl) {{ zoneTableEl.innerHTML = zoneTableHtml; }}
 
     // ── Today + Tomorrow chart ──────────────────────────────────────────
     const tomorrow = new Date(nowDate); tomorrow.setDate(tomorrow.getDate()+1);
@@ -1040,7 +1200,20 @@ async function loadOutlookChart() {{
   }}
 }}
 
+function toggleAllNodes() {{
+  if (!daChart) return;
+  const btn = document.getElementById('nodes-toggle-btn');
+  const showing = btn.textContent.includes('Show');
+  daChart.data.datasets.forEach((ds, i) => {{
+    // First 10 are hubs + premium (always visible), rest are zone nodes
+    if (i >= 10) ds.hidden = showing ? false : true;
+  }});
+  daChart.update();
+  btn.textContent = showing ? 'Hide zone nodes' : 'Show all nodes';
+}}
+
 async function refreshChart() {{
+  if (daChart) {{ daChart.destroy(); daChart = null; }}
   if (outlookChart) {{ outlookChart.destroy(); outlookChart = null; }}
   if (todayChart) {{ todayChart.destroy(); todayChart = null; }}
   if (regionalLoadChart) {{ regionalLoadChart.destroy(); regionalLoadChart = null; }}
