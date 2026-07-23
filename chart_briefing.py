@@ -327,16 +327,9 @@ outages = fetch_outages()
 
 # ─── DA Settlement Point Prices — today + tomorrow, all 32 fleet nodes + 4 zone hubs ───
 DA_NODES = [
-    # Zone hubs
+    # Zone hubs — used as DA reference price for all non-premium batteries in each zone
     "LZ_WEST","LZ_NORTH","LZ_SOUTH","LZ_HOUSTON",
-    # West Texas (12)
-    "TOYAH_RN","SADLBACK_RN","FAULKNER_RN","COYOTSPR_RN","LONESTAR_RN","RTLSNAKE_BT",
-    "CEDRVALE_RN","SBEAN_BESS","GOMZ_RN","GRDNE_ESR_RN","JDKNS_RN","SANDLAKE_RN",
-    # North Texas (7)
-    "OLNEYTN_RN","DIBOL_RN","FRMRSVLW_RN","MNWL_BESS_RN","LFSTH_RN","PAULN_RN","CISC_RN",
-    # Coastal (7)
-    "MV_VALV4_RN","WLTC_ESR_RN","MAINLAND_RN","FALFUR_RN","PAVLOV_BT_RN","POTEETS_RN","TYNAN_RN",
-    # Premium (6)
+    # Premium nodes — individually registered DA settlement points
     "CATARINA_B1","HOLCOMB_RN1","HAMI_BESS_RN","JUNCTION_RN","RUSSEKST_RN","FTDUNCAN_RN",
 ]
 DA_DATE_FROM = TODAY.isoformat()
