@@ -323,6 +323,56 @@ except Exception as e:
 # ─── HSL outages: sum all four zone columns ───
 outages = fetch_outages()
 
+# ─── DA Settlement Point Prices — today + tomorrow, all 32 fleet nodes + 4 zone hubs ───
+DA_NODES = [
+    # Zone hubs
+    "LZ_WEST","LZ_NORTH","LZ_SOUTH","LZ_HOUSTON",
+    # West Texas (12)
+    "TOYAH_RN","SADLBACK_RN","FAULKNER_RN","COYOTSPR_RN","LONESTAR_RN","RTLSNAKE_BT",
+    "CEDRVALE_RN","SBEAN_BESS","GOMZ_RN","GRDNE_ESR_RN","JDKNS_RN","SANDLAKE_RN",
+    # North Texas (7)
+    "OLNEYTN_RN","DIBOL_RN","FRMRSVLW_RN","MNWL_BESS_RN","LFSTH_RN","PAULN_RN","CISC_RN",
+    # Coastal (7)
+    "MV_VALV4_RN","WLTC_ESR_RN","MAINLAND_RN","FALFUR_RN","PAVLOV_BT_RN","POTEETS_RN","TYNAN_RN",
+    # Premium (6)
+    "CATARINA_B1","HOLCOMB_RN1","HAMI_BESS_RN","JUNCTION_RN","RUSSEKST_RN","FTDUNCAN_RN",
+]
+DA_DATE_FROM = TODAY.isoformat()
+DA_DATE_TO   = (TODAY + timedelta(days=1)).isoformat()
+
+print(f"Fetching DA prices for {len(DA_NODES)} settlement points ({DA_DATE_FROM} + {DA_DATE_TO})...")
+da_prices = {}   # {node: {date_str: {he: price}}}
+da_fetched = 0
+for node in DA_NODES:
+    try:
+        r = requests.get(BASE+"/np4-190-cd/dam_stlmnt_pnt_prices",
+            params={"settlementPoint":node,"deliveryDateFrom":DA_DATE_FROM,"deliveryDateTo":DA_DATE_TO,"size":50},
+            headers=hdrs, timeout=15)
+        if r.ok:
+            d = r.json()
+            fields = d.get("fields",[])
+            rows = d.get("data",[])
+            date_col  = next((f["cardinality"]-1 for f in fields if "deliverydate" in f.get("name","").lower()), 0)
+            hour_col  = next((f["cardinality"]-1 for f in fields if "hour" in f.get("name","").lower()), 2)
+            price_col = next((f["cardinality"]-1 for f in fields if "price" in f.get("name","").lower()), 4)
+            node_data = {}
+            for row in rows:
+                if not isinstance(row, list): continue
+                try:
+                    d_str = str(row[date_col])[:10]
+                    he    = parse_he(row[hour_col]) if hour_col < len(row) else 0
+                    price = float(row[price_col]) if price_col < len(row) and row[price_col] not in (None,"") else None
+                    if price is not None:
+                        node_data.setdefault(d_str, {})[he] = round(price, 2)
+                except: continue
+            if node_data:
+                da_prices[node] = node_data
+                da_fetched += 1
+        time.sleep(0.15)   # gentle rate-limiting
+    except Exception as e:
+        print(f"DA prices {node}: error {e}")
+print(f"DA prices: {da_fetched}/{len(DA_NODES)} nodes fetched")
+
 # ─── Assemble one combined hourly series ───
 CHART_START = (TODAY - timedelta(days=1)).isoformat()  # yesterday
 CHART_END = END_DATE                                    # 7 days ahead
@@ -391,6 +441,9 @@ chart_data = {
     "generated_at": CDT.strftime("%Y-%m-%d %H:%M CDT"),
     "now_date": TODAY.isoformat(),
     "now_he": CDT.hour + 1,
+    "da_today": DA_DATE_FROM,
+    "da_tomorrow": DA_DATE_TO,
+    "da_prices": da_prices,
     "points": points
 }
 with open("chart_data.json", "w") as f:
