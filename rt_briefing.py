@@ -774,7 +774,7 @@ input:focus{{outline:none;border-color:#4BACC6}}
 <button class="btn" onclick="toggleFullscreen('da-card')" style="background:#111f30;border:0.5px solid rgba(75,172,198,0.3);color:#4BACC6;padding:5px 12px;font-size:11px">⛶</button>
 </div>
 </div>
-<div style="font-size:11px;color:#5c7a8c;margin-bottom:14px">Thick lines = zone hubs · Colored lines = premium nodes · Default hides individual zone nodes — click "Show all nodes" to reveal · Click legend to toggle</div>
+<div style="font-size:11px;color:#5c7a8c;margin-bottom:14px">Thick lines = zone hubs · Colored = premium nodes · Default hides individual zone nodes — "Show all nodes" to reveal · Labels with * hub = settling at load zone price (no individual DA settlement point)</div>
 <div style="position:relative;height:420px" id="da-container">
 <canvas id="da-canvas"></canvas>
 </div>
@@ -1024,13 +1024,38 @@ async function loadOutlookChart() {{
       {{node:'TYNAN_RN',     label:'Tynan',       color:'#34d399', width:1.0, hidden:true}},
     ];
 
+    // Zone hub fallback — nodes without individual DA prices settle at their load zone hub
+    const NODE_HUB = {{
+      // West Texas → LZ_WEST (all have individual prices, fallback not needed but included for safety)
+      'TOYAH_RN':'LZ_WEST','SADLBACK_RN':'LZ_WEST','FAULKNER_RN':'LZ_WEST','COYOTSPR_RN':'LZ_WEST',
+      'LONESTAR_RN':'LZ_WEST','RTLSNAKE_BT':'LZ_WEST','CEDRVALE_RN':'LZ_WEST','SBEAN_BESS':'LZ_WEST',
+      'GOMZ_RN':'LZ_WEST','GRDNE_ESR_RN':'LZ_WEST','JDKNS_RN':'LZ_WEST','SANDLAKE_RN':'LZ_WEST',
+      // North Texas → LZ_NORTH (no individual prices — settle at zone hub)
+      'OLNEYTN_RN':'LZ_NORTH','DIBOL_RN':'LZ_NORTH','FRMRSVLW_RN':'LZ_NORTH','MNWL_BESS_RN':'LZ_NORTH',
+      'LFSTH_RN':'LZ_NORTH','PAULN_RN':'LZ_NORTH','CISC_RN':'LZ_NORTH',
+      // Coastal → LZ_SOUTH (Mainland → LZ_HOUSTON)
+      'MV_VALV4_RN':'LZ_SOUTH','WLTC_ESR_RN':'LZ_SOUTH','FALFUR_RN':'LZ_SOUTH',
+      'PAVLOV_BT_RN':'LZ_SOUTH','POTEETS_RN':'LZ_SOUTH','TYNAN_RN':'LZ_SOUTH',
+      'MAINLAND_RN':'LZ_HOUSTON',
+      // Premium → zone hub as fallback
+      'CATARINA_B1':'LZ_SOUTH','HOLCOMB_RN1':'LZ_SOUTH','HAMI_BESS_RN':'LZ_SOUTH',
+      'FTDUNCAN_RN':'LZ_SOUTH','JUNCTION_RN':'LZ_WEST','RUSSEKST_RN':'LZ_WEST',
+    }};
+
     function mkDaSeries(s) {{
       const prices = daPrices[s.node] || {{}};
+      const hub = NODE_HUB[s.node];
+      const hubPrices = hub ? (daPrices[hub] || {{}}) : {{}};
+      const hasOwn = Object.keys(prices).length > 0;
       return {{
-        label: s.label, hidden: s.hidden,
+        label: s.label + (hasOwn ? '' : ' *hub'),
+        hidden: s.hidden,
         data: daHours.map(h => {{
           const d = prices[h.date] || {{}};
-          return d[h.he] != null ? d[h.he] : null;
+          if (d[h.he] != null) return d[h.he];
+          // Fall back to zone hub price if no individual settlement point
+          const hd = hubPrices[h.date] || {{}};
+          return hd[h.he] != null ? hd[h.he] : null;
         }}),
         borderColor: s.color, backgroundColor: 'transparent',
         borderWidth: s.width, pointRadius: 0, pointHoverRadius: 4,
