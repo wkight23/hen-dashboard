@@ -327,9 +327,16 @@ outages = fetch_outages()
 
 # ─── DA Settlement Point Prices — today + tomorrow, all 32 fleet nodes + 4 zone hubs ───
 DA_NODES = [
-    # Zone hubs — used as DA reference price for all non-premium batteries in each zone
+    # Zone hubs
     "LZ_WEST","LZ_NORTH","LZ_SOUTH","LZ_HOUSTON",
-    # Premium nodes — individually registered DA settlement points
+    # West Texas (12)
+    "TOYAH_RN","SADLBACK_RN","FAULKNER_RN","COYOTSPR_RN","LONESTAR_RN","RTLSNAKE_BT",
+    "CEDRVALE_RN","SBEAN_BESS","GOMZ_RN","GRDNE_ESR_RN","JDKNS_RN","SANDLAKE_RN",
+    # North Texas (7)
+    "OLNEYTN_RN","DIBOL_RN","FRMRSVLW_RN","MNWL_BESS_RN","LFSTH_RN","PAULN_RN","CISC_RN",
+    # Coastal (7)
+    "MV_VALV4_RN","WLTC_ESR_RN","MAINLAND_RN","FALFUR_RN","PAVLOV_BT_RN","POTEETS_RN","TYNAN_RN",
+    # Premium (6)
     "CATARINA_B1","HOLCOMB_RN1","HAMI_BESS_RN","JUNCTION_RN","RUSSEKST_RN","FTDUNCAN_RN",
 ]
 DA_DATE_FROM = TODAY.isoformat()
@@ -376,10 +383,10 @@ for idx, node in enumerate(DA_NODES):
                 da_failed.append(node)
         else:
             da_failed.append(node)
-        time.sleep(0.5)   # 0.5s delay — ERCOT API rate limits at ~30 req/min
+        time.sleep(1.0)   # 1.0s delay — generous spacing to avoid ERCOT API rate limits
     except Exception as e:
         da_failed.append(node)
-        time.sleep(0.5)
+        time.sleep(1.0)
 if da_failed:
     print(f"DA prices: {da_fetched}/{len(DA_NODES)} fetched. Failed nodes: {da_failed[:5]}{'...' if len(da_failed)>5 else ''}")
 else:
