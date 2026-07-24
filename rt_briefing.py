@@ -994,34 +994,34 @@ async function loadOutlookChart() {{
     ];
     const DA_ZONE_NODES = [
       // West Texas nodes — amber family
-      {{node:'TOYAH_RN',     label:'Toyah',       color:'#fbbf24', width:1.0, hidden:true}},
-      {{node:'SADLBACK_RN',  label:'Saddleback',  color:'#fcd34d', width:1.0, hidden:true}},
-      {{node:'FAULKNER_RN',  label:'Faulkner',    color:'#f59e0b', width:1.0, hidden:true}},
-      {{node:'COYOTSPR_RN',  label:'Coyote',      color:'#d97706', width:1.0, hidden:true}},
-      {{node:'LONESTAR_RN',  label:'Lonestar',    color:'#b45309', width:1.0, hidden:true}},
-      {{node:'RTLSNAKE_BT',  label:'Rattlesnake', color:'#92400e', width:1.0, hidden:true}},
-      {{node:'CEDRVALE_RN',  label:'Cedarvale',   color:'#fbbf24', width:1.0, hidden:true}},
-      {{node:'SBEAN_BESS',   label:'Screwbean',   color:'#fcd34d', width:1.0, hidden:true}},
-      {{node:'GOMZ_RN',      label:'Gomez',       color:'#f59e0b', width:1.0, hidden:true}},
-      {{node:'GRDNE_ESR_RN', label:'Garden City', color:'#d97706', width:1.0, hidden:true}},
-      {{node:'JDKNS_RN',     label:'Judkins',     color:'#b45309', width:1.0, hidden:true}},
-      {{node:'SANDLAKE_RN',  label:'Sandlake',    color:'#92400e', width:1.0, hidden:true}},
+      {{node:'TOYAH_RN',     label:'Toyah',       color:'#fbbf24', width:1.0, hidden:false}},
+      {{node:'SADLBACK_RN',  label:'Saddleback',  color:'#fcd34d', width:1.0, hidden:false}},
+      {{node:'FAULKNER_RN',  label:'Faulkner',    color:'#f59e0b', width:1.0, hidden:false}},
+      {{node:'COYOTSPR_RN',  label:'Coyote',      color:'#d97706', width:1.0, hidden:false}},
+      {{node:'LONESTAR_RN',  label:'Lonestar',    color:'#b45309', width:1.0, hidden:false}},
+      {{node:'RTLSNAKE_BT',  label:'Rattlesnake', color:'#92400e', width:1.0, hidden:false}},
+      {{node:'CEDRVALE_RN',  label:'Cedarvale',   color:'#fbbf24', width:1.0, hidden:false}},
+      {{node:'SBEAN_BESS',   label:'Screwbean',   color:'#fcd34d', width:1.0, hidden:false}},
+      {{node:'GOMZ_RN',      label:'Gomez',       color:'#f59e0b', width:1.0, hidden:false}},
+      {{node:'GRDNE_ESR_RN', label:'Garden City', color:'#d97706', width:1.0, hidden:false}},
+      {{node:'JDKNS_RN',     label:'Judkins',     color:'#b45309', width:1.0, hidden:false}},
+      {{node:'SANDLAKE_RN',  label:'Sandlake',    color:'#92400e', width:1.0, hidden:false}},
       // North Texas nodes — blue family
-      {{node:'OLNEYTN_RN',   label:'Olney',       color:'#60a5fa', width:1.0, hidden:true}},
-      {{node:'DIBOL_RN',     label:'Diboll',      color:'#93c5fd', width:1.0, hidden:true}},
-      {{node:'FRMRSVLW_RN',  label:'Farmersville',color:'#3b82f6', width:1.0, hidden:true}},
-      {{node:'MNWL_BESS_RN', label:'Mineral Wells',color:'#2563eb',width:1.0, hidden:true}},
-      {{node:'LFSTH_RN',     label:'Lufkin South',color:'#1d4ed8', width:1.0, hidden:true}},
-      {{node:'PAULN_RN',     label:'Pauline',     color:'#1e40af', width:1.0, hidden:true}},
-      {{node:'CISC_RN',      label:'Cisco',       color:'#60a5fa', width:1.0, hidden:true}},
+      {{node:'OLNEYTN_RN',   label:'Olney',       color:'#60a5fa', width:1.0, hidden:false}},
+      {{node:'DIBOL_RN',     label:'Diboll',      color:'#93c5fd', width:1.0, hidden:false}},
+      {{node:'FRMRSVLW_RN',  label:'Farmersville',color:'#3b82f6', width:1.0, hidden:false}},
+      {{node:'MNWL_BESS_RN', label:'Mineral Wells',color:'#2563eb',width:1.0, hidden:false}},
+      {{node:'LFSTH_RN',     label:'Lufkin South',color:'#1d4ed8', width:1.0, hidden:false}},
+      {{node:'PAULN_RN',     label:'Pauline',     color:'#1e40af', width:1.0, hidden:false}},
+      {{node:'CISC_RN',      label:'Cisco',       color:'#60a5fa', width:1.0, hidden:false}},
       // Coastal nodes — green family
-      {{node:'MV_VALV4_RN',  label:'Val Verde',   color:'#34d399', width:1.0, hidden:true}},
-      {{node:'WLTC_ESR_RN',  label:'Weil Tract',  color:'#6ee7b7', width:1.0, hidden:true}},
-      {{node:'MAINLAND_RN',  label:'Mainland',    color:'#10b981', width:1.0, hidden:true}},
-      {{node:'FALFUR_RN',    label:'Falfurrias',  color:'#059669', width:1.0, hidden:true}},
-      {{node:'PAVLOV_BT_RN', label:'Pavlov',      color:'#047857', width:1.0, hidden:true}},
-      {{node:'POTEETS_RN',   label:'Poteet',      color:'#065f46', width:1.0, hidden:true}},
-      {{node:'TYNAN_RN',     label:'Tynan',       color:'#34d399', width:1.0, hidden:true}},
+      {{node:'MV_VALV4_RN',  label:'Val Verde',   color:'#34d399', width:1.0, hidden:false}},
+      {{node:'WLTC_ESR_RN',  label:'Weil Tract',  color:'#6ee7b7', width:1.0, hidden:false}},
+      {{node:'MAINLAND_RN',  label:'Mainland',    color:'#10b981', width:1.0, hidden:false}},
+      {{node:'FALFUR_RN',    label:'Falfurrias',  color:'#059669', width:1.0, hidden:false}},
+      {{node:'PAVLOV_BT_RN', label:'Pavlov',      color:'#047857', width:1.0, hidden:false}},
+      {{node:'POTEETS_RN',   label:'Poteet',      color:'#065f46', width:1.0, hidden:false}},
+      {{node:'TYNAN_RN',     label:'Tynan',       color:'#34d399', width:1.0, hidden:false}},
     ];
 
     // Zone hub fallback — nodes without individual DA prices settle at their load zone hub
@@ -1263,12 +1263,12 @@ async function loadOutlookChart() {{
 function toggleAllNodes() {{
   if (!daChart) return;
   const btn = document.getElementById('nodes-toggle-btn');
-  const showing = btn.textContent.includes('Show');
+  const hiding = btn.textContent.includes('Hide');
   daChart.data.datasets.forEach((ds, i) => {{
-    if (i >= 10) ds.hidden = showing ? false : true;  // indices 0-9 are hubs+premium, 10+ are zone nodes
+    if (i >= 10) ds.hidden = hiding ? true : false;
   }});
   daChart.update();
-  btn.textContent = showing ? 'Hide zone nodes' : 'Show all nodes';
+  btn.textContent = hiding ? 'Show zone nodes' : 'Hide zone nodes';
 }}
 
 async function refreshChart() {{
