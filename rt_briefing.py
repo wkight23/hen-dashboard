@@ -487,11 +487,11 @@ CRITICAL FRAMING RULES:
 
 Answer four questions clearly:
 1. WHAT IS HAPPENING RIGHT NOW — Are current RT prices favorable for dispatch? Which zones or premium nodes specifically?
-2. WHAT TO EXPECT LATER TODAY/TONIGHT — Based on today's live constraint pattern, yesterday's full-day pattern, and current RT, what should operators watch for?
+2. WHAT TO EXPECT LATER TODAY/TONIGHT — Based on today's SCED pattern, playbook drivers, and shift factors, what should operators watch for in the evening ramp (HE17-24)? Specifically: which HEN nodes are likely to see ELEVATED RT pricing due to expected congestion (positive SF on likely-binding constraints), and which nodes may see SUPPRESSED or negative RT pricing (negative SF on those same constraints)? Give the operator a clear directional read on which sites to prioritize for dispatch vs hold.
 3. TOMORROW SOLAR WINDOW CHARGING DECISION — Should we charge overnight/early morning to be full for tomorrow's solar window? Is DA during HE9-14 high enough to justify it, or is the overnight charging opportunity better used elsewhere?
 4. YESTERDAY & TODAY CONGESTION DEBRIEF — A short, plain-language recap of what the binding constraints actually did. For each constraint with a playbook entry, state whether observed conditions match the known driver. For untracked constraints (listed under UNTRACKED CONSTRAINTS above), briefly note each one in one sentence: when it appeared, what shadow pricing was seen, and flag it as not yet in the HEN heatmap — the operator will use this to decide whether to add it. Call out any stacked congestion on a single HEN node. Keep it tight — one sentence per constraint.
 
-Be direct and actionable. Use zone names (West Texas, North Texas, Coastal) and premium node names when relevant. Reference specific HEs and dollar amounts. Keep each section tight - the whole response under 500 words."""
+Be direct and actionable. Use zone names (West Texas, North Texas, Coastal) and premium node names when relevant. Reference specific HEs. Keep each section tight - the whole response under 500 words."""
 
 cr = requests.post("https://api.anthropic.com/v1/messages",
     headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},
@@ -499,6 +499,150 @@ cr = requests.post("https://api.anthropic.com/v1/messages",
     timeout=60)
 analysis = cr.json()["content"][0]["text"]
 print("Claude analysis done")
+
+# ─── DA Outlook — tomorrow's congestion-based DA pricing direction ───
+print("Fetching tomorrow's forecast for DA Outlook...")
+
+def build_playbook_sf_context():
+    """Build playbook entries with HEN node shift factor impacts for DA Outlook prompt."""
+    seen, blocks = set(), []
+    for pb_key, pb in PLAYBOOK.items():
+        if " " not in pb_key: continue   # skip tokenized keys
+        line = pb.get("line", pb_key)
+        if line in seen: continue
+        seen.add(line)
+        priority = pb.get("priority","")
+        if "🟢" not in priority and "🟡" not in priority: continue
+        driver = pb.get("driver","")
+        if not driver: continue
+        # Find matching SF data by prefix matching on line name
+        sf_entry = None
+        line_up = line.upper()
+        for sf_key, sf_val in SF_DATA.items():
+            if " " in sf_key and sf_key.upper()[:len(line_up)] == line_up:
+                sf_entry = sf_val; break
+            if " " in sf_key and line_up[:15] in sf_key.upper():
+                sf_entry = sf_val; break
+        pos_nodes, neg_nodes = [], []
+        if sf_entry:
+            for site_key, sf_v in sf_entry["sf"].items():
+                if abs(sf_v) >= 0.05:
+                    site_code = SF_TO_SP.get(site_key)
+                    name = SITE_NAMES.get(site_code, site_key)
+                    (pos_nodes if sf_v > 0 else neg_nodes).append((name, sf_v))
+            pos_nodes.sort(key=lambda x: -x[1])
+            neg_nodes.sort(key=lambda x: x[1])
+        pri = "Active" if "🟢" in priority else "Watch"
+        b = f"[{pri}] {line}\n  Driver: {driver[:200]}\n"
+        if pb.get("season"): b += f"  Season: {pb['season']} | Peak HEs: {pb.get('peak_he','?')}\n"
+        if pos_nodes: b += f"  Elevated DA (pos SF): {', '.join(f'{n}(+{v:.0%})' for n,v in pos_nodes[:5])}\n"
+        if neg_nodes: b += f"  Suppressed DA (neg SF): {', '.join(f'{n}({v:.0%})' for n,v in neg_nodes[:5])}\n"
+        if not sf_entry: b += "  (No SF crosswalk data for this line)\n"
+        blocks.append(b)
+    return "\n".join(blocks)
+
+# Fetch tomorrow's load forecast by zone
+tmr_load = {}   # {zone: {he: mw}}
+ZONE_MAP_FCST = {"coast":"houston","east":"houston","farWest":"west","north":"north",
+                 "northCentral":"north","southCentral":"south","southern":"south","west":"west"}
+try:
+    r = requests.get(BASE+"/np3-565-cd/lf_by_model_weather_zone",
+        params={"deliveryDateFrom":TOMORROW,"deliveryDateTo":TOMORROW,"size":100},
+        headers=hdrs, timeout=15)
+    if r.ok:
+        d = r.json(); fields = d.get("fields",[]); rows = d.get("data",[])
+        hour_col  = next((f["cardinality"]-1 for f in fields if "hour" in f.get("name","").lower()), 2)
+        flag_col  = next((f["cardinality"]-1 for f in fields if "inuse" in f.get("name","").lower()), None)
+        zone_col_map = {f.get("name",""): f["cardinality"]-1 for f in fields if f.get("name","") in {"coast","east","farWest","north","northCentral","southCentral","southern","west"}}
+        for row in rows:
+            if not isinstance(row, list): continue
+            try:
+                if flag_col and flag_col < len(row) and str(row[flag_col]).strip().lower() not in ("true","1","yes"): continue
+                he = parse_he(row[hour_col]) if hour_col < len(row) else 0
+                for zname, col in zone_col_map.items():
+                    grp = ZONE_MAP_FCST.get(zname)
+                    if grp and col < len(row) and row[col] not in (None,""):
+                        tmr_load.setdefault(grp, {})[he] = tmr_load.get(grp,{}).get(he,0) + float(row[col])
+            except: continue
+except Exception as e: print(f"Tomorrow load forecast error: {e}")
+
+# Fetch tomorrow's wind forecast by region
+tmr_wind = {}   # {region: {he: mw}}
+WIND_GEO_FCST_COLS = {"panhandle":"STWPFPanhandle","west":"STWPFWest","north":"STWPFNorth",
+                       "south":"STWPFSouth","coastal":"STWPFCoastal"}
+try:
+    r = requests.get(BASE+"/np4-742-cd/wpp_hrly_actual_fcast_geo",
+        params={"deliveryDateFrom":TOMORROW,"deliveryDateTo":TOMORROW,"size":100},
+        headers=hdrs, timeout=15)
+    if r.ok:
+        d = r.json(); fields = d.get("fields",[]); rows = d.get("data",[])
+        hour_col = next((f["cardinality"]-1 for f in fields if "hour" in f.get("name","").lower()), 2)
+        rcols = {reg: next((f["cardinality"]-1 for f in fields if f.get("name","")==fn), None)
+                 for reg, fn in WIND_GEO_FCST_COLS.items()}
+        for row in rows:
+            if not isinstance(row, list): continue
+            try:
+                he = parse_he(row[hour_col]) if hour_col < len(row) else 0
+                for reg, col in rcols.items():
+                    if col and col < len(row) and row[col] not in (None,""):
+                        tmr_wind.setdefault(reg, {})[he] = float(row[col])
+            except: continue
+except Exception as e: print(f"Tomorrow wind forecast error: {e}")
+
+# Summarize forecast into key windows
+def zone_avg(zone_dict, zone, hours):
+    vals = [zone_dict.get(zone,{}).get(h,0) for h in hours]
+    return round(sum(vals)/len(vals)/1000, 1) if vals else 0
+
+def wind_avg(reg, hours):
+    vals = [tmr_wind.get(reg,{}).get(h,0) for h in hours]
+    return round(sum(vals)/len(vals)/1000, 1) if vals else 0
+
+tmr_prompt = f"\n=== TOMORROW'S FORECAST ({TOMORROW}) FOR DA BID ANALYSIS ===\n"
+tmr_prompt += "Load by zone (GW):\n"
+for window, hrs in [("Overnight HE1-8",range(1,9)),("Solar window HE9-14",range(9,15)),("Ramp HE15-20",range(15,21)),("Peak HE20-24",range(20,25))]:
+    n = zone_avg(tmr_load,"north",hrs); s = zone_avg(tmr_load,"south",hrs)
+    w = zone_avg(tmr_load,"west",hrs);  h = zone_avg(tmr_load,"houston",hrs)
+    tmr_prompt += f"  {window}: N={n}k S={s}k W={w}k H={h}k GW\n"
+tmr_prompt += "Wind forecast by region (GW):\n"
+for window, hrs in [("Overnight HE1-8",range(1,9)),("Solar window HE9-14",range(9,15)),("Ramp HE17-24",range(17,25))]:
+    pan=wind_avg("panhandle",hrs); west=wind_avg("west",hrs)
+    north=wind_avg("north",hrs); south=wind_avg("south",hrs)
+    tmr_prompt += f"  {window}: Panhandle={pan}k West={west}k North={north}k South={south}k GW\n"
+
+tmr_prompt += f"\n=== PLAYBOOK CONSTRAINTS & HEN NODE SHIFT FACTORS ===\n"
+tmr_prompt += build_playbook_sf_context()
+
+da_sys_msg = """You are a DA bid analyst for Hunt Energy Network (HEN), a 32-site ERCOT battery storage operator. Your job is to assess tomorrow's DA market based on the wind/load forecast and the congestion playbook.
+
+RULES:
+- Do NOT suggest specific $ prices or MW quantities
+- Focus purely on DIRECTIONAL guidance: which constraints are likely to bind, and how that affects DA pricing at HEN nodes
+- Positive shift factor = constraint binding raises that node's DA LMP (bid high, favorable for discharge)  
+- Negative shift factor = constraint binding lowers that node's DA LMP (suppressed price, possible charging opportunity)
+- Cross-reference forecast conditions against playbook driver thresholds (e.g., "West wind sub 5GW" → if forecast shows West wind below 5GW during morning hours, this constraint is likely active)
+- Group nodes clearly: ELEVATED DA PRICING, SUPPRESSED DA PRICING, NEUTRAL/HUB
+
+Structure your response as:
+1. FORECAST CONDITIONS SUMMARY — Brief (2-3 sentences): what do tomorrow's wind and load patterns look like overall?
+2. CONSTRAINTS LIKELY TO BIND TOMORROW — For each Active/Watch constraint, one sentence: likely/possible/unlikely, and why based on the driver vs forecast
+3. HEN NODE DA PRICING DIRECTION — Group nodes into: ELEVATED (positive SF on expected binding constraints), SUPPRESSED (negative SF), NEUTRAL (at zone hub or minimal SF exposure). This is the key operational output.
+4. KEY WATCH ITEMS — Any unusual patterns, stacked congestion risk, or nodes where the direction is uncertain
+
+Keep total response under 450 words. Be specific about which nodes and which constraints."""
+
+print("Calling Claude for DA Outlook...")
+try:
+    da_cr = requests.post("https://api.anthropic.com/v1/messages",
+        headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},
+        json={"model":"claude-sonnet-4-6","max_tokens":600,"system":da_sys_msg,
+              "messages":[{"role":"user","content":tmr_prompt}]},
+        timeout=60)
+    da_analysis = da_cr.json()["content"][0]["text"]
+    print("DA Outlook done")
+except Exception as e:
+    da_analysis = f"DA Outlook analysis unavailable: {e}"
+    print(f"DA Outlook error: {e}")
 
 # ─── 7. Build RT HTML ───
 Q = chr(39)
@@ -614,6 +758,30 @@ for para in analysis.strip().split("\n"):
     else:
         outlook_html += block
 
+# Parse DA Outlook analysis
+DA_SECTION_COLORS = {"1":"#4BACC6","2":"#e0584f","3":"#4fcf8a","4":"#d6a83f"}
+DA_SECTION_LABELS = {"1":"Forecast conditions","2":"Constraints likely to bind","3":"HEN node DA pricing direction","4":"Key watch items"}
+da_html = ""
+da_current = 0
+for para in da_analysis.strip().split("\n"):
+    para = para.strip()
+    if not para: continue
+    if para[0].isdigit() and len(para) > 1 and para[1] == ".":
+        da_current = int(para[0])
+        col = DA_SECTION_COLORS.get(str(da_current),"#4BACC6")
+        da_html += (f"<div style={Q}font-size:12px;font-weight:700;color:{col};margin:14px 0 5px;"
+                    f"text-transform:uppercase;letter-spacing:0.04em{Q}>{DA_SECTION_LABELS.get(str(da_current), para[:2])}</div>"
+                    f"<div style={Q}font-size:13px;color:#c8d8e8;line-height:1.65;margin-bottom:8px{Q}>{para[2:].strip()}</div>")
+    elif para.startswith("**") or para.startswith("##"):
+        clean = para.replace("**","").replace("#","").strip()
+        col = DA_SECTION_COLORS.get(str(da_current),"#7ea8bc")
+        da_html += f"<div style={Q}font-size:11px;font-weight:700;color:{col};margin:8px 0 3px{Q}>{clean}</div>"
+    elif para.startswith("-") or para.startswith("•"):
+        da_html += f"<div style={Q}font-size:13px;color:#c8d8e8;line-height:1.65;padding-left:12px;margin-bottom:4px{Q}>{para}</div>"
+    else:
+        da_html += f"<div style={Q}font-size:13px;color:#c8d8e8;line-height:1.65;margin-bottom:6px{Q}>{para}</div>"
+
+
 verdict_label = verdict["label"]
 verdict_action = verdict["action"]
 verdict_rt = verdict["rt_now"]
@@ -695,6 +863,7 @@ input:focus{{outline:none;border-color:#4BACC6}}
 
 <div class="tab-bar">
 <button class="tab-btn active" onclick="showTab('outlook',this)">Outlook — HE16–24 + tomorrow AM</button>
+<button class="tab-btn" onclick="showTab('daoutlook',this)">DA Outlook — {TOMORROW}</button>
 <button class="tab-btn" onclick="showTab('overnight',this)">Historical — HE1–15</button>
 <button class="tab-btn" onclick="showTab('chart',this)">Charts</button>
 </div>
@@ -727,6 +896,22 @@ input:focus{{outline:none;border-color:#4BACC6}}
 </div>
 <div style="font-size:11px;color:#5c7a8c;margin-bottom:10px">Zone hub DA prices for each hour. Click the Charts tab for full node-level detail.</div>
 <div id="da-zone-table" style="font-size:11px;color:#7ea8bc">Loading DA zone profile...</div>
+</div>
+
+</div>
+
+<div class="tab-panel" id="tab-daoutlook">
+
+<div class="card" style="padding:1.25rem;margin-bottom:1.25rem">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+<div style="width:3px;height:14px;background:#4fcf8a;border-radius:1px"></div>
+<div class="eyebrow" style="color:#4fcf8a">DA Outlook — {TOMORROW}</div>
+<span class="mono" style="font-size:10px;color:#3d5a70;margin-left:auto">{TODAY} {CDT.strftime('%H:%M CDT')} · based on {TOMORROW} forecast + playbook drivers + shift factors</span>
+</div>
+<div style="font-size:11px;color:#5c7a8c;margin-bottom:14px">
+Directional DA pricing guidance for tomorrow's bids — which HEN nodes expect elevated DA LMP vs suppressed DA LMP based on forecast conditions and expected congestion. No specific price or MW recommendations.
+</div>
+{da_html}
 </div>
 
 </div>
