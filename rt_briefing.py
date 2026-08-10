@@ -596,12 +596,21 @@ Answer four questions clearly:
 
 Be direct and actionable. Use zone names (West Texas, North Texas, Coastal) and premium node names when relevant. Reference specific HEs. Keep each section tight - the whole response under 500 words."""
 
-cr = requests.post("https://api.anthropic.com/v1/messages",
-    headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},
-    json={"model":"claude-sonnet-4-6","max_tokens":600,"system":sys_msg,"messages":[{"role":"user","content":prompt_data}]},
-    timeout=60)
-analysis = cr.json()["content"][0]["text"]
-print("Claude analysis done")
+try:
+    cr = requests.post("https://api.anthropic.com/v1/messages",
+        headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},
+        json={"model":"claude-sonnet-4-6","max_tokens":600,"system":sys_msg,"messages":[{"role":"user","content":prompt_data}]},
+        timeout=60)
+    if not cr.ok:
+        raise RuntimeError(f"HTTP {cr.status_code}: {cr.text[:500]}")
+    body = cr.json()
+    if "content" not in body:
+        raise RuntimeError(f"Unexpected response shape: {json.dumps(body)[:500]}")
+    analysis = body["content"][0]["text"]
+    print("Claude analysis done")
+except Exception as e:
+    analysis = f"RT dispatch analysis unavailable this run: {e}"
+    print(f"RT analysis error: {e}")
 
 # ─── DA Outlook — tomorrow's congestion-based DA pricing direction ───
 print("Fetching tomorrow's forecast for DA Outlook...")
