@@ -295,6 +295,12 @@ stacked_sites = [s for s, n in site_hit_counts.items() if n >= 2]
 print("Fetching RT prices...")
 rt_prices = {}
 KEY_NODES = ["LZ_WEST","LZ_NORTH","LZ_SOUTH","LZ_HOUSTON"] + PREMIUM_NODES
+# All 32 HEN battery sites. KEY_NODES above already covers the 6 PREMIUM
+# sites individually, so ALL_OTHER_SITES is just the remaining 26 - these
+# get their own individual RT (and attempted DA) fetches below so the new
+# "Full portfolio" table isn't stuck showing zone-hub prices for everyone.
+ALL_SITES = list(SITE_NAMES.keys())
+ALL_OTHER_SITES = [s for s in ALL_SITES if s not in PREMIUM_NODES]
 for node in KEY_NODES:
     try:
         r = requests.get(BASE+"/np6-788-cd/lmp_node_zone_hub",
@@ -315,7 +321,33 @@ for node in KEY_NODES:
                 except: pass
     except: pass
     time.sleep(0.2)
-print(f"RT prices: {len(rt_prices)} nodes")
+print(f"RT prices (zone hubs + premium): {len(rt_prices)} nodes")
+
+# Same RT fetch, extended to the other 26 battery sites so every one of the
+# 32 HEN sites gets its own individually-tracked RT price for the new
+# "Full portfolio" table (not just its zone hub's price).
+print("Fetching RT prices for remaining battery sites...")
+for node in ALL_OTHER_SITES:
+    try:
+        r = requests.get(BASE+"/np6-788-cd/lmp_node_zone_hub",
+            params={"settlementPoint":node,"SCEDTimestampFrom":TODAY+"T00:00:00","SCEDTimestampTo":ts_to_today,"size":500},
+            headers=hdrs, timeout=15)
+        if r.ok:
+            d = r.json()
+            fields = d.get("fields",[])
+            rows = d.get("data",[])
+            ts_col = next((f["cardinality"]-1 for f in fields if "sced" in f.get("name","").lower() or "timestamp" in f.get("name","").lower()), 0)
+            pr_col = next((f["cardinality"]-1 for f in fields if "lmp" in f.get("name","").lower() or "price" in f.get("name","").lower()), 1)
+            valid_rows = [r_ for r_ in rows if isinstance(r_, list) and len(r_) > max(ts_col, pr_col)]
+            if valid_rows:
+                latest = max(valid_rows, key=lambda r_: str(r_[ts_col]))
+                try:
+                    price = float(latest[pr_col])
+                    rt_prices[node] = round(price, 2)
+                except: pass
+    except: pass
+    time.sleep(0.2)
+print(f"RT prices: {len(rt_prices)} nodes total (all {len(ALL_SITES)} battery sites + zone hubs)")
 
 # ─── 3. DA Prices for tomorrow (solar window focus) ───
 print("Fetching DA prices for tomorrow...")
@@ -341,7 +373,39 @@ for node in KEY_NODES:
                 except: pass
     except: pass
     time.sleep(0.2)
-print(f"DA prices: {len(da_prices)} nodes")
+print(f"DA prices (zone hubs + premium): {len(da_prices)} nodes")
+
+# Try an individual DA quote for the other 26 sites too. Per William's
+# playbook, ERCOT only publishes individually-settled DA prices for West
+# Texas nodes, the 4 zone hubs, and the premium nodes - North Texas and
+# Coastal sites settle at their zone hub in the DA market. Rather than
+# hard-code which sites will/won't have data, we just attempt the fetch for
+# everyone; sites with no individual DA rows simply never get a da_prices
+# entry, and the table below falls back to their zone hub's DA profile
+# (see da_profile_for_site() further down).
+print("Fetching DA prices for remaining battery sites...")
+for node in ALL_OTHER_SITES:
+    try:
+        r = requests.get(BASE+"/np4-190-cd/dam_stlmnt_pnt_prices",
+            params={"settlementPoint":node,"deliveryDateFrom":TOMORROW,"deliveryDateTo":TOMORROW,"size":25},
+            headers=hdrs, timeout=15)
+        if r.ok:
+            d = r.json()
+            fields = d.get("fields",[])
+            rows = d.get("data",[])
+            he_col = next((f["cardinality"]-1 for f in fields if "hour" in f.get("name","").lower()),2)
+            pr_col = next((f["cardinality"]-1 for f in fields if "Price" in f.get("name","")),4)
+            for row in rows:
+                if not isinstance(row, list): continue
+                he = parse_he(row[he_col]) if he_col < len(row) else 0
+                try:
+                    price = float(row[pr_col]) if pr_col < len(row) and row[pr_col] else 0
+                    if node not in da_prices: da_prices[node] = {}
+                    da_prices[node][he] = round(price, 2)
+                except: pass
+    except: pass
+    time.sleep(0.2)
+print(f"DA prices: {len(da_prices)} nodes total (individually-quoted sites; the rest fall back to their zone hub)")
 
 # ─── 4. Compute RT vs DA comparison ───
 def zone_metrics(rt_price, da_hub):
@@ -364,6 +428,45 @@ premium_metrics = {}
 for node in PREMIUM_NODES:
     home_hub = PREMIUM_HOME_HUB[node]
     premium_metrics[node] = zone_metrics(rt_prices.get(node), da_prices.get(home_hub, {}))
+
+# ─── 4a. Per-site metrics for all 32 battery sites (feeds the "Full
+# portfolio" table below the Premium cards). Premium sites reuse the
+# metrics already computed above; the other 26 get their own RT price and,
+# where ERCOT didn't return an individual DA quote, fall back to their
+# zone hub's DA profile.
+def da_profile_for_site(site):
+    """Individual DA quote if ERCOT returned one for this site; otherwise
+    fall back to the site's zone hub (or, for premium sites, home hub)."""
+    if site in PREMIUM_NODES:
+        return da_prices.get(PREMIUM_HOME_HUB[site], {})
+    prof = da_prices.get(site)
+    if prof:
+        return prof
+    zone = SITE_ZONES.get(site)
+    hub = ZONE_HUBS.get(zone)
+    return da_prices.get(hub, {}) if hub else {}
+
+# Per-site flag: did ERCOT actually return an individually-settled DA quote
+# for this site, or is the DA figure shown for it really its zone hub's
+# number? Per William: ERCOT only individually settles West Texas nodes,
+# the 4 zone hubs, and the 6 Premium nodes in the DA market - North Texas
+# and Coastal sites never get their own DA quote, so this will read False
+# for all of them. The "Full portfolio" table uses this to show a small
+# "zone" tag next to the DA figure instead of silently presenting a
+# zone-level number as if it were node-level.
+site_da_is_individual = {}
+for site in ALL_SITES:
+    if site in PREMIUM_NODES:
+        site_da_is_individual[site] = False  # premium always shown via home hub, same as before
+    else:
+        site_da_is_individual[site] = bool(da_prices.get(site))
+
+site_metrics = {}
+for site in ALL_SITES:
+    if site in PREMIUM_NODES:
+        site_metrics[site] = premium_metrics[site]
+    else:
+        site_metrics[site] = zone_metrics(rt_prices.get(site), da_profile_for_site(site))
 
 # ─── 5. Verdict: pick the single most actionable signal across zones + premium nodes ───
 candidates = []
@@ -728,9 +831,55 @@ def constraint_table(rows, header_color="#BF5700"):
         f"<th style={Q}text-align:left;font-size:9px;color:#8A8478;padding:0 10px 6px;border-bottom:0.5px solid rgba(0,0,0,0.10){Q}>Peak HEs</th>"
         f"</tr></thead><tbody>{rows}</tbody></table>")
 
+def site_table_row(site, m, stacked, da_is_individual):
+    zone = SITE_ZONES.get(site,"")
+    zone_label = ZONE_LABELS.get(zone, zone)
+    is_premium = site in PREMIUM_NODES
+    rt = m["rt_now"]
+    sol = m["da_solar_avg"]
+    sig = m["signal"]
+    col = rc_map.get(sig, "#BF5700")
+    rt_col = "#B3261E" if rt and rt > 50 else "#1F8A4C" if rt is not None and rt < 10 else "#1B1B18"
+    prem_badge = f"<span style={Q}font-size:8px;font-weight:700;color:#BF5700;background:rgba(191,87,0,0.14);padding:1px 5px;border-radius:2px;margin-left:6px;letter-spacing:0.04em{Q}>PREMIUM</span>" if is_premium else ""
+    stack_badge = f"<span style={Q}font-size:8px;font-weight:700;color:#B3261E;margin-left:6px{Q}>&#9888; STACKED</span>" if stacked else ""
+    row_bg = "rgba(191,87,0,0.05)" if is_premium else ""
+    # ERCOT only settles West Texas nodes, the 4 zone hubs, and Premium
+    # nodes individually in the DA market - North Texas / Coastal sites
+    # never get their own DA quote. When that's the case, the number shown
+    # is really the site's zone hub's DA average, not a node-level figure,
+    # so tag it with a small "zone" badge instead of presenting it as if it
+    # were individually settled.
+    da_val = ('$'+str(sol)) if sol is not None else '&mdash;'
+    zone_tag = f" <span style={Q}font-size:8px;font-weight:600;color:#8A8478;border:0.5px solid rgba(0,0,0,0.15);border-radius:2px;padding:0 3px{Q} title={Q}ERCOT does not publish an individual day-ahead price for this site -- showing the zone hub day-ahead average instead{Q}>zone</span>" if (sol is not None and not da_is_individual) else ""
+    return (f"<tr style={Q}background:{row_bg}{Q}>"
+        f"<td style={Q}padding:6px 10px;font-size:12px;font-weight:600;color:#1B1B18;border-bottom:0.5px solid rgba(0,0,0,0.08){Q}>{SITE_NAMES.get(site,site)}{prem_badge}{stack_badge}</td>"
+        f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:10px;color:#6B665A;border-bottom:0.5px solid rgba(0,0,0,0.08){Q}>{zone_label}</td>"
+        f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:12px;font-weight:600;color:{rt_col};border-bottom:0.5px solid rgba(0,0,0,0.08){Q}>{('$'+str(rt)) if rt is not None else '&mdash;'}</td>"
+        f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:11px;color:#4A473F;border-bottom:0.5px solid rgba(0,0,0,0.08){Q}>{da_val}{zone_tag}</td>"
+        f"<td style={Q}padding:6px 10px;font-size:10px;color:#B3261E;border-bottom:0.5px solid rgba(0,0,0,0.08){Q}>{'&#9888; Stacked' if stacked else '&mdash;'}</td>"
+        f"<td style={Q}padding:6px 10px;border-bottom:0.5px solid rgba(0,0,0,0.08){Q}><span style={Q}font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:{col}22;color:{col}{Q}>{sig.lower()}</span></td>"
+        f"</tr>")
+
+def site_table(rows_html, table_id):
+    headers = [("Site","text"),("Zone","text"),("RT now","num"),("DA solar avg","num"),("Congestion","text"),("Signal","text")]
+    th_html = "".join(
+        f"<th onclick={Q}sortSiteTable(\"{table_id}\",{idx},\"{typ}\"){Q} style={Q}text-align:left;font-size:9px;color:#8A8478;padding:0 10px 6px;border-bottom:0.5px solid rgba(0,0,0,0.10);cursor:pointer;user-select:none{Q}>{label} &#8645;</th>"
+        for idx, (label, typ) in enumerate(headers))
+    return (f"<table id={Q}{table_id}{Q} style={Q}width:100%;border-collapse:collapse{Q}><thead><tr>{th_html}</tr></thead><tbody>{rows_html}</tbody></table>")
+
 geo_cards = "".join([zone_card(ZONE_LABELS[z], rt_vs_da[z]) for z in ["WEST_TEXAS","NORTH_TEXAS","COASTAL"]])
 geo_cards += zone_card("Mainland (Houston zone)", coastal_secondary)
 premium_cards = "".join([zone_card(SITE_NAMES.get(n,n), premium_metrics[n], highlight=True) for n in PREMIUM_NODES])
+
+# "Full portfolio" table: all 32 sites, grouped by zone (West Texas, North
+# Texas, Coastal, then Premium), sortable client-side by clicking a header.
+# Premium sites are included here too (visually flagged with a PREMIUM
+# badge) so nothing is missing from this view even though they also keep
+# their own card treatment above.
+_ZONE_ORDER = ["WEST_TEXAS","NORTH_TEXAS","COASTAL","PREMIUM"]
+_site_rows_sorted = sorted(ALL_SITES, key=lambda s: (_ZONE_ORDER.index(SITE_ZONES.get(s,"WEST_TEXAS")), SITE_NAMES.get(s,s)))
+portfolio_rows = "".join([site_table_row(s, site_metrics[s], s in stacked_sites, site_da_is_individual.get(s, False)) for s in _site_rows_sorted])
+portfolio_table_html = site_table(portfolio_rows, "portfolio-table")
 today_rows = "".join([constraint_row(c,i+1,"t") for i,c in enumerate(top_today_constraints)])
 yesterday_rows = "".join([constraint_row(c,i+1,"y") for i,c in enumerate(top_constraints)])
 
@@ -992,6 +1141,14 @@ input:focus{{outline:none;border-color:#BF5700}}
 {premium_cards}
 </div>
 
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+<div class="eyebrow" style="display:block">Full portfolio &mdash; all 32 battery sites</div>
+<span style="font-size:10px;color:#8A8478">click a column to sort</span>
+</div>
+<div class="card" style="padding:1rem;margin-bottom:1.25rem;overflow-x:auto">
+{portfolio_table_html}
+</div>
+
 <div class="card" style="padding:1.25rem;margin-bottom:1.25rem">
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
 <div style="width:3px;height:14px;background:#BF5700;border-radius:1px"></div>
@@ -1154,6 +1311,32 @@ function showTab(name, btn) {{
       loadOutlookChart();
     }}
   }}
+}}
+
+// Sortable "Full portfolio" table - click a <th> to sort by that column,
+// click again to flip direction. type is 'num' for $ columns, 'text' for
+// site/zone/signal columns.
+function sortSiteTable(tableId, colIdx, type) {{
+  const table = document.getElementById(tableId);
+  if (!table) return;
+  const tbody = table.querySelector("tbody");
+  const rows = Array.from(tbody.querySelectorAll("tr"));
+  const asc = !(table.dataset.sortCol === String(colIdx) && table.dataset.sortDir === "asc");
+  rows.sort((a, b) => {{
+    let av = a.children[colIdx].innerText.trim();
+    let bv = b.children[colIdx].innerText.trim();
+    if (type === "num") {{
+      let an = parseFloat(av.replace(/[^0-9.\-]/g, ""));
+      let bn = parseFloat(bv.replace(/[^0-9.\-]/g, ""));
+      if (isNaN(an)) an = -Infinity;
+      if (isNaN(bn)) bn = -Infinity;
+      return asc ? an - bn : bn - an;
+    }}
+    return asc ? av.localeCompare(bv) : bv.localeCompare(av);
+  }});
+  rows.forEach(r => tbody.appendChild(r));
+  table.dataset.sortCol = String(colIdx);
+  table.dataset.sortDir = asc ? "asc" : "desc";
 }}
 
 let outlookChart = null;
