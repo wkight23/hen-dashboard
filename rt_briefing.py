@@ -927,18 +927,18 @@ input:focus{{outline:none;border-color:#BF5700}}
 .tab-btn.active{{color:#FAF8F4;background:#BF5700}}
 .tab-panel{{display:none}}
 .tab-panel.active{{display:block}}
-.claude-section{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 4px 10px;margin:16px 0 8px}
-.claude-section:first-child{margin-top:0}
-.claude-subhead{font-size:12px;font-weight:700;margin:10px 0 4px}
-.claude-p{font-size:13px;color:#3A3833;line-height:1.65;margin-bottom:8px}
-.claude-list{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:6px}
-.claude-list li{font-size:13px;color:#3A3833;line-height:1.55;padding-left:2px}
-.claude-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:0.02em;padding:2px 7px;border-radius:4px;margin-right:6px}
-.claude-table{width:100%;border-collapse:collapse;margin:8px 0 12px;font-size:12px}
-.claude-table th{text-align:left;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#8A8478;padding:0 10px 6px;border-bottom:1px solid rgba(20,15,10,0.15)}
-.claude-table td{padding:7px 10px;color:#3A3833;border-bottom:0.5px solid rgba(20,15,10,0.08);vertical-align:top}
-.claude-table tr:last-child td{border-bottom:none}
-.assess-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:0.03em;padding:2px 8px;border-radius:4px}
+.claude-section{{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 4px 10px;margin:16px 0 8px}}
+.claude-section:first-child{{margin-top:0}}
+.claude-subhead{{font-size:12px;font-weight:700;margin:10px 0 4px}}
+.claude-p{{font-size:13px;color:#3A3833;line-height:1.65;margin-bottom:8px}}
+.claude-list{{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:6px}}
+.claude-list li{{font-size:13px;color:#3A3833;line-height:1.55;padding-left:2px}}
+.claude-badge{{display:inline-block;font-size:10px;font-weight:700;letter-spacing:0.02em;padding:2px 7px;border-radius:4px;margin-right:6px}}
+.claude-table{{width:100%;border-collapse:collapse;margin:8px 0 12px;font-size:12px}}
+.claude-table th{{text-align:left;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#8A8478;padding:0 10px 6px;border-bottom:1px solid rgba(20,15,10,0.15)}}
+.claude-table td{{padding:7px 10px;color:#3A3833;border-bottom:0.5px solid rgba(20,15,10,0.08);vertical-align:top}}
+.claude-table tr:last-child td{{border-bottom:none}}
+.assess-badge{{display:inline-block;font-size:10px;font-weight:700;letter-spacing:0.03em;padding:2px 8px;border-radius:4px}}
 </style></head><body>
 
 <div style="background:#FFFFFF;border-bottom:0.5px solid rgba(20,15,10,0.12);padding:0 1.5rem;height:50px;display:flex;align-items:center;justify-content:space-between">
