@@ -950,7 +950,7 @@ input:focus{{outline:none;border-color:#BF5700}}
 <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#4A473F"><span class="livedot"></span><span class="mono">HE{cur_he} · {CDT.strftime('%H:%M CDT')}</span></div>
 <a href="results.html" style="font-size:11px;color:#BF5700;text-decoration:none;border:0.5px solid rgba(191,87,0,0.25);padding:4px 10px;border-radius:5px">← Bid prep</a></div></div>
 
-<div style="max-width:960px;margin:0 auto;padding:1.5rem 1.5rem 3rem">
+<div style="max-width:1440px;margin:0 auto;padding:1.5rem 2rem 3rem">
 
 {run_control_html}
 
