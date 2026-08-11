@@ -186,6 +186,27 @@ auth_resp = requests.post(AUTH_URL, data={"username":ERCOT_USER,"password":ERCOT
 token = auth_resp.json().get("id_token","")
 hdrs = {"Authorization":"Bearer "+token,"Ocp-Apim-Subscription-Key":ERCOT_SUBKEY}
 
+# ERCOT's OAuth token can go stale partway through a long run. Since the 32-site
+# expansion this script now makes ~70+ individual settlement-point calls per run
+# (up from ~20), long enough that the DA fetch loop can start after the token has
+# expired - which silently fails every request in that loop, including the zone
+# hubs that used to work fine. chart_briefing.py already solves this by
+# re-authenticating every 15 calls; do the same thing here.
+_ercot_call_count = 0
+def reauth_if_stale():
+    global _ercot_call_count, token
+    _ercot_call_count += 1
+    if _ercot_call_count % 15 == 0:
+        try:
+            r2 = requests.post(AUTH_URL, data={"username":ERCOT_USER,"password":ERCOT_PASS,"grant_type":"password","scope":"openid fec253ea-0d06-4272-a5e6-b478baeecd70 offline_access","client_id":"fec253ea-0d06-4272-a5e6-b478baeecd70","response_type":"id_token"})
+            t2 = r2.json().get("id_token","")
+            if t2:
+                token = t2
+                hdrs["Authorization"] = "Bearer " + token
+                print(f"Re-authenticated at ERCOT call #{_ercot_call_count}")
+        except Exception as e:
+            print(f"Re-auth failed at ERCOT call #{_ercot_call_count}: {e}")
+
 def parse_he(val):
     try:
         s = str(val)
@@ -302,6 +323,7 @@ KEY_NODES = ["LZ_WEST","LZ_NORTH","LZ_SOUTH","LZ_HOUSTON"] + PREMIUM_NODES
 ALL_SITES = list(SITE_NAMES.keys())
 ALL_OTHER_SITES = [s for s in ALL_SITES if s not in PREMIUM_NODES]
 for node in KEY_NODES:
+    reauth_if_stale()
     try:
         r = requests.get(BASE+"/np6-788-cd/lmp_node_zone_hub",
             params={"settlementPoint":node,"SCEDTimestampFrom":TODAY+"T00:00:00","SCEDTimestampTo":ts_to_today,"size":500},
@@ -328,6 +350,7 @@ print(f"RT prices (zone hubs + premium): {len(rt_prices)} nodes")
 # "Full portfolio" table (not just its zone hub's price).
 print("Fetching RT prices for remaining battery sites...")
 for node in ALL_OTHER_SITES:
+    reauth_if_stale()
     try:
         r = requests.get(BASE+"/np6-788-cd/lmp_node_zone_hub",
             params={"settlementPoint":node,"SCEDTimestampFrom":TODAY+"T00:00:00","SCEDTimestampTo":ts_to_today,"size":500},
@@ -353,6 +376,7 @@ print(f"RT prices: {len(rt_prices)} nodes total (all {len(ALL_SITES)} battery si
 print("Fetching DA prices for tomorrow...")
 da_prices = {}
 for node in KEY_NODES:
+    reauth_if_stale()
     try:
         r = requests.get(BASE+"/np4-190-cd/dam_stlmnt_pnt_prices",
             params={"settlementPoint":node,"deliveryDateFrom":TOMORROW,"deliveryDateTo":TOMORROW,"size":25},
@@ -385,6 +409,7 @@ print(f"DA prices (zone hubs + premium): {len(da_prices)} nodes")
 # (see da_profile_for_site() further down).
 print("Fetching DA prices for remaining battery sites...")
 for node in ALL_OTHER_SITES:
+    reauth_if_stale()
     try:
         r = requests.get(BASE+"/np4-190-cd/dam_stlmnt_pnt_prices",
             params={"settlementPoint":node,"deliveryDateFrom":TOMORROW,"deliveryDateTo":TOMORROW,"size":25},
