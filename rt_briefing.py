@@ -373,29 +373,44 @@ for node in ALL_OTHER_SITES:
 print(f"RT prices: {len(rt_prices)} nodes total (all {len(ALL_SITES)} battery sites + zone hubs)")
 
 # ─── 3. DA Prices for tomorrow (solar window focus) ───
+# NOTE: previously queried deliveryDateFrom=deliveryDateTo=TOMORROW (a single-day
+# range) and it silently returned zero rows for every node on several recent runs,
+# even zone hubs that used to work. chart_briefing.py queries a 2-day range
+# (TODAY..TOMORROW) and has never had this problem, so we now match that proven
+# shape and filter down to just tomorrow's rows ourselves via the date column.
 print("Fetching DA prices for tomorrow...")
 da_prices = {}
+da_debug_printed = False
 for node in KEY_NODES:
     reauth_if_stale()
     try:
         r = requests.get(BASE+"/np4-190-cd/dam_stlmnt_pnt_prices",
-            params={"settlementPoint":node,"deliveryDateFrom":TOMORROW,"deliveryDateTo":TOMORROW,"size":25},
+            params={"settlementPoint":node,"deliveryDateFrom":TODAY,"deliveryDateTo":TOMORROW,"size":50},
             headers=hdrs, timeout=15)
         if r.ok:
             d = r.json()
             fields = d.get("fields",[])
             rows = d.get("data",[])
+            date_col = next((f["cardinality"]-1 for f in fields if "deliverydate" in f.get("name","").lower()), 0)
             he_col = next((f["cardinality"]-1 for f in fields if "hour" in f.get("name","").lower()),2)
             pr_col = next((f["cardinality"]-1 for f in fields if "Price" in f.get("name","")),4)
+            if not da_debug_printed:
+                print(f"DA sample response for {node}: fields={[f.get('name') for f in fields]} rows={len(rows)}")
+                da_debug_printed = True
             for row in rows:
                 if not isinstance(row, list): continue
-                he = parse_he(row[he_col]) if he_col < len(row) else 0
                 try:
+                    row_date = str(row[date_col])[:10] if date_col < len(row) else ""
+                    if row_date != TOMORROW: continue
+                    he = parse_he(row[he_col]) if he_col < len(row) else 0
                     price = float(row[pr_col]) if pr_col < len(row) and row[pr_col] else 0
                     if node not in da_prices: da_prices[node] = {}
                     da_prices[node][he] = round(price, 2)
                 except: pass
-    except: pass
+        else:
+            print(f"DA fetch failed for {node}: HTTP {r.status_code} {r.text[:200]}")
+    except Exception as e:
+        print(f"DA fetch error for {node}: {e}")
     time.sleep(0.2)
 print(f"DA prices (zone hubs + premium): {len(da_prices)} nodes")
 
@@ -412,23 +427,29 @@ for node in ALL_OTHER_SITES:
     reauth_if_stale()
     try:
         r = requests.get(BASE+"/np4-190-cd/dam_stlmnt_pnt_prices",
-            params={"settlementPoint":node,"deliveryDateFrom":TOMORROW,"deliveryDateTo":TOMORROW,"size":25},
+            params={"settlementPoint":node,"deliveryDateFrom":TODAY,"deliveryDateTo":TOMORROW,"size":50},
             headers=hdrs, timeout=15)
         if r.ok:
             d = r.json()
             fields = d.get("fields",[])
             rows = d.get("data",[])
+            date_col = next((f["cardinality"]-1 for f in fields if "deliverydate" in f.get("name","").lower()), 0)
             he_col = next((f["cardinality"]-1 for f in fields if "hour" in f.get("name","").lower()),2)
             pr_col = next((f["cardinality"]-1 for f in fields if "Price" in f.get("name","")),4)
             for row in rows:
                 if not isinstance(row, list): continue
-                he = parse_he(row[he_col]) if he_col < len(row) else 0
                 try:
+                    row_date = str(row[date_col])[:10] if date_col < len(row) else ""
+                    if row_date != TOMORROW: continue
+                    he = parse_he(row[he_col]) if he_col < len(row) else 0
                     price = float(row[pr_col]) if pr_col < len(row) and row[pr_col] else 0
                     if node not in da_prices: da_prices[node] = {}
                     da_prices[node][he] = round(price, 2)
                 except: pass
-    except: pass
+        else:
+            print(f"DA fetch failed for {node}: HTTP {r.status_code} {r.text[:200]}")
+    except Exception as e:
+        print(f"DA fetch error for {node}: {e}")
     time.sleep(0.2)
 print(f"DA prices: {len(da_prices)} nodes total (individually-quoted sites; the rest fall back to their zone hub)")
 
