@@ -207,6 +207,21 @@ def reauth_if_stale():
         except Exception as e:
             print(f"Re-auth failed at ERCOT call #{_ercot_call_count}: {e}")
 
+# ERCOT's public API rate-limits across ALL requests, not per-endpoint. With the
+# 32-site expansion this script makes ~74 individual settlement-point calls per
+# run (SCED + 36 RT + 36 DA); the old 0.2s pause between calls was enough to trip
+# ERCOT's limit by the time the DA loop started, which then failed EVERY DA call
+# in a row with HTTP 429 (confirmed in the 2026-08-11 run log). chart_briefing.py
+# never hits this because it paces calls a full 1.0s apart with no RT loop before
+# it. Match that pace here, and back off hard if we still get a 429 so one bad
+# call doesn't cascade into every remaining node failing too.
+def throttle(resp=None):
+    if resp is not None and getattr(resp, "status_code", None) == 429:
+        print("Rate-limited by ERCOT - backing off 15s before continuing")
+        time.sleep(15)
+    else:
+        time.sleep(1.0)
+
 def parse_he(val):
     try:
         s = str(val)
@@ -324,6 +339,7 @@ ALL_SITES = list(SITE_NAMES.keys())
 ALL_OTHER_SITES = [s for s in ALL_SITES if s not in PREMIUM_NODES]
 for node in KEY_NODES:
     reauth_if_stale()
+    r = None
     try:
         r = requests.get(BASE+"/np6-788-cd/lmp_node_zone_hub",
             params={"settlementPoint":node,"SCEDTimestampFrom":TODAY+"T00:00:00","SCEDTimestampTo":ts_to_today,"size":500},
@@ -342,7 +358,7 @@ for node in KEY_NODES:
                     rt_prices[node] = round(price, 2)
                 except: pass
     except: pass
-    time.sleep(0.2)
+    throttle(r)
 print(f"RT prices (zone hubs + premium): {len(rt_prices)} nodes")
 
 # Same RT fetch, extended to the other 26 battery sites so every one of the
@@ -351,6 +367,7 @@ print(f"RT prices (zone hubs + premium): {len(rt_prices)} nodes")
 print("Fetching RT prices for remaining battery sites...")
 for node in ALL_OTHER_SITES:
     reauth_if_stale()
+    r = None
     try:
         r = requests.get(BASE+"/np6-788-cd/lmp_node_zone_hub",
             params={"settlementPoint":node,"SCEDTimestampFrom":TODAY+"T00:00:00","SCEDTimestampTo":ts_to_today,"size":500},
@@ -369,7 +386,7 @@ for node in ALL_OTHER_SITES:
                     rt_prices[node] = round(price, 2)
                 except: pass
     except: pass
-    time.sleep(0.2)
+    throttle(r)
 print(f"RT prices: {len(rt_prices)} nodes total (all {len(ALL_SITES)} battery sites + zone hubs)")
 
 # ─── 3. DA Prices for tomorrow (solar window focus) ───
@@ -383,6 +400,7 @@ da_prices = {}
 da_debug_printed = False
 for node in KEY_NODES:
     reauth_if_stale()
+    r = None
     try:
         r = requests.get(BASE+"/np4-190-cd/dam_stlmnt_pnt_prices",
             params={"settlementPoint":node,"deliveryDateFrom":TODAY,"deliveryDateTo":TOMORROW,"size":50},
@@ -411,7 +429,7 @@ for node in KEY_NODES:
             print(f"DA fetch failed for {node}: HTTP {r.status_code} {r.text[:200]}")
     except Exception as e:
         print(f"DA fetch error for {node}: {e}")
-    time.sleep(0.2)
+    throttle(r)
 print(f"DA prices (zone hubs + premium): {len(da_prices)} nodes")
 
 # Try an individual DA quote for the other 26 sites too. Per William's
@@ -425,6 +443,7 @@ print(f"DA prices (zone hubs + premium): {len(da_prices)} nodes")
 print("Fetching DA prices for remaining battery sites...")
 for node in ALL_OTHER_SITES:
     reauth_if_stale()
+    r = None
     try:
         r = requests.get(BASE+"/np4-190-cd/dam_stlmnt_pnt_prices",
             params={"settlementPoint":node,"deliveryDateFrom":TODAY,"deliveryDateTo":TOMORROW,"size":50},
@@ -450,7 +469,7 @@ for node in ALL_OTHER_SITES:
             print(f"DA fetch failed for {node}: HTTP {r.status_code} {r.text[:200]}")
     except Exception as e:
         print(f"DA fetch error for {node}: {e}")
-    time.sleep(0.2)
+    throttle(r)
 print(f"DA prices: {len(da_prices)} nodes total (individually-quoted sites; the rest fall back to their zone hub)")
 
 # ─── 4. Compute RT vs DA comparison ───
