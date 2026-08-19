@@ -389,15 +389,51 @@ for node in ALL_OTHER_SITES:
     throttle(r)
 print(f"RT prices: {len(rt_prices)} nodes total (all {len(ALL_SITES)} battery sites + zone hubs)")
 
-# ─── 3. DA Prices for tomorrow (solar window focus) ───
-# NOTE: previously queried deliveryDateFrom=deliveryDateTo=TOMORROW (a single-day
-# range) and it silently returned zero rows for every node on several recent runs,
-# even zone hubs that used to work. chart_briefing.py queries a 2-day range
-# (TODAY..TOMORROW) and has never had this problem, so we now match that proven
-# shape and filter down to just tomorrow's rows ourselves via the date column.
-print("Fetching DA prices for tomorrow...")
-da_prices = {}
+# ─── 3. DA Prices - tomorrow (solar window focus) AND today (current-hour
+# RT-vs-DA comparison) ───
+# NOTE: previously compared ERCOT's returned date against TOMORROW with a plain
+# string match. ERCOT's dam_stlmnt_pnt_prices endpoint sometimes returns
+# deliveryDate as MM/DD/YYYY instead of YYYY-MM-DD (chart_briefing.py already
+# works around this - see its "Normalize: handle both YYYY-MM-DD and MM/DD/YYYY
+# formats" comment). A plain string compare against MM/DD/YYYY will NEVER equal
+# our YYYY-MM-DD TOMORROW string, which explains why this stayed broken no
+# matter what time of day the run kicked off. Normalizing the date format here
+# the same way chart_briefing.py does.
+def normalize_da_date(raw):
+    s = str(raw)
+    if len(s) >= 10 and s[2] == '/' and s[5] == '/':
+        parts = s[:10].split('/')
+        try:
+            return f"{parts[2]}-{int(parts[0]):02d}-{int(parts[1]):02d}"
+        except Exception:
+            return s[:10]
+    return s[:10]
+
+print("Fetching DA prices for today + tomorrow...")
+da_prices = {}         # tomorrow's hourly prices per node - solar-window avg / charging decision
+da_today_prices = {}   # today's hourly prices per node - current-hour RT-vs-DA comparison
 da_debug_printed = False
+
+def _parse_da_response(node, rows, fields):
+    date_col = next((f["cardinality"]-1 for f in fields if "deliverydate" in f.get("name","").lower()), 0)
+    he_col = next((f["cardinality"]-1 for f in fields if "hour" in f.get("name","").lower()),2)
+    pr_col = next((f["cardinality"]-1 for f in fields if "Price" in f.get("name","")),4)
+    dates_seen = set()
+    for row in rows:
+        if not isinstance(row, list): continue
+        try:
+            raw_date = row[date_col] if date_col < len(row) else ""
+            row_date = normalize_da_date(raw_date)
+            dates_seen.add(row_date)
+            he = parse_he(row[he_col]) if he_col < len(row) else 0
+            price = float(row[pr_col]) if pr_col < len(row) and row[pr_col] else 0
+            if row_date == TOMORROW:
+                da_prices.setdefault(node, {})[he] = round(price, 2)
+            elif row_date == TODAY:
+                da_today_prices.setdefault(node, {})[he] = round(price, 2)
+        except: pass
+    return dates_seen
+
 for node in KEY_NODES:
     reauth_if_stale()
     r = None
@@ -409,28 +445,16 @@ for node in KEY_NODES:
             d = r.json()
             fields = d.get("fields",[])
             rows = d.get("data",[])
-            date_col = next((f["cardinality"]-1 for f in fields if "deliverydate" in f.get("name","").lower()), 0)
-            he_col = next((f["cardinality"]-1 for f in fields if "hour" in f.get("name","").lower()),2)
-            pr_col = next((f["cardinality"]-1 for f in fields if "Price" in f.get("name","")),4)
+            dates_seen = _parse_da_response(node, rows, fields)
             if not da_debug_printed:
-                print(f"DA sample response for {node}: fields={[f.get('name') for f in fields]} rows={len(rows)}")
+                print(f"DA sample response for {node}: fields={[f.get('name') for f in fields]} rows={len(rows)} dates_seen={sorted(dates_seen)} (today={TODAY} tomorrow={TOMORROW})")
                 da_debug_printed = True
-            for row in rows:
-                if not isinstance(row, list): continue
-                try:
-                    row_date = str(row[date_col])[:10] if date_col < len(row) else ""
-                    if row_date != TOMORROW: continue
-                    he = parse_he(row[he_col]) if he_col < len(row) else 0
-                    price = float(row[pr_col]) if pr_col < len(row) and row[pr_col] else 0
-                    if node not in da_prices: da_prices[node] = {}
-                    da_prices[node][he] = round(price, 2)
-                except: pass
         else:
             print(f"DA fetch failed for {node}: HTTP {r.status_code} {r.text[:200]}")
     except Exception as e:
         print(f"DA fetch error for {node}: {e}")
     throttle(r)
-print(f"DA prices (zone hubs + premium): {len(da_prices)} nodes")
+print(f"DA prices (zone hubs + premium): {len(da_prices)} nodes for tomorrow, {len(da_today_prices)} nodes for today")
 
 # Try an individual DA quote for the other 26 sites too. Per William's
 # playbook, ERCOT only publishes individually-settled DA prices for West
@@ -452,25 +476,13 @@ for node in ALL_OTHER_SITES:
             d = r.json()
             fields = d.get("fields",[])
             rows = d.get("data",[])
-            date_col = next((f["cardinality"]-1 for f in fields if "deliverydate" in f.get("name","").lower()), 0)
-            he_col = next((f["cardinality"]-1 for f in fields if "hour" in f.get("name","").lower()),2)
-            pr_col = next((f["cardinality"]-1 for f in fields if "Price" in f.get("name","")),4)
-            for row in rows:
-                if not isinstance(row, list): continue
-                try:
-                    row_date = str(row[date_col])[:10] if date_col < len(row) else ""
-                    if row_date != TOMORROW: continue
-                    he = parse_he(row[he_col]) if he_col < len(row) else 0
-                    price = float(row[pr_col]) if pr_col < len(row) and row[pr_col] else 0
-                    if node not in da_prices: da_prices[node] = {}
-                    da_prices[node][he] = round(price, 2)
-                except: pass
+            _parse_da_response(node, rows, fields)
         else:
             print(f"DA fetch failed for {node}: HTTP {r.status_code} {r.text[:200]}")
     except Exception as e:
         print(f"DA fetch error for {node}: {e}")
     throttle(r)
-print(f"DA prices: {len(da_prices)} nodes total (individually-quoted sites; the rest fall back to their zone hub)")
+print(f"DA prices: {len(da_prices)} nodes total for tomorrow, {len(da_today_prices)} for today (individually-quoted sites; the rest fall back to their zone hub)")
 
 # ─── 4. Compute RT vs DA comparison ───
 def zone_metrics(rt_price, da_hub):
@@ -525,6 +537,28 @@ for site in ALL_SITES:
         site_da_is_individual[site] = False  # premium always shown via home hub, same as before
     else:
         site_da_is_individual[site] = bool(da_prices.get(site))
+
+# ─── 4b. "DA now" - today's DA price at the current settlement hour, for a
+# direct side-by-side comparison with RT now in the Full Portfolio table.
+# Requested by William: with RT now already shown per site, today's DA price
+# for the hour we're currently in is the natural comparison (the classic
+# RT-vs-DA spread), and it's available immediately - no waiting on tomorrow's
+# DAM auction to post like da_solar_avg / the DA Outlook tab do.
+def da_today_profile_for_site(site):
+    """Same fallback logic as da_profile_for_site, but against today's prices."""
+    if site in PREMIUM_NODES:
+        return da_today_prices.get(PREMIUM_HOME_HUB[site], {})
+    prof = da_today_prices.get(site)
+    if prof:
+        return prof
+    zone = SITE_ZONES.get(site)
+    hub = ZONE_HUBS.get(zone)
+    return da_today_prices.get(hub, {}) if hub else {}
+
+_cur_he_for_da = CDT.hour + 1
+site_da_now = {}
+for site in ALL_SITES:
+    site_da_now[site] = da_today_profile_for_site(site).get(_cur_he_for_da)
 
 site_metrics = {}
 for site in ALL_SITES:
@@ -905,7 +939,7 @@ def constraint_table(rows, header_color="#BF5700"):
         f"<th style={Q}text-align:left;font-size:9px;color:#8A8478;padding:0 10px 6px;border-bottom:0.5px solid rgba(0,0,0,0.10){Q}>Peak HEs</th>"
         f"</tr></thead><tbody>{rows}</tbody></table>")
 
-def site_table_row(site, m, stacked, da_is_individual):
+def site_table_row(site, m, stacked, da_is_individual, da_now):
     zone = SITE_ZONES.get(site,"")
     zone_label = ZONE_LABELS.get(zone, zone)
     is_premium = site in PREMIUM_NODES
@@ -914,6 +948,7 @@ def site_table_row(site, m, stacked, da_is_individual):
     sig = m["signal"]
     col = rc_map.get(sig, "#BF5700")
     rt_col = "#B3261E" if rt and rt > 50 else "#1F8A4C" if rt is not None and rt < 10 else "#1B1B18"
+    da_now_col = "#B3261E" if da_now and da_now > 50 else "#1F8A4C" if da_now is not None and da_now < 10 else "#4A473F"
     prem_badge = f"<span style={Q}font-size:8px;font-weight:700;color:#BF5700;background:rgba(191,87,0,0.14);padding:1px 5px;border-radius:2px;margin-left:6px;letter-spacing:0.04em{Q}>PREMIUM</span>" if is_premium else ""
     stack_badge = f"<span style={Q}font-size:8px;font-weight:700;color:#B3261E;margin-left:6px{Q}>&#9888; STACKED</span>" if stacked else ""
     row_bg = "rgba(191,87,0,0.05)" if is_premium else ""
@@ -925,17 +960,19 @@ def site_table_row(site, m, stacked, da_is_individual):
     # were individually settled.
     da_val = ('$'+str(sol)) if sol is not None else '&mdash;'
     zone_tag = f" <span style={Q}font-size:8px;font-weight:600;color:#8A8478;border:0.5px solid rgba(0,0,0,0.15);border-radius:2px;padding:0 3px{Q} title={Q}ERCOT does not publish an individual day-ahead price for this site -- showing the zone hub day-ahead average instead{Q}>zone</span>" if (sol is not None and not da_is_individual) else ""
+    da_now_val = ('$'+str(da_now)) if da_now is not None else '&mdash;'
     return (f"<tr style={Q}background:{row_bg}{Q}>"
         f"<td style={Q}padding:6px 10px;font-size:12px;font-weight:600;color:#1B1B18;border-bottom:0.5px solid rgba(0,0,0,0.08){Q}>{SITE_NAMES.get(site,site)}{prem_badge}{stack_badge}</td>"
         f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:10px;color:#6B665A;border-bottom:0.5px solid rgba(0,0,0,0.08){Q}>{zone_label}</td>"
         f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:12px;font-weight:600;color:{rt_col};border-bottom:0.5px solid rgba(0,0,0,0.08){Q}>{('$'+str(rt)) if rt is not None else '&mdash;'}</td>"
+        f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:12px;font-weight:600;color:{da_now_col};border-bottom:0.5px solid rgba(0,0,0,0.08){Q}>{da_now_val}</td>"
         f"<td class={Q}mono{Q} style={Q}padding:6px 10px;font-size:11px;color:#4A473F;border-bottom:0.5px solid rgba(0,0,0,0.08){Q}>{da_val}{zone_tag}</td>"
         f"<td style={Q}padding:6px 10px;font-size:10px;color:#B3261E;border-bottom:0.5px solid rgba(0,0,0,0.08){Q}>{'&#9888; Stacked' if stacked else '&mdash;'}</td>"
         f"<td style={Q}padding:6px 10px;border-bottom:0.5px solid rgba(0,0,0,0.08){Q}><span style={Q}font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;background:{col}22;color:{col}{Q}>{sig.lower()}</span></td>"
         f"</tr>")
 
 def site_table(rows_html, table_id):
-    headers = [("Site","text"),("Zone","text"),("RT now","num"),("DA solar avg","num"),("Congestion","text"),("Signal","text")]
+    headers = [("Site","text"),("Zone","text"),("RT now","num"),(f"DA now (HE{cur_he})","num"),("DA solar avg","num"),("Congestion","text"),("Signal","text")]
     th_html = "".join(
         f"<th onclick={Q}sortSiteTable(\"{table_id}\",{idx},\"{typ}\"){Q} style={Q}text-align:left;font-size:9px;color:#8A8478;padding:0 10px 6px;border-bottom:0.5px solid rgba(0,0,0,0.10);cursor:pointer;user-select:none{Q}>{label} &#8645;</th>"
         for idx, (label, typ) in enumerate(headers))
@@ -952,7 +989,7 @@ premium_cards = "".join([zone_card(SITE_NAMES.get(n,n), premium_metrics[n], high
 # their own card treatment above.
 _ZONE_ORDER = ["WEST_TEXAS","NORTH_TEXAS","COASTAL","PREMIUM"]
 _site_rows_sorted = sorted(ALL_SITES, key=lambda s: (_ZONE_ORDER.index(SITE_ZONES.get(s,"WEST_TEXAS")), SITE_NAMES.get(s,s)))
-portfolio_rows = "".join([site_table_row(s, site_metrics[s], s in stacked_sites, site_da_is_individual.get(s, False)) for s in _site_rows_sorted])
+portfolio_rows = "".join([site_table_row(s, site_metrics[s], s in stacked_sites, site_da_is_individual.get(s, False), site_da_now.get(s)) for s in _site_rows_sorted])
 portfolio_table_html = site_table(portfolio_rows, "portfolio-table")
 today_rows = "".join([constraint_row(c,i+1,"t") for i,c in enumerate(top_today_constraints)])
 yesterday_rows = "".join([constraint_row(c,i+1,"y") for i,c in enumerate(top_constraints)])
