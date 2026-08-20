@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-20T15:58:37.004015+00:00",
+  "updated": "2026-08-20T16:12:29.333564+00:00",
   "available": true,
   "matched_count": 77,
   "tracked_count": 102,
@@ -40,7 +40,7 @@
         "Weil Tract": -0.079,
         "Mainland": 0.118
       },
-      "status": "CRITICAL"
+      "status": "ELEVATED"
     },
     {
       "name": "ZEN-THW 345KV THWZEN71_A",
@@ -75,7 +75,7 @@
         "Olney": -0.062,
         "Pauline": -0.07
       },
-      "status": "CRITICAL"
+      "status": "ELEVATED"
     },
     {
       "name": "ZEN-THW 345KV THWZEN98_A",
@@ -109,7 +109,7 @@
         "Olney": -0.0558,
         "Pauline": -0.062
       },
-      "status": "CRITICAL"
+      "status": "ELEVATED"
     },
     {
       "name": "BCESW-SNDSW 345KV 421__A",
@@ -150,7 +150,7 @@
         "Olney": -0.069,
         "Pauline": -0.078
       },
-      "status": "ELEVATED"
+      "status": "NORMAL"
     },
     {
       "name": "YELWJCKT-HEXT 69KV HEXT_YELWJC1_1",
@@ -161,7 +161,7 @@
       "sites": {
         "Junction": 0.059
       },
-      "status": "ELEVATED"
+      "status": "NORMAL"
     },
     {
       "name": "TREADWEL-YELWJCKT 138KV TREADW_YELWJC1_1",
@@ -183,7 +183,7 @@
         "Sandlake": -0.02252,
         "Screwbean": -0.02235
       },
-      "status": "ELEVATED"
+      "status": "NORMAL"
     },
     {
       "name": "GT-BG 138KV BG_GT_37_A",
@@ -194,7 +194,7 @@
       "sites": {
         "Mainland": 0.14257
       },
-      "status": "ELEVATED"
+      "status": "NORMAL"
     },
     {
       "name": "SMITHERS-BI 345KV BI_SMR98_A",
@@ -215,7 +215,7 @@
         "Weil Tract": -0.051,
         "Mainland": 0.023
       },
-      "status": "ELEVATED"
+      "status": "NORMAL"
     },
     {
       "name": "DOW-OAS 345KV DOWOAS18_A",
@@ -241,7 +241,7 @@
         "Lufkin South": 0.03,
         "Pauline": 0.029
       },
-      "status": "ELEVATED"
+      "status": "NORMAL"
     },
     {
       "name": "PEARSALL-POTEETS 69KV POT_PEAR_1",
@@ -252,7 +252,7 @@
       "sites": {
         "Poteets": 0.39103
       },
-      "status": "ELEVATED"
+      "status": "NORMAL"
     },
     {
       "name": "MADDUX-TREADWEL 138KV MADDUX_TREADW1_1",
@@ -378,7 +378,7 @@
           "Weil Tract": -0.079,
           "Mainland": 0.118
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -419,7 +419,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "SMITHERS-BI 345KV BI_SMR98_A",
@@ -440,7 +440,7 @@
           "Weil Tract": -0.051,
           "Mainland": 0.023
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "DOW-OAS 345KV DOWOAS18_A",
@@ -466,7 +466,7 @@
           "Lufkin South": 0.03,
           "Pauline": 0.029
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       }
     ],
     "Holcomb": [
@@ -506,7 +506,7 @@
           "Weil Tract": -0.079,
           "Mainland": 0.118
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -547,7 +547,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "SMITHERS-BI 345KV BI_SMR98_A",
@@ -568,7 +568,7 @@
           "Weil Tract": -0.051,
           "Mainland": 0.023
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "DOW-OAS 345KV DOWOAS18_A",
@@ -594,7 +594,7 @@
           "Lufkin South": 0.03,
           "Pauline": 0.029
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       }
     ],
     "Fort Duncan": [
@@ -634,7 +634,7 @@
           "Weil Tract": -0.079,
           "Mainland": 0.118
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN71_A",
@@ -669,7 +669,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -710,7 +710,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "SMITHERS-BI 345KV BI_SMR98_A",
@@ -731,7 +731,7 @@
           "Weil Tract": -0.051,
           "Mainland": 0.023
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       }
     ],
     "Mainland": [
@@ -771,7 +771,7 @@
           "Weil Tract": -0.079,
           "Mainland": 0.118
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN71_A",
@@ -806,7 +806,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -840,7 +840,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "GT-BG 138KV BG_GT_37_A",
@@ -851,7 +851,7 @@
         "sites": {
           "Mainland": 0.14257
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       }
     ],
     "Russek": [
@@ -877,7 +877,7 @@
           "Weil Tract": -0.079,
           "Mainland": 0.118
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN71_A",
@@ -912,7 +912,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -946,7 +946,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -987,7 +987,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "TREADWEL-YELWJCKT 138KV TREADW_YELWJC1_1",
@@ -1009,7 +1009,7 @@
           "Sandlake": -0.02252,
           "Screwbean": -0.02235
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       }
     ],
     "Hamilton": [
@@ -1035,7 +1035,7 @@
           "Weil Tract": -0.079,
           "Mainland": 0.118
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN71_A",
@@ -1070,7 +1070,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -1104,7 +1104,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -1145,7 +1145,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "SMITHERS-BI 345KV BI_SMR98_A",
@@ -1166,7 +1166,7 @@
           "Weil Tract": -0.051,
           "Mainland": 0.023
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       }
     ],
     "Junction": [
@@ -1192,7 +1192,7 @@
           "Weil Tract": -0.079,
           "Mainland": 0.118
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN71_A",
@@ -1227,7 +1227,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -1261,7 +1261,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -1302,7 +1302,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "YELWJCKT-HEXT 69KV HEXT_YELWJC1_1",
@@ -1313,7 +1313,7 @@
         "sites": {
           "Junction": 0.059
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       }
     ],
     "Toyah": [
@@ -1339,7 +1339,7 @@
           "Weil Tract": -0.079,
           "Mainland": 0.118
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN71_A",
@@ -1374,7 +1374,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -1408,7 +1408,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -1449,7 +1449,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "TREADWEL-YELWJCKT 138KV TREADW_YELWJC1_1",
@@ -1471,7 +1471,7 @@
           "Sandlake": -0.02252,
           "Screwbean": -0.02235
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       }
     ],
     "Val Verde": [
@@ -1497,7 +1497,7 @@
           "Weil Tract": -0.079,
           "Mainland": 0.118
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -1538,7 +1538,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "SMITHERS-BI 345KV BI_SMR98_A",
@@ -1559,7 +1559,7 @@
           "Weil Tract": -0.051,
           "Mainland": 0.023
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "DOW-OAS 345KV DOWOAS18_A",
@@ -1585,7 +1585,7 @@
           "Lufkin South": 0.03,
           "Pauline": 0.029
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "JEWET-BBSES 345KV 50__A",
@@ -1651,7 +1651,7 @@
           "Weil Tract": -0.079,
           "Mainland": 0.118
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -1692,7 +1692,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "SMITHERS-BI 345KV BI_SMR98_A",
@@ -1713,7 +1713,7 @@
           "Weil Tract": -0.051,
           "Mainland": 0.023
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "DOW-OAS 345KV DOWOAS18_A",
@@ -1739,7 +1739,7 @@
           "Lufkin South": 0.03,
           "Pauline": 0.029
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "JEWET-BBSES 345KV 50__A",
@@ -1805,7 +1805,7 @@
           "Weil Tract": -0.079,
           "Mainland": 0.118
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN71_A",
@@ -1840,7 +1840,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -1874,7 +1874,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -1915,7 +1915,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "SMITHERS-BI 345KV BI_SMR98_A",
@@ -1936,7 +1936,7 @@
           "Weil Tract": -0.051,
           "Mainland": 0.023
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       }
     ],
     "Poteets": [
@@ -1962,7 +1962,7 @@
           "Weil Tract": -0.079,
           "Mainland": 0.118
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -2003,7 +2003,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "SMITHERS-BI 345KV BI_SMR98_A",
@@ -2024,7 +2024,7 @@
           "Weil Tract": -0.051,
           "Mainland": 0.023
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "DOW-OAS 345KV DOWOAS18_A",
@@ -2050,7 +2050,7 @@
           "Lufkin South": 0.03,
           "Pauline": 0.029
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "PEARSALL-POTEETS 69KV POT_PEAR_1",
@@ -2061,7 +2061,7 @@
         "sites": {
           "Poteets": 0.39103
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       }
     ],
     "Tynan": [
@@ -2087,7 +2087,7 @@
           "Weil Tract": -0.079,
           "Mainland": 0.118
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -2128,7 +2128,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "SMITHERS-BI 345KV BI_SMR98_A",
@@ -2149,7 +2149,7 @@
           "Weil Tract": -0.051,
           "Mainland": 0.023
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "DOW-OAS 345KV DOWOAS18_A",
@@ -2175,7 +2175,7 @@
           "Lufkin South": 0.03,
           "Pauline": 0.029
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "JEWET-BBSES 345KV 50__A",
@@ -2241,7 +2241,7 @@
           "Weil Tract": -0.079,
           "Mainland": 0.118
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -2282,7 +2282,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "SMITHERS-BI 345KV BI_SMR98_A",
@@ -2303,7 +2303,7 @@
           "Weil Tract": -0.051,
           "Mainland": 0.023
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "DOW-OAS 345KV DOWOAS18_A",
@@ -2329,7 +2329,7 @@
           "Lufkin South": 0.03,
           "Pauline": 0.029
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "JEWET-BBSES 345KV 50__A",
@@ -2406,7 +2406,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -2440,7 +2440,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -2481,7 +2481,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "TREADWEL-YELWJCKT 138KV TREADW_YELWJC1_1",
@@ -2503,7 +2503,7 @@
           "Sandlake": -0.02252,
           "Screwbean": -0.02235
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "MADDUX-TREADWEL 138KV MADDUX_TREADW1_1",
@@ -2563,7 +2563,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -2597,7 +2597,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -2638,7 +2638,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "TREADWEL-YELWJCKT 138KV TREADW_YELWJC1_1",
@@ -2660,7 +2660,7 @@
           "Sandlake": -0.02252,
           "Screwbean": -0.02235
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "MADDUX-TREADWEL 138KV MADDUX_TREADW1_1",
@@ -2720,7 +2720,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -2754,7 +2754,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -2795,7 +2795,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "MADDUX-TREADWEL 138KV MADDUX_TREADW1_1",
@@ -2879,7 +2879,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -2913,7 +2913,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -2954,7 +2954,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "TREADWEL-YELWJCKT 138KV TREADW_YELWJC1_1",
@@ -2976,7 +2976,7 @@
           "Sandlake": -0.02252,
           "Screwbean": -0.02235
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "MADDUX-TREADWEL 138KV MADDUX_TREADW1_1",
@@ -3036,7 +3036,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -3070,7 +3070,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -3111,7 +3111,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "MADDUX-TREADWEL 138KV MADDUX_TREADW1_1",
@@ -3195,7 +3195,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -3229,7 +3229,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -3270,7 +3270,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "TREADWEL-YELWJCKT 138KV TREADW_YELWJC1_1",
@@ -3292,7 +3292,7 @@
           "Sandlake": -0.02252,
           "Screwbean": -0.02235
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "MADDUX-TREADWEL 138KV MADDUX_TREADW1_1",
@@ -3352,7 +3352,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -3386,7 +3386,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -3427,7 +3427,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "TREADWEL-YELWJCKT 138KV TREADW_YELWJC1_1",
@@ -3449,7 +3449,7 @@
           "Sandlake": -0.02252,
           "Screwbean": -0.02235
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "MADDUX-TREADWEL 138KV MADDUX_TREADW1_1",
@@ -3509,7 +3509,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -3543,7 +3543,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -3584,7 +3584,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "TREADWEL-YELWJCKT 138KV TREADW_YELWJC1_1",
@@ -3606,7 +3606,7 @@
           "Sandlake": -0.02252,
           "Screwbean": -0.02235
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "MADDUX-TREADWEL 138KV MADDUX_TREADW1_1",
@@ -3666,7 +3666,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -3700,7 +3700,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -3741,7 +3741,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "TREADWEL-YELWJCKT 138KV TREADW_YELWJC1_1",
@@ -3763,7 +3763,7 @@
           "Sandlake": -0.02252,
           "Screwbean": -0.02235
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "MADDUX-TREADWEL 138KV MADDUX_TREADW1_1",
@@ -3823,7 +3823,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -3857,7 +3857,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -3898,7 +3898,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "TREADWEL-YELWJCKT 138KV TREADW_YELWJC1_1",
@@ -3920,7 +3920,7 @@
           "Sandlake": -0.02252,
           "Screwbean": -0.02235
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "MADDUX-TREADWEL 138KV MADDUX_TREADW1_1",
@@ -3980,7 +3980,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -4014,7 +4014,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -4055,7 +4055,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "TREADWEL-YELWJCKT 138KV TREADW_YELWJC1_1",
@@ -4077,7 +4077,7 @@
           "Sandlake": -0.02252,
           "Screwbean": -0.02235
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "MADDUX-TREADWEL 138KV MADDUX_TREADW1_1",
@@ -4137,7 +4137,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -4171,7 +4171,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -4212,7 +4212,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "FMRVL-RYSSW 345KV 400__A",
@@ -4290,7 +4290,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -4324,7 +4324,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -4365,7 +4365,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "DOW-OAS 345KV DOWOAS18_A",
@@ -4391,7 +4391,7 @@
           "Lufkin South": 0.03,
           "Pauline": 0.029
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "FMRVL-RYSSW 345KV 400__A",
@@ -4455,7 +4455,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -4489,7 +4489,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -4530,7 +4530,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "DOW-OAS 345KV DOWOAS18_A",
@@ -4556,7 +4556,7 @@
           "Lufkin South": 0.03,
           "Pauline": 0.029
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "JEWET-BBSES 345KV 50__A",
@@ -4633,7 +4633,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -4667,7 +4667,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -4708,7 +4708,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "DOW-OAS 345KV DOWOAS18_A",
@@ -4734,7 +4734,7 @@
           "Lufkin South": 0.03,
           "Pauline": 0.029
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "FMRVL-RYSSW 345KV 400__A",
@@ -4798,7 +4798,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -4832,7 +4832,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -4873,7 +4873,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "FMRVL-RYSSW 345KV 400__A",
@@ -4951,7 +4951,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -4985,7 +4985,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -5026,7 +5026,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "FMRVL-RYSSW 345KV 400__A",
@@ -5130,7 +5130,7 @@
           "Olney": -0.062,
           "Pauline": -0.07
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "ZEN-THW 345KV THWZEN98_A",
@@ -5164,7 +5164,7 @@
           "Olney": -0.0558,
           "Pauline": -0.062
         },
-        "status": "CRITICAL"
+        "status": "ELEVATED"
       },
       {
         "name": "BCESW-SNDSW 345KV 421__A",
@@ -5205,7 +5205,7 @@
           "Olney": -0.069,
           "Pauline": -0.078
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "DOW-OAS 345KV DOWOAS18_A",
@@ -5231,7 +5231,7 @@
           "Lufkin South": 0.03,
           "Pauline": 0.029
         },
-        "status": "ELEVATED"
+        "status": "NORMAL"
       },
       {
         "name": "FMRVL-RYSSW 345KV 400__A",
