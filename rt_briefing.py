@@ -135,6 +135,81 @@ def load_playbook(path="HEN_NOC_Congestion_Playbook.xlsx"):
 
 PLAYBOOK = load_playbook()
 
+def load_muse_data(path="muse_data.json"):
+    """Load the output of muse_briefing.py (run on-demand alongside this script).
+    Returns a placeholder dict if the file isn't there yet so the tab still renders."""
+    try:
+        with open(path) as f:
+            data = json.load(f)
+        print(f"Loaded muse_data.json: available={data.get('available')} matched={data.get('matched_count','-')}")
+        return data
+    except FileNotFoundError:
+        print(f"No {path} found - Line Loading tab will show a placeholder")
+        return {"available": False, "reason": "MUSE data hasn't been pulled yet for this run."}
+    except Exception as e:
+        print(f"Could not load {path}: {e}")
+        return {"available": False, "reason": str(e)}
+
+MUSE_DATA = load_muse_data()
+MUSE_STATUS_COLORS = {"CRITICAL": "#B3261E", "ELEVATED": "#AD7D0C", "NORMAL": "#1F8A4C"}
+
+def muse_row(c, idx):
+    color = MUSE_STATUS_COLORS.get(c.get("status"), "#4A473F")
+    sites = ", ".join(sorted(c.get("sites", {}).keys()))
+    return (f"<tr>"
+            f"<td style='padding:8px 10px;font-size:11px;color:#8A8478'>{idx}</td>"
+            f"<td style='padding:8px 10px;font-size:11px;font-family:monospace;color:#1B1B18'>{c['name']}</td>"
+            f"<td style='padding:8px 10px;font-size:11px;text-align:right;color:#4A473F'>{c['rating_mw']:.0f}</td>"
+            f"<td style='padding:8px 10px;font-size:11px;text-align:right;color:#4A473F'>{c['flow_mw']:.0f}</td>"
+            f"<td style='padding:8px 10px;font-size:12px;font-weight:700;text-align:right;color:{color}'>{c['pct_loaded']:.1f}%</td>"
+            f"<td style='padding:8px 10px;font-size:10px;font-weight:700;color:{color}'>{c.get('status','')}</td>"
+            f"<td style='padding:8px 10px;font-size:11px;color:#6B665A'>{sites}</td>"
+            f"</tr>")
+
+def render_muse_tab(data):
+    if not data.get("available"):
+        reason = data.get("reason", "MUSE data hasn't been pulled yet.")
+        return (f"<div class='card' style='padding:1.25rem'>"
+                f"<div style='display:flex;align-items:center;gap:10px;margin-bottom:8px'>"
+                f"<div style='width:3px;height:14px;background:#BF5700;border-radius:1px'></div>"
+                f"<div class='eyebrow' style='color:#BF5700'>Live Line Loading &mdash; MUSE (Enverus)</div>"
+                f"</div>"
+                f"<div style='font-size:12px;color:#6B665A'>{reason} Run <code>muse_briefing.py</code> with "
+                f"MUSE_USERNAME / MUSE_PASSWORD set to populate this tab.</div>"
+                f"</div>")
+    rows = "".join(muse_row(c, i + 1) for i, c in enumerate(data.get("top_constraints", [])))
+    updated = data.get("updated", "")
+    matched = data.get("matched_count", 0)
+    tracked = data.get("tracked_count", 0)
+    return (
+        "<div class='card' style='padding:1.25rem;margin-bottom:1.25rem'>"
+        "<div style='display:flex;align-items:center;gap:10px;margin-bottom:4px'>"
+        "<div style='width:3px;height:14px;background:#BF5700;border-radius:1px'></div>"
+        "<div class='eyebrow' style='color:#BF5700'>Live Line Loading &mdash; MUSE (Enverus)</div>"
+        f"<span class='mono' style='font-size:10px;color:#8A8478;margin-left:auto'>Pulled {updated} &middot; "
+        f"{matched} of {tracked} tracked constraints matched</span>"
+        "</div>"
+        "<div style='font-size:11px;color:#6B665A;margin-bottom:12px'>Live MW flow vs. each line's rating, for "
+        "constraints tied to HEN battery sites &mdash; sorted most-loaded first. "
+        "<span style='color:#B3261E;font-weight:600'>CRITICAL</span> = 90%+ of rating, "
+        "<span style='color:#AD7D0C;font-weight:600'>ELEVATED</span> = 70%+.</div>"
+        "<table style='width:100%;border-collapse:collapse'>"
+        "<thead><tr>"
+        "<th style='text-align:left;font-size:9px;color:#8A8478;padding:0 10px 6px'>#</th>"
+        "<th style='text-align:left;font-size:9px;color:#8A8478;padding:0 10px 6px'>Constraint</th>"
+        "<th style='text-align:right;font-size:9px;color:#8A8478;padding:0 10px 6px'>Rating (MW)</th>"
+        "<th style='text-align:right;font-size:9px;color:#8A8478;padding:0 10px 6px'>Flow (MW)</th>"
+        "<th style='text-align:right;font-size:9px;color:#8A8478;padding:0 10px 6px'>% Loaded</th>"
+        "<th style='text-align:left;font-size:9px;color:#8A8478;padding:0 10px 6px'>Status</th>"
+        "<th style='text-align:left;font-size:9px;color:#8A8478;padding:0 10px 6px'>HEN Sites Affected</th>"
+        "</tr></thead>"
+        f"<tbody>{rows}</tbody>"
+        "</table>"
+        "</div>"
+    )
+
+MUSE_TAB_HTML = render_muse_tab(MUSE_DATA)
+
 def hen_match_sf(name):
     """Real HEN-relevance check using the shift factor workbook.
     Tries exact name, normalized (double→single underscore), and uppercased variants."""
@@ -1230,6 +1305,7 @@ input:focus{{outline:none;border-color:#BF5700}}
 <button class="tab-btn" onclick="showTab('daoutlook',this)">DA Outlook — {TOMORROW}</button>
 <button class="tab-btn" onclick="showTab('overnight',this)">Historical — HE1–15</button>
 <button class="tab-btn" onclick="showTab('chart',this)">Charts</button>
+<button class="tab-btn" onclick="showTab('muse',this)">Line Loading</button>
 </div>
 
 <div class="tab-panel active" id="tab-outlook">
@@ -1403,6 +1479,10 @@ Directional DA pricing guidance for tomorrow's bids — which HEN nodes expect e
 <div id="regional-wind-error" style="font-size:12px;color:#B3261E;margin-top:10px;display:none"></div>
 </div>
 
+</div>
+
+<div class="tab-panel" id="tab-muse">
+{MUSE_TAB_HTML}
 </div>
 
 <div style="text-align:center;font-size:10px;color:#8A8478;padding:16px 0 0">Data: ERCOT SCED {TODAY} (live) + {YESTERDAY} (full day) · RT prices {TODAY} HE{cur_he} · DA prices {TOMORROW}</div>
