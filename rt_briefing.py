@@ -774,7 +774,7 @@ Be direct and actionable. Use zone names (West Texas, North Texas, Coastal) and 
 try:
     cr = requests.post("https://api.anthropic.com/v1/messages",
         headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},
-        json={"model":"claude-sonnet-4-6","max_tokens":600,"system":sys_msg,"messages":[{"role":"user","content":prompt_data}]},
+        json={"model":"claude-sonnet-4-6","max_tokens":1500,"system":sys_msg,"messages":[{"role":"user","content":prompt_data}]},
         timeout=60)
     if not cr.ok:
         raise RuntimeError(f"HTTP {cr.status_code}: {cr.text[:500]}")
@@ -922,7 +922,7 @@ print("Calling Claude for DA Outlook...")
 try:
     da_cr = requests.post("https://api.anthropic.com/v1/messages",
         headers={"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},
-        json={"model":"claude-sonnet-4-6","max_tokens":600,"system":da_sys_msg,
+        json={"model":"claude-sonnet-4-6","max_tokens":1200,"system":da_sys_msg,
               "messages":[{"role":"user","content":tmr_prompt}]},
         timeout=60)
     da_analysis = da_cr.json()["content"][0]["text"]
