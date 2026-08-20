@@ -175,9 +175,9 @@ def build_by_site(matched, top_n=5):
 
 
 def loading_status(pct):
-    if pct >= 90:
+    if pct >= 97:
         return "CRITICAL"
-    if pct >= 70:
+    if pct >= 85:
         return "ELEVATED"
     return "NORMAL"
 
