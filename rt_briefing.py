@@ -155,7 +155,8 @@ MUSE_STATUS_COLORS = {"CRITICAL": "#B3261E", "ELEVATED": "#AD7D0C", "NORMAL": "#
 
 def muse_row(c, idx):
     color = MUSE_STATUS_COLORS.get(c.get("status"), "#4A473F")
-    sites = ", ".join(sorted(c.get("sites", {}).keys()))
+    sites_sorted = sorted(c.get("sites", {}).items(), key=lambda kv: -abs(kv[1]))
+    sites = ", ".join(f"{name} ({val*100:.1f}%)" for name, val in sites_sorted)
     return (f"<tr>"
             f"<td style='padding:8px 10px;font-size:11px;color:#8A8478'>{idx}</td>"
             f"<td style='padding:8px 10px;font-size:11px;font-family:monospace;color:#1B1B18'>{c['name']}</td>"
@@ -201,7 +202,7 @@ def render_muse_tab(data):
         "<th style='text-align:right;font-size:9px;color:#8A8478;padding:0 10px 6px'>Flow (MW)</th>"
         "<th style='text-align:right;font-size:9px;color:#8A8478;padding:0 10px 6px'>% Loaded</th>"
         "<th style='text-align:left;font-size:9px;color:#8A8478;padding:0 10px 6px'>Status</th>"
-        "<th style='text-align:left;font-size:9px;color:#8A8478;padding:0 10px 6px'>HEN Sites Affected</th>"
+        "<th style='text-align:left;font-size:9px;color:#8A8478;padding:0 10px 6px'>HEN Sites Affected (Shift Factor)</th>"
         "</tr></thead>"
         f"<tbody>{rows}</tbody>"
         "</table>"
