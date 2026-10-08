@@ -1,0 +1,21 @@
+name: Sync playbook
+on:
+  push:
+    paths: ["playbook/*.xlsx", "tools/build_playbook_json.py"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install openpyxl
+      - run: python tools/build_playbook_json.py playbook/HEN_NOC_Congestion_Playbook.xlsx playbook.json
+      - name: Commit
+        run: |
+          git config user.name "github-actions"; git config user.email "actions@github.com"
+          git add playbook.json
+          git diff --staged --quiet || (git commit -m "Update playbook.json" && git pull --rebase && git push)
