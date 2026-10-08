@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HEN Live Congestion</title>
+<style>
+  :root{--bg:#0f1b2d;--card:#172740;--line:#2a3d5c;--tx:#e8eef7;--mut:#8fa3bf;--g:#2ecc71;--y:#f1c40f;--r:#e74c3c;--b:#3d8bfd}
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.45 system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--tx)}
+  header{padding:14px 18px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+  h1{font-size:20px;margin:0}
+  #refresh{background:var(--b);color:#fff;border:0;border-radius:8px;padding:12px 26px;font-size:17px;font-weight:600;cursor:pointer}
+  #refresh:disabled{opacity:.6}
+  #status{color:var(--mut);font-size:13px}
+  #status.stale{color:var(--r);font-weight:700}
+  .banner{margin:14px 18px;padding:10px 14px;background:#3a2f10;border:1px solid #7a6420;border-radius:8px;color:#ffe59a;font-size:14px}
+  .banner b{color:#fff}
+  main{padding:0 18px 40px}
+  h2{font-size:15px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:22px 0 8px}
+  .card{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--mut);border-radius:8px;margin:8px 0;overflow:hidden}
+  .card.Active{border-left-color:var(--g)}.card.Watch{border-left-color:var(--y)}.card.Low{border-left-color:#666}.card.New{border-left-color:var(--b)}.card.none{border-left-color:var(--r)}
+  .top{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;padding:10px 14px;cursor:pointer}
+  .nm{font-weight:700;font-size:16px;min-width:230px}
+  .sub{color:var(--mut);font-size:12px;font-weight:400}
+  .pill{font-size:12px;border-radius:99px;padding:2px 9px;background:#26395a}
+  .sp{font-size:18px;font-weight:700}
+  .tag{font-size:11px;padding:1px 7px;border-radius:4px;margin-left:6px}
+  .now{background:var(--r)}.recent{background:#555}
+  .body{display:none;padding:4px 14px 14px;border-top:1px solid var(--line)}
+  .card.open .body{display:block}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px 24px}
+  .lbl{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-top:8px}
+  .val{white-space:pre-wrap}
+  table{border-collapse:collapse;margin-top:6px}
+  td,th{padding:3px 12px 3px 0;text-align:left;font-size:13px}
+  th{color:var(--mut);font-weight:500}
+  .neg{color:#7fb8ff}.pos{color:var(--g)}
+  .bars{display:flex;align-items:flex-end;gap:2px;height:46px;margin-top:6px}
+  .bars div{flex:1;background:#4a6fa5;min-height:1px}
+  .bars div.hot{background:var(--y)}
+  .hrs{display:flex;gap:2px;font-size:9px;color:var(--mut)}.hrs span{flex:1;text-align:center}
+  .empty{color:var(--mut);padding:12px 0}
+  footer{padding:20px 18px;color:var(--mut);font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>⚡ HEN Live Congestion</h1><div id="status">Loading…</div></div>
+  <button id="refresh">Refresh</button>
+</header>
+
+<div class="banner" id="disc">
+  <b>Guidance only — not 100% accurate.</b> Shift factors, MCC estimates and line behavior come from a historical study (Apr 2025 – May 2026).
+  ERCOT topology is constantly changing and generators and lines are continually going in and out of outages.
+  <b>Always check current outages before acting.</b>
+</div>
+
+<main id="main"></main>
+<footer id="foot"></footer>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm = s => String(s||"").toUpperCase().replace(/\d+\s*KV/g,"").replace(/[^A-Z0-9]/g,"");
+let PB = null, LIVE = null;
+
+// ---- matching: ERCOT constraint -> playbook row ----
+function buildIndex(){
+  PB.lines.forEach(l=>{
+    const parts = l.line.replace(/\s*\d+\s*kv\s*$/i,"").split("-").map(norm).filter(Boolean);
+    l._parts = parts; l._full = norm(l.line);
+    l._alias = (l.aliases||[]).map(norm);
+  });
+}
+function matchLine(c){
+  const nm = norm(c.name), fr = norm(c.from), to = norm(c.to);
+  const pairs = (a,b)=> a && b && ((a.startsWith(b)||b.startsWith(a)) );
+  let best=null;
+  for(const l of PB.lines){
+    if(l._alias.includes(nm) || l._full===nm || (nm && l._full && nm===l._full)){ return l; }
+    if(l._parts.length===2 && fr && to){
+      const [p,q]=l._parts;
+      if((pairs(fr,p)&&pairs(to,q))||(pairs(fr,q)&&pairs(to,p))) { best = best||l; }
+    }
+    if(l._parts.length===2 && nm){
+      const [p,q]=l._parts;
+      if(nm.includes(p)&&nm.includes(q)) best = best||l;
+    }
+  }
+  return best;
+}
+const order = {Active:0,Watch:1,New:2,Low:3};
+
+function fmt(n,d=0){return n==null||isNaN(n)?"–":Number(n).toLocaleString(undefined,{maximumFractionDigits:d,minimumFractionDigits:d})}
+function cardHTML(c,l){
+  const cls = l ? l.priority : "none";
+  const tag = c.bindingNow ? '<span class="tag now">BINDING NOW</span>' : '<span class="tag recent">earlier in last hr</span>';
+  let h = `<div class="card ${cls}"><div class="top">
+    <div class="nm">${esc(l?l.line:(c.name||c.from+"-"+c.to))}${tag}
+      <div class="sub">${esc(c.name)}${c.contingency?" · cont: "+esc(c.contingency):""}${l?"":" · not in playbook"}</div></div>
+    <span class="pill">${l?esc(l.priority):"Not in playbook"}</span>
+    <div><div class="sp">$${fmt(c.shadowPrice,2)}</div><div class="sub">shadow price (max $${fmt(c.maxShadowPrice,0)} · ${c.intervalsBinding} intervals/hr)</div></div>
+    ${l?`<div><div class="sub">Primary node</div>${esc(l.primaryNode)}</div><div><div class="sub">Most common hours (HE)</div>${esc(l.peakHE)}</div>`:""}
+  </div><div class="body">`;
+  if(l){
+    h += `<div class="grid">
+      <div><div class="lbl">What drives it</div><div class="val">${esc(l.trigger)||"–"}</div></div>
+      <div><div class="lbl">Hold strategy / discharge timing</div><div class="val">${esc(l.holdStrategy)||"–"}</div></div>
+      <div><div class="lbl">Operator notes</div><div class="val">${esc(l.notes)||"–"}</div></div>
+      <div><div class="lbl">Season</div><div class="val">${esc(l.season)||"–"}</div></div></div>`;
+    const sites = Object.entries(l.siteSF||{}).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1]));
+    if(sites.length){
+      h += `<div class="lbl">Shift factors (positive = discharge side, negative = charge side)</div><table><tr><th>Site</th><th>Shift factor</th></tr>`;
+      sites.forEach(([s,sf])=>{ h+=`<tr><td>${esc(s)}</td><td class="${sf<0?'neg':'pos'}">${sf>0?"+":""}${(sf*100).toFixed(1)}%</td></tr>`;});
+      h += `</table>`;
+    }
+    if(l.hourly){
+      const mx=Math.max(...l.hourly)||1, pk=[...l.hourly].sort((a,b)=>b-a)[2];
+      h += `<div class="lbl">Historical shadow $ by hour-ending</div><div class="bars">${l.hourly.map((v,i)=>`<div class="${v>=pk?'hot':''}" style="height:${Math.max(1,v/mx*100)}%" title="HE${i+1}: $${fmt(v)}"></div>`).join("")}</div>
+      <div class="hrs">${l.hourly.map((_,i)=>`<span>${i+1}</span>`).join("")}</div>`;
+    }
+  } else {
+    h += `<div class="empty">This constraint is not in the playbook. Check current outages and shift factors manually. (To map it, add its ERCOT name to an “ERCOT Alias” column in the Line Lookup sheet.)</div>`;
+  }
+  return h + `</div></div>`;
+}
+
+function render(){
+  const cons = (LIVE.constraints||[]).map(c=>({c,l:matchLine(c)}));
+  cons.sort((a,b)=> (b.c.bindingNow-a.c.bindingNow) || ((a.l?order[a.l.priority]:-1)-(b.l?order[b.l.priority]:-1)) || b.c.shadowPrice-a.c.shadowPrice);
+  const now = cons.filter(x=>x.c.bindingNow), earlier = cons.filter(x=>!x.c.bindingNow);
+  let h = `<h2>Binding now (${now.length})</h2>` + (now.length? now.map(x=>cardHTML(x.c,x.l)).join("") : '<div class="empty">No binding constraints in the latest SCED interval.</div>');
+  if(earlier.length) h += `<h2>Bound earlier in the last hour (${earlier.length})</h2>` + earlier.map(x=>cardHTML(x.c,x.l)).join("");
+  $("#main").innerHTML = h;
+  document.querySelectorAll(".top").forEach(t=>t.onclick=()=>t.parentElement.classList.toggle("open"));
+  // auto-open Active matches that are binding now
+  document.querySelectorAll(".card.Active").forEach(c=>{ if(c.querySelector(".now")) c.classList.add("open"); });
+}
+
+function updStatus(){
+  const s=$("#status");
+  if(!LIVE.fetchedUTC){ s.textContent="No data yet — waiting for first feed run."; s.className="stale"; return; }
+  const age=(Date.now()-new Date(LIVE.fetchedUTC))/60000;
+  s.className = age>20 ? "stale" : "";
+  s.textContent = `Latest SCED interval: ${LIVE.latestSCED||"–"} (CPT) · feed updated ${Math.round(age)} min ago` + (age>20?" — DATA MAY BE STALE":"");
+}
+
+async function load(){
+  const b=$("#refresh"); b.disabled=true; b.textContent="Refreshing…";
+  try{
+    const t=Date.now();
+    const [p,l]=await Promise.all([fetch("playbook.json?t="+t),fetch("live_constraints.json?t="+t)]);
+    PB=await p.json(); LIVE=await l.json();
+    buildIndex(); updStatus(); render();
+    $("#foot").textContent = `Playbook: ${PB.source} · converted ${PB.generated} UTC · ${PB.lines.length} lines · HEN internal use only`;
+  }catch(e){ $("#status").textContent="Load error: "+e; $("#status").className="stale"; }
+  b.disabled=false; b.textContent="Refresh";
+}
+$("#refresh").onclick=load; load(); setInterval(load,5*60*1000);
+</script>
+</body>
+</html>
