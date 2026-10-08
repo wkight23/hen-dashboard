@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-08T17:21:47.536317Z",
+ "generated": "2026-10-08T20:49:49.514492Z",
  "source": "HEN_NOC_Congestion_Playbook.xlsx",
  "disclaimer": [
   "\u26a1  HEN Real-Time Congestion Playbook",
@@ -372,7 +372,7 @@
   },
   {
    "line": "PILONCIL-NLARSW 138KV",
-   "priority": "Watch",
+   "priority": "Active",
    "season": "All",
    "peakHE": "All hours, track wind",
    "trigger": "See this congestion pop up throughout the middle of the day. Can pair up/cancel out catarina congestion with ASHERTON-CATARINA but this congestion will stick if you have higher west wind. More than 2.5GW of west wind in the middle of the day should keep this congestion elevated in the middle of the day.",
@@ -1798,7 +1798,7 @@
    "line": "GN-PZ 138KV",
    "priority": "Watch",
    "season": "Spring",
-   "peakHE": "HE16, HE14, HE17",
+   "peakHE": "HE14-17",
    "trigger": "High coastal wind generation, specifically around 2GW+",
    "primaryNode": "Mainland (18.3%)",
    "primarySF": 0.18322,
@@ -1806,7 +1806,7 @@
    "mcc1000": 183.22,
    "mcc2000": 366.44,
    "otherNodes": "",
-   "holdStrategy": "",
+   "holdStrategy": "A lot of this congestion is really driven by outages and load in Houston. Lines tend to go in and out of outage around here which makes it very difficult",
    "notes": "",
    "aliases": [],
    "siteSF": {
@@ -1837,55 +1837,6 @@
     91.6,
     86.7,
     136.98
-   ]
-  },
-  {
-   "line": "PILONCIL-NLARSW 138KV",
-   "priority": "Watch",
-   "season": "All",
-   "peakHE": "All hours, track wind",
-   "trigger": "see this with really low coastal and south winds. Like sub 1GW for each. In the middle of the day, we can see this when coastal and south wind go down to 500MW in both regions (both have less than 500MW of gen)",
-   "primaryNode": "Holcomb (23.8%)",
-   "primarySF": 0.23807,
-   "mcc500": 119.035,
-   "mcc1000": 238.07,
-   "mcc2000": 476.14,
-   "otherNodes": "Catarina (-26.5%)\nFort Duncan (-13.0%)\nHamilton (-9.4%)\nVal Verde (+7.6%)",
-   "holdStrategy": "really just important to track the wind. If South gen stays below 500MW and coastal is also below 500MW during middle of day with low west wind, could see this really flare up all day",
-   "notes": "",
-   "aliases": [],
-   "siteSF": {
-    "Catarina": -0.26481,
-    "Holcomb": 0.23807,
-    "Hamilton": -0.09445,
-    "Fort Duncan": -0.12963,
-    "Val Verde": 0.076
-   },
-   "hourly": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0.69,
-    60.43,
-    113.4,
-    168.03,
-    407.59,
-    560.35,
-    844.98,
-    1077.23,
-    725.64,
-    139.68,
-    64.65,
-    0,
-    0,
-    0,
-    0,
-    0
    ]
   },
   {
@@ -3693,7 +3644,7 @@
   {
    "line": "POTEET-OAKS 69kV",
    "priority": "New",
-   "season": "",
+   "season": "Summer",
    "peakHE": "HE16-19",
    "trigger": "GR_Coastal above ~1,900-2,000 MW AND SCEN (south central) load above 14,000 MW, in the 14:00-19:00 window.",
    "primaryNode": "Poteet (-44%)",
@@ -3711,7 +3662,7 @@
   {
    "line": "ORNGROV-ORNGROC",
    "priority": "New",
-   "season": "",
+   "season": "Summer",
    "peakHE": "HE16-19",
    "trigger": "This congestion also stems from STX wind generation. Don't know where the wind gen is coming from exactly (some local wind farm) but when you see this congestion pop up, know it is from the stx wind output",
    "primaryNode": "Tynan (17%)",
