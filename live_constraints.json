@@ -1,7 +1,7 @@
 {
- "fetchedUTC": "2026-10-08T20:50:29.940623Z",
+ "fetchedUTC": "2026-10-08T21:04:03.133435Z",
  "latestSCED": "2026-10-08T14:55:18",
- "intervalsInWindow": 12,
+ "intervalsInWindow": 11,
  "constraints": [
   {
    "name": "SND_ORAN_1",
@@ -24,7 +24,7 @@
    "kv": 138.0,
    "shadowPrice": 401.48605,
    "maxShadowPrice": 956.30847,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 235.9,
    "flow": 235.9
@@ -36,8 +36,8 @@
    "to": "PZ",
    "kv": 138.0,
    "shadowPrice": 314.71103,
-   "maxShadowPrice": 625.55377,
-   "intervalsBinding": 12,
+   "maxShadowPrice": 609.63617,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 375.3,
    "flow": 375.3
@@ -50,7 +50,7 @@
    "kv": 138.0,
    "shadowPrice": 285.83899,
    "maxShadowPrice": 378.31897,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 131.9,
    "flow": 131.9
@@ -63,7 +63,7 @@
    "kv": 138.0,
    "shadowPrice": 93.76392,
    "maxShadowPrice": 342.89935,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 472.3,
    "flow": 472.3
@@ -76,7 +76,7 @@
    "kv": 345.0,
    "shadowPrice": 84.95303,
    "maxShadowPrice": 211.49954,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 424.6,
    "flow": 424.6
@@ -89,7 +89,7 @@
    "kv": 138.0,
    "shadowPrice": 75.10794,
    "maxShadowPrice": 102.47568,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 505.4,
    "flow": 505.4
@@ -102,7 +102,7 @@
    "kv": 138.0,
    "shadowPrice": 66.67556,
    "maxShadowPrice": 207.22214,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 81.6,
    "flow": 81.6
@@ -141,7 +141,7 @@
    "kv": 69.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 48.6,
    "flow": 43.4
@@ -154,7 +154,7 @@
    "kv": 345.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 93.7533,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 1789.9,
    "flow": 1770.9
@@ -167,7 +167,7 @@
    "kv": 69.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 72.6,
    "flow": 65.7
@@ -180,7 +180,7 @@
    "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 62.84347,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 204.3,
    "flow": 199.4
@@ -193,7 +193,7 @@
    "kv": 345.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 741.6,
    "flow": 714.5
@@ -206,7 +206,7 @@
    "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 98.28268,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 515.4,
    "flow": 479.4
@@ -232,7 +232,7 @@
    "kv": 345.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 2022.8,
    "flow": 1884.1
@@ -245,7 +245,7 @@
    "kv": 345.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 1789.0,
    "flow": 1712.1
@@ -258,7 +258,7 @@
    "kv": 1.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 60.9,
    "flow": 55.4
