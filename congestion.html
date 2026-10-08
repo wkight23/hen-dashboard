@@ -3,161 +3,275 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HEN Live Congestion</title>
+<title>HEN Real-Time Congestion Monitor</title>
 <style>
-  :root{--bg:#0f1b2d;--card:#172740;--line:#2a3d5c;--tx:#e8eef7;--mut:#8fa3bf;--g:#2ecc71;--y:#f1c40f;--r:#e74c3c;--b:#3d8bfd}
+  :root{
+    --bg:#000;--panel:#0d0f12;--panel2:#13161b;--line:#22262e;--line2:#2e333d;
+    --tx:#e9edf3;--mut:#8b94a3;--dim:#5d6676;
+    --accent:#4da3ff;--g:#34d399;--y:#fbbf24;--r:#f87171;--neg:#7cb6ff;
+  }
   *{box-sizing:border-box}
-  body{margin:0;font:15px/1.45 system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--tx)}
-  header{padding:14px 18px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
-  h1{font-size:20px;margin:0}
-  #refresh{background:var(--b);color:#fff;border:0;border-radius:8px;padding:12px 26px;font-size:17px;font-weight:600;cursor:pointer}
-  #refresh:disabled{opacity:.6}
-  #status{color:var(--mut);font-size:13px}
-  #status.stale{color:var(--r);font-weight:700}
-  .banner{margin:14px 18px;padding:10px 14px;background:#3a2f10;border:1px solid #7a6420;border-radius:8px;color:#ffe59a;font-size:14px}
-  .banner b{color:#fff}
-  main{padding:0 18px 40px}
-  h2{font-size:15px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:22px 0 8px}
-  .card{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--mut);border-radius:8px;margin:8px 0;overflow:hidden}
-  .card.Active{border-left-color:var(--g)}.card.Watch{border-left-color:var(--y)}.card.Low{border-left-color:#666}.card.New{border-left-color:var(--b)}.card.none{border-left-color:var(--r)}
-  .top{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;padding:10px 14px;cursor:pointer}
-  .nm{font-weight:700;font-size:16px;min-width:230px}
-  .sub{color:var(--mut);font-size:12px;font-weight:400}
-  .pill{font-size:12px;border-radius:99px;padding:2px 9px;background:#26395a}
-  .sp{font-size:18px;font-weight:700}
-  .tag{font-size:11px;padding:1px 7px;border-radius:4px;margin-left:6px}
-  .now{background:var(--r)}.recent{background:#555}
-  .body{display:none;padding:4px 14px 14px;border-top:1px solid var(--line)}
+  html{background:var(--bg)}
+  body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 "Segoe UI",Inter,system-ui,-apple-system,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+  /* header */
+  header{border-bottom:1px solid var(--line);background:linear-gradient(#0a0c10,#000)}
+  .hbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:18px 0}
+  .brand{display:flex;align-items:center;gap:14px}
+  .logo{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,#1c6dd0,#4da3ff);display:grid;place-items:center;font-weight:800;color:#fff;letter-spacing:.5px;font-size:13px}
+  h1{font-size:19px;font-weight:600;margin:0;letter-spacing:.2px}
+  .tagline{color:var(--mut);font-size:12px}
+  .actions{display:flex;align-items:center;gap:12px}
+  .btn{background:var(--accent);color:#04101f;border:0;border-radius:8px;padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.2px;transition:filter .15s}
+  .btn:hover{filter:brightness(1.12)}.btn:disabled{opacity:.55;cursor:default}
+  .btn.ghost{background:transparent;color:var(--mut);border:1px solid var(--line2);font-weight:500;padding:9px 14px}
+  .btn.ghost:hover{color:var(--tx);border-color:var(--mut)}
+  .status{display:flex;align-items:center;gap:8px;color:var(--mut);font-size:12.5px}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--dim);flex:none}
+  .dot.ok{background:var(--g);box-shadow:0 0 8px var(--g)}.dot.warn{background:var(--y)}.dot.bad{background:var(--r);box-shadow:0 0 8px var(--r)}
+
+  /* disclaimer */
+  .disc{margin:18px 0 6px;padding:12px 16px;background:#14110a;border:1px solid #3a2f12;border-left:3px solid var(--y);border-radius:8px;color:#e8d9a8;font-size:13px}
+  .disc b{color:#fff}
+
+  /* stats */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:16px 0 4px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px}
+  .stat .n{font-size:26px;font-weight:700;line-height:1.1}
+  .stat .l{color:var(--mut);font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;margin-top:3px}
+
+  h2{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.12em;margin:28px 0 10px}
+  h2::after{content:"";flex:1;height:1px;background:var(--line)}
+  h2 .ct{background:var(--panel2);border:1px solid var(--line2);color:var(--tx);border-radius:99px;padding:0 9px;font-size:11px;letter-spacing:0}
+
+  /* cards */
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin:8px 0;overflow:hidden;position:relative;transition:border-color .15s}
+  .card:hover{border-color:var(--line2)}
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--dim)}
+  .card.Active::before{background:var(--g)}.card.Watch::before{background:var(--y)}.card.New::before{background:var(--accent)}.card.Low::before{background:#4b5260}.card.none::before{background:var(--r)}
+  .top{display:grid;grid-template-columns:minmax(220px,2.2fr) 110px 150px minmax(120px,1.2fr) minmax(110px,1fr) 20px;gap:14px;align-items:center;padding:13px 16px 13px 20px;cursor:pointer}
+  .nm{font-weight:600;font-size:15px}
+  .sub{color:var(--mut);font-size:11.5px;font-weight:400;margin-top:1px}
+  .badge{display:inline-block;font-size:11px;font-weight:600;padding:2px 10px;border-radius:99px;border:1px solid var(--line2);color:var(--mut);white-space:nowrap}
+  .badge.Active{color:var(--g);border-color:#1d5c46;background:#07160f}.badge.Watch{color:var(--y);border-color:#5b4710;background:#161106}
+  .badge.New{color:var(--accent);border-color:#1c4a7a;background:#06101a}.badge.none{color:var(--r);border-color:#6b2a2a;background:#190909}
+  .live{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;letter-spacing:.06em;margin-left:8px;color:var(--r);vertical-align:middle}
+  .live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--r);animation:pulse 1.4s infinite}
+  .live.earlier{color:var(--dim)}.live.earlier::before{background:var(--dim);animation:none}
+  @keyframes pulse{50%{opacity:.25}}
+  .k{color:var(--dim);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em}
+  .v{font-size:13.5px}
+  .sp{font-size:17px;font-weight:700}
+  .chev{color:var(--dim);transition:transform .15s}
+  .card.open .chev{transform:rotate(90deg)}
+  .body{display:none;padding:4px 20px 18px;border-top:1px solid var(--line);background:var(--panel2)}
   .card.open .body{display:block}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px 24px}
-  .lbl{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-top:8px}
-  .val{white-space:pre-wrap}
-  table{border-collapse:collapse;margin-top:6px}
-  td,th{padding:3px 12px 3px 0;text-align:left;font-size:13px}
-  th{color:var(--mut);font-weight:500}
-  .neg{color:#7fb8ff}.pos{color:var(--g)}
-  .bars{display:flex;align-items:flex-end;gap:2px;height:46px;margin-top:6px}
-  .bars div{flex:1;background:#4a6fa5;min-height:1px}
-  .bars div.hot{background:var(--y)}
-  .hrs{display:flex;gap:2px;font-size:9px;color:var(--mut)}.hrs span{flex:1;text-align:center}
-  .empty{color:var(--mut);padding:12px 0}
-  footer{padding:20px 18px;color:var(--mut);font-size:12px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:4px 32px}
+  .lbl{color:var(--dim);font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;margin:14px 0 4px;font-weight:600}
+  .val{white-space:pre-wrap;color:#d5dbe5}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{border:1px solid var(--line2);background:#0a0c0f;border-radius:6px;padding:3px 10px;font-size:12.5px}
+  .chip b{font-weight:600;margin-left:6px}
+  .chip .p{color:var(--g)}.chip .n{color:var(--neg)}
+  .bars{display:flex;align-items:flex-end;gap:3px;height:56px;margin-top:6px}
+  .bars div{flex:1;background:#2a3b55;border-radius:2px 2px 0 0;min-height:1px}
+  .bars div.hot{background:var(--accent)}
+  .hrs{display:flex;gap:3px;font-size:9.5px;color:var(--dim);margin-top:3px}.hrs span{flex:1;text-align:center}
+  .empty{color:var(--mut);padding:14px 0}
+  footer{padding:30px 0 50px;color:var(--dim);font-size:11.5px;border-top:1px solid var(--line);margin-top:34px}
+  .note{color:var(--dim);font-size:12px;margin-top:6px}
+  .note a{color:var(--accent);cursor:pointer;text-decoration:none}
+
+  dialog{background:var(--panel);color:var(--tx);border:1px solid var(--line2);border-radius:12px;max-width:520px;padding:22px}
+  dialog::backdrop{background:rgba(0,0,0,.75)}
+  dialog h3{margin:0 0 8px}dialog ol{padding-left:20px;color:#c4ccd8}dialog li{margin:5px 0}
+  input[type=password]{width:100%;background:#000;border:1px solid var(--line2);border-radius:8px;color:var(--tx);padding:10px;margin:10px 0;font-family:monospace}
+  .row{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}
+
+  @media(max-width:860px){.top{grid-template-columns:1fr auto;}.top>div:nth-child(n+3):not(.chev-wrap){display:none}}
 </style>
 </head>
 <body>
-<header>
-  <div><h1>⚡ HEN Live Congestion</h1><div id="status">Loading…</div></div>
-  <button id="refresh">Refresh</button>
-</header>
+<header><div class="wrap hbar">
+  <div class="brand"><div class="logo">HEN</div>
+    <div><h1>Real-Time Congestion Monitor</h1><div class="tagline">Binding ERCOT constraints matched to the HEN congestion playbook</div></div></div>
+  <div class="actions">
+    <div class="status"><span class="dot" id="dot"></span><span id="status">Loading…</span></div>
+    <button class="btn" id="refresh">Refresh</button>
+  </div>
+</div></header>
 
-<div class="banner" id="disc">
-  <b>Guidance only — not 100% accurate.</b> Shift factors, MCC estimates and line behavior come from a historical study (Apr 2025 – May 2026).
-  ERCOT topology is constantly changing and generators and lines are continually going in and out of outages.
-  <b>Always check current outages before acting.</b>
+<div class="wrap">
+  <div class="disc"><b>Guidance only — not 100% accurate.</b> Shift factors, drivers and line behavior come from a historical study (Apr 2025 – May 2026).
+    ERCOT topology is constantly changing, and generators and lines are continually going in and out of outages.
+    <b>Always check current outages before acting.</b></div>
+
+  <div class="stats" id="stats"></div>
+  <div id="main"></div>
+  <div class="note" id="livenote"></div>
+  <footer id="foot"></footer>
 </div>
 
-<main id="main"></main>
-<footer id="foot"></footer>
+<dialog id="dlg">
+  <h3>Enable instant refresh</h3>
+  <p style="color:var(--mut);margin-top:0">With a GitHub token saved in this browser, the Refresh button re-runs the ERCOT pull immediately instead of waiting for the 5-minute schedule.</p>
+  <ol>
+    <li>GitHub → Settings → Developer settings → Personal access tokens → <b>Fine-grained tokens</b> → Generate new token.</li>
+    <li>Repository access: <b>Only select repositories</b> → hen-dashboard.</li>
+    <li>Permissions: <b>Actions: Read and write</b> and <b>Contents: Read-only</b>.</li>
+    <li>Paste the token below. It is stored only in this browser.</li>
+  </ol>
+  <input type="password" id="tokin" placeholder="github_pat_…" autocomplete="off">
+  <div class="row"><button class="btn ghost" id="tokclear">Remove token</button><button class="btn ghost" id="tokcancel">Cancel</button><button class="btn" id="toksave">Save</button></div>
+</dialog>
 
 <script>
-const $ = s => document.querySelector(s);
-const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const norm = s => String(s||"").toUpperCase().replace(/\d+\s*KV/g,"").replace(/[^A-Z0-9]/g,"");
-let PB = null, LIVE = null;
+const REPO="wkight23/hen-dashboard", WF="constraints-feed.yml";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm=s=>String(s||"").toUpperCase().replace(/\d+\s*KV/g,"").replace(/[^A-Z0-9]/g,"");
+const fmt=(n,d=0)=>n==null||isNaN(n)?"–":Number(n).toLocaleString(undefined,{maximumFractionDigits:d,minimumFractionDigits:d});
+let PB=null,LIVE=null;
+const tok=()=>{try{return localStorage.getItem("hen_gh_token")||""}catch(e){return ""}};
+const setTok=v=>{try{v?localStorage.setItem("hen_gh_token",v):localStorage.removeItem("hen_gh_token")}catch(e){}};
 
-// ---- matching: ERCOT constraint -> playbook row ----
+/* ---------- data loading ---------- */
+async function getJSON(path){
+  const t=tok();
+  if(t){
+    try{
+      const r=await fetch(`https://api.github.com/repos/${REPO}/contents/${path}?ref=main`,
+        {headers:{Authorization:"Bearer "+t,Accept:"application/vnd.github.raw+json"}});
+      if(r.ok) return await r.json();
+    }catch(e){}
+  }
+  const r=await fetch(path+"?t="+Date.now()); if(!r.ok) throw new Error(path+" "+r.status);
+  return r.json();
+}
+
+/* ---------- matching ---------- */
 function buildIndex(){
   PB.lines.forEach(l=>{
-    const parts = l.line.replace(/\s*\d+\s*kv\s*$/i,"").split("-").map(norm).filter(Boolean);
-    l._parts = parts; l._full = norm(l.line);
-    l._alias = (l.aliases||[]).map(norm);
+    l._parts=l.line.replace(/\s*\d+\s*kv\s*$/i,"").split("-").map(norm).filter(Boolean);
+    l._full=norm(l.line); l._alias=(l.aliases||[]).map(norm);
   });
 }
 function matchLine(c){
-  const nm = norm(c.name), fr = norm(c.from), to = norm(c.to);
-  const pairs = (a,b)=> a && b && ((a.startsWith(b)||b.startsWith(a)) );
-  let best=null;
+  const nm=norm(c.name),fr=norm(c.from),to=norm(c.to);
+  const pr=(a,b)=>a&&b&&(a.startsWith(b)||b.startsWith(a));
+  let best=null,bs=0;
   for(const l of PB.lines){
-    if(l._alias.includes(nm) || l._full===nm || (nm && l._full && nm===l._full)){ return l; }
-    if(l._parts.length===2 && fr && to){
+    if(l._alias.includes(nm)||(nm&&l._full===nm)) return l;
+    if(l._parts.length===2){
       const [p,q]=l._parts;
-      if((pairs(fr,p)&&pairs(to,q))||(pairs(fr,q)&&pairs(to,p))) { best = best||l; }
-    }
-    if(l._parts.length===2 && nm){
-      const [p,q]=l._parts;
-      if(nm.includes(p)&&nm.includes(q)) best = best||l;
+      let s=0;
+      // exact direction (from->to) beats reversed direction
+      if(fr&&to){ if(pr(fr,p)&&pr(to,q)) s=Math.max(s,3); else if(pr(fr,q)&&pr(to,p)) s=Math.max(s,1); }
+      if(nm&&nm.includes(p)&&nm.includes(q)) s=Math.max(s, nm.indexOf(p)<nm.indexOf(q)?2:1);
+      if(s>bs){best=l;bs=s}
     }
   }
   return best;
 }
-const order = {Active:0,Watch:1,New:2,Low:3};
+const order={Active:0,Watch:1,New:2,Low:3};
 
-function fmt(n,d=0){return n==null||isNaN(n)?"–":Number(n).toLocaleString(undefined,{maximumFractionDigits:d,minimumFractionDigits:d})}
+/* ---------- rendering ---------- */
 function cardHTML(c,l){
-  const cls = l ? l.priority : "none";
-  const tag = c.bindingNow ? '<span class="tag now">BINDING NOW</span>' : '<span class="tag recent">earlier in last hr</span>';
-  let h = `<div class="card ${cls}"><div class="top">
-    <div class="nm">${esc(l?l.line:(c.name||c.from+"-"+c.to))}${tag}
-      <div class="sub">${esc(c.name)}${c.contingency?" · cont: "+esc(c.contingency):""}${l?"":" · not in playbook"}</div></div>
-    <span class="pill">${l?esc(l.priority):"Not in playbook"}</span>
-    <div><div class="sp">$${fmt(c.shadowPrice,2)}</div><div class="sub">shadow price (max $${fmt(c.maxShadowPrice,0)} · ${c.intervalsBinding} intervals/hr)</div></div>
-    ${l?`<div><div class="sub">Primary node</div>${esc(l.primaryNode)}</div><div><div class="sub">Most common hours (HE)</div>${esc(l.peakHE)}</div>`:""}
-  </div><div class="body">`;
+  const cls=l?l.priority:"none";
+  const live=c.bindingNow?'<span class="live">BINDING NOW</span>':'<span class="live earlier">EARLIER IN LAST HOUR</span>';
+  let h=`<div class="card ${cls}"><div class="top">
+    <div><div class="nm">${esc(l?l.line:(c.name||c.from+"-"+c.to))}${live}</div>
+      <div class="sub">${esc(c.name)}${c.contingency?" · contingency: "+esc(c.contingency):""}</div></div>
+    <div><span class="badge ${cls}">${l?esc(l.priority):"Not in playbook"}</span></div>
+    <div><div class="k">Shadow price</div><div class="sp">$${fmt(c.shadowPrice,2)}</div></div>
+    <div><div class="k">Most common hours</div><div class="v">${l&&l.peakHE?esc(l.peakHE):"–"}</div></div>
+    <div><div class="k">Primary node</div><div class="v">${l&&l.primaryNode?esc(l.primaryNode):"–"}</div></div>
+    <div class="chev">▶</div></div><div class="body">`;
   if(l){
-    h += `<div class="grid">
+    h+=`<div class="grid">
       <div><div class="lbl">What drives it</div><div class="val">${esc(l.trigger)||"–"}</div></div>
-      <div><div class="lbl">Hold strategy / discharge timing</div><div class="val">${esc(l.holdStrategy)||"–"}</div></div>
       <div><div class="lbl">Operator notes</div><div class="val">${esc(l.notes)||"–"}</div></div>
+      ${l.holdStrategy?`<div><div class="lbl">Hold strategy / discharge timing</div><div class="val">${esc(l.holdStrategy)}</div></div>`:""}
       <div><div class="lbl">Season</div><div class="val">${esc(l.season)||"–"}</div></div></div>`;
-    const sites = Object.entries(l.siteSF||{}).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1]));
-    if(sites.length){
-      h += `<div class="lbl">Shift factors (positive = discharge side, negative = charge side)</div><table><tr><th>Site</th><th>Shift factor</th></tr>`;
-      sites.forEach(([s,sf])=>{ h+=`<tr><td>${esc(s)}</td><td class="${sf<0?'neg':'pos'}">${sf>0?"+":""}${(sf*100).toFixed(1)}%</td></tr>`;});
-      h += `</table>`;
-    }
+    const sites=Object.entries(l.siteSF||{}).sort((a,b)=>b[1]-a[1]);
+    if(sites.length) h+=`<div class="lbl">Shift factors &nbsp;<span style="text-transform:none;letter-spacing:0;font-weight:400">(+ discharge side · − charge side)</span></div><div class="chips">${
+      sites.map(([s,sf])=>`<span class="chip">${esc(s)}<b class="${sf<0?"n":"p"}">${sf>0?"+":""}${(sf*100).toFixed(1)}%</b></span>`).join("")}</div>`;
     if(l.hourly){
-      const mx=Math.max(...l.hourly)||1, pk=[...l.hourly].sort((a,b)=>b-a)[2];
-      h += `<div class="lbl">Historical shadow $ by hour-ending</div><div class="bars">${l.hourly.map((v,i)=>`<div class="${v>=pk?'hot':''}" style="height:${Math.max(1,v/mx*100)}%" title="HE${i+1}: $${fmt(v)}"></div>`).join("")}</div>
+      const mx=Math.max(...l.hourly)||1,pk=[...l.hourly].sort((a,b)=>b-a)[2];
+      h+=`<div class="lbl">Historical shadow $ by hour-ending</div><div class="bars">${l.hourly.map((v,i)=>`<div class="${v>=pk?"hot":""}" style="height:${Math.max(1,v/mx*100)}%" title="HE${i+1}: $${fmt(v)}"></div>`).join("")}</div>
       <div class="hrs">${l.hourly.map((_,i)=>`<span>${i+1}</span>`).join("")}</div>`;
     }
-  } else {
-    h += `<div class="empty">This constraint is not in the playbook. Check current outages and shift factors manually. (To map it, add its ERCOT name to an “ERCOT Alias” column in the Line Lookup sheet.)</div>`;
-  }
-  return h + `</div></div>`;
+  }else h+=`<div class="empty">This constraint is not in the playbook. Check current outages and shift factors manually.</div>`;
+  return h+`</div></div>`;
 }
 
 function render(){
-  const cons = (LIVE.constraints||[]).map(c=>({c,l:matchLine(c)}));
-  cons.sort((a,b)=> (b.c.bindingNow-a.c.bindingNow) || ((a.l?order[a.l.priority]:-1)-(b.l?order[b.l.priority]:-1)) || b.c.shadowPrice-a.c.shadowPrice);
-  const now = cons.filter(x=>x.c.bindingNow), earlier = cons.filter(x=>!x.c.bindingNow);
-  let h = `<h2>Binding now (${now.length})</h2>` + (now.length? now.map(x=>cardHTML(x.c,x.l)).join("") : '<div class="empty">No binding constraints in the latest SCED interval.</div>');
-  if(earlier.length) h += `<h2>Bound earlier in the last hour (${earlier.length})</h2>` + earlier.map(x=>cardHTML(x.c,x.l)).join("");
-  $("#main").innerHTML = h;
+  const all=(LIVE.constraints||[]).map(c=>({c,l:matchLine(c)}));
+  const key=x=>[x.c.bindingNow?0:1, x.l?order[x.l.priority]:9, -x.c.shadowPrice];
+  const cmp=(a,b)=>{const A=key(a),B=key(b);for(let i=0;i<3;i++)if(A[i]!==B[i])return A[i]-B[i];return 0};
+  const inPb=all.filter(x=>x.l).sort(cmp), notPb=all.filter(x=>!x.l).sort(cmp);
+  const now=all.filter(x=>x.c.bindingNow);
+  $("#stats").innerHTML=[
+    [now.length,"Binding now"],
+    [now.filter(x=>x.l).length,"Binding now · in playbook"],
+    [now.filter(x=>x.l&&x.l.priority==="Active").length,"Binding now · Active priority"],
+    [all.length,"Bound in last hour"]
+  ].map(([n,l])=>`<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join("");
+  let h=`<h2>In the playbook <span class="ct">${inPb.length}</span></h2>`+
+    (inPb.length?inPb.map(x=>cardHTML(x.c,x.l)).join(""):'<div class="empty">None of the recent binding constraints are in the playbook.</div>');
+  if(notPb.length) h+=`<h2>Not in the playbook <span class="ct">${notPb.length}</span></h2>`+notPb.map(x=>cardHTML(x.c,x.l)).join("");
+  $("#main").innerHTML=h;
   document.querySelectorAll(".top").forEach(t=>t.onclick=()=>t.parentElement.classList.toggle("open"));
-  // auto-open Active matches that are binding now
-  document.querySelectorAll(".card.Active").forEach(c=>{ if(c.querySelector(".now")) c.classList.add("open"); });
+  document.querySelectorAll(".card.Active").forEach(c=>{if(c.querySelector(".live:not(.earlier)"))c.classList.add("open")});
 }
 
 function updStatus(){
-  const s=$("#status");
-  if(!LIVE.fetchedUTC){ s.textContent="No data yet — waiting for first feed run."; s.className="stale"; return; }
+  const s=$("#status"),d=$("#dot");
+  if(!LIVE.fetchedUTC){s.textContent="No data yet — waiting for first feed run";d.className="dot bad";return}
   const age=(Date.now()-new Date(LIVE.fetchedUTC))/60000;
-  s.className = age>20 ? "stale" : "";
-  s.textContent = `Latest SCED interval: ${LIVE.latestSCED||"–"} (CPT) · feed updated ${Math.round(age)} min ago` + (age>20?" — DATA MAY BE STALE":"");
+  d.className="dot "+(age<10?"ok":age<20?"warn":"bad");
+  s.textContent=`SCED ${LIVE.latestSCED||"–"} CPT · updated ${Math.max(0,Math.round(age))} min ago`+(age>=20?" · DATA MAY BE STALE":"");
+}
+function updNote(){
+  $("#livenote").innerHTML=tok()
+    ?'Instant refresh is on for this browser. <a id="tokedit">Change token</a>'
+    :'Showing the scheduled feed (updates about every 5 minutes). <a id="tokedit">Enable instant refresh</a>';
+  $("#tokedit").onclick=()=>$("#dlg").showModal();
 }
 
 async function load(){
-  const b=$("#refresh"); b.disabled=true; b.textContent="Refreshing…";
   try{
-    const t=Date.now();
-    const [p,l]=await Promise.all([fetch("playbook.json?t="+t),fetch("live_constraints.json?t="+t)]);
-    PB=await p.json(); LIVE=await l.json();
-    buildIndex(); updStatus(); render();
-    $("#foot").textContent = `Playbook: ${PB.source} · converted ${PB.generated} UTC · ${PB.lines.length} lines · HEN internal use only`;
-  }catch(e){ $("#status").textContent="Load error: "+e; $("#status").className="stale"; }
-  b.disabled=false; b.textContent="Refresh";
+    const [p,l]=await Promise.all([getJSON("playbook.json"),getJSON("live_constraints.json")]);
+    PB=p;LIVE=l;buildIndex();updStatus();render();updNote();
+    $("#foot").textContent=`Playbook: ${PB.source} · ${PB.lines.length} lines · converted ${PB.generated.replace("T"," ").slice(0,16)} UTC · HEN internal use only`;
+  }catch(e){$("#status").textContent="Load error: "+e;$("#dot").className="dot bad"}
 }
-$("#refresh").onclick=load; load(); setInterval(load,5*60*1000);
+
+async function refreshClick(){
+  const b=$("#refresh");b.disabled=true;
+  if(!tok()){b.textContent="Refreshing…";await load();b.textContent="Refresh";b.disabled=false;return}
+  const before=LIVE&&LIVE.fetchedUTC;
+  try{
+    b.textContent="Starting pull…";
+    const r=await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/${WF}/dispatches`,
+      {method:"POST",headers:{Authorization:"Bearer "+tok(),Accept:"application/vnd.github+json"},body:JSON.stringify({ref:"main"})});
+    if(r.status!==204) throw new Error(r.status===401||r.status===403||r.status===404?"token rejected or missing Actions permission":"GitHub returned "+r.status);
+    b.textContent="Pulling from ERCOT…";
+    for(let i=0;i<20;i++){
+      await new Promise(r=>setTimeout(r,6000));
+      const l=await getJSON("live_constraints.json");
+      if(l.fetchedUTC!==before){await load();break}
+    }
+  }catch(e){alert("Instant refresh failed: "+e.message+"\nShowing the latest saved data instead.");await load()}
+  b.textContent="Refresh";b.disabled=false;
+}
+
+$("#refresh").onclick=refreshClick;
+$("#toksave").onclick=()=>{setTok($("#tokin").value.trim());$("#tokin").value="";$("#dlg").close();updNote();load()};
+$("#tokclear").onclick=()=>{setTok("");$("#dlg").close();updNote()};
+$("#tokcancel").onclick=()=>$("#dlg").close();
+load();setInterval(load,5*60*1000);setInterval(()=>{if(LIVE)updStatus()},30000);
 </script>
 </body>
 </html>
