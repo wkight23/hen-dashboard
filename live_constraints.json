@@ -1,6 +1,6 @@
 {
- "fetchedUTC": "2026-10-15T11:57:25.441104Z",
- "latestSCED": "2026-10-15T05:55:18",
+ "fetchedUTC": "2026-10-15T16:22:59.764726Z",
+ "latestSCED": "2026-10-15T10:55:17",
  "intervalsInWindow": 12,
  "constraints": [
   {
@@ -9,25 +9,51 @@
    "from": "CONCHO",
    "to": "HARI",
    "kv": 69.0,
-   "shadowPrice": 2060.16626,
-   "maxShadowPrice": 2067.67822,
+   "shadowPrice": 2799.99976,
+   "maxShadowPrice": 2800.0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 28.4,
-   "flow": 28.4
+   "limit": 29.3,
+   "flow": 30.2
   },
   {
-   "name": "G138_15_1",
-   "contingency": "SWCOWCO8",
-   "from": "ANGLETON",
-   "to": "WCOLLOCL",
+   "name": "SNDSW_MR1H",
+   "contingency": "MSNDWCR5",
+   "from": "SNDSW",
+   "to": "SNDSW",
+   "kv": 345.0,
+   "shadowPrice": 222.653,
+   "maxShadowPrice": 222.653,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 741.9,
+   "flow": 741.9
+  },
+  {
+   "name": "RAYBURN_69_2",
+   "contingency": "SFORRAY8",
+   "from": "RAYBURN",
+   "to": "RAYBURN",
+   "kv": 138.0,
+   "shadowPrice": 65.99306,
+   "maxShadowPrice": 65.99306,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 81.1,
+   "flow": 81.1
+  },
+  {
+   "name": "1295__A",
+   "contingency": "DTMETMP8",
+   "from": "TMPCR",
+   "to": "TMPSW",
    "kv": 138.0,
    "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 5,
-   "bindingNow": false,
-   "limit": 210.4,
-   "flow": 98.2
+   "maxShadowPrice": 36.00124,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 521.3,
+   "flow": 433.9
   },
   {
    "name": "_WC_WCO_1",
@@ -37,23 +63,10 @@
    "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 6,
-   "bindingNow": false,
-   "limit": 523.9,
-   "flow": 380.4
-  },
-  {
-   "name": "BRUNI_69_1",
-   "contingency": "SLAQLOB8",
-   "from": "BRUNI",
-   "to": "BRUNI",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 6,
-   "bindingNow": false,
-   "limit": 36.1,
-   "flow": 25.3
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 524.8,
+   "flow": 288.0
   }
  ]
 }
