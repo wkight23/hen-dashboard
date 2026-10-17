@@ -1,6 +1,6 @@
 {
- "fetchedUTC": "2026-10-17T10:15:18.955167Z",
- "latestSCED": "2026-10-17T04:55:17",
+ "fetchedUTC": "2026-10-17T13:46:07.166166Z",
+ "latestSCED": "2026-10-17T07:55:19",
  "intervalsInWindow": 12,
  "constraints": [
   {
@@ -9,25 +9,25 @@
    "from": "NLARSW",
    "to": "PILONCIL",
    "kv": 138.0,
-   "shadowPrice": 743.83087,
-   "maxShadowPrice": 774.58057,
+   "shadowPrice": 712.22052,
+   "maxShadowPrice": 972.10358,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 150.9,
-   "flow": 150.9
+   "limit": 151.1,
+   "flow": 151.1
   },
   {
-   "name": "BLESSI_PAVLOV1_1",
-   "contingency": "SLANARR8",
-   "from": "BLESSING",
-   "to": "PAVLOV",
+   "name": "ESCOND_GANSO1_1",
+   "contingency": "SBRAPIN8",
+   "from": "ESCONDID",
+   "to": "GANSO",
    "kv": 138.0,
-   "shadowPrice": 72.14999,
-   "maxShadowPrice": 909.77264,
+   "shadowPrice": 291.76993,
+   "maxShadowPrice": 291.76993,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 155.7,
-   "flow": 155.7
+   "limit": 118.5,
+   "flow": 118.5
   },
   {
    "name": "NELRIO",
@@ -35,25 +35,12 @@
    "from": "",
    "to": "",
    "kv": 0.0,
-   "shadowPrice": 1.11002,
-   "maxShadowPrice": 3.85363,
+   "shadowPrice": 1.70065,
+   "maxShadowPrice": 6.67869,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 907.8,
-   "flow": 907.8
-  },
-  {
-   "name": "ATSO_SONR1_1",
-   "contingency": "SCARFRI8",
-   "from": "SONR",
-   "to": "ATSO",
-   "kv": 69.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 70.73975,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 37.5,
-   "flow": 36.3
+   "limit": 918.0,
+   "flow": 918.0
   },
   {
    "name": "LAKENA_SAMATH1_1",
@@ -65,21 +52,34 @@
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 38.0,
-   "flow": 36.7
+   "limit": 37.9,
+   "flow": 34.8
   },
   {
-   "name": "SN_STR26_A",
-   "contingency": "DWLFHLJ5",
-   "from": "SN",
-   "to": "STR",
+   "name": "SOLSTICE_PST1",
+   "contingency": "STARLEO8",
+   "from": "SOLSTICE",
+   "to": "SOLSTICE",
    "kv": 138.0,
    "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 5,
-   "bindingNow": false,
-   "limit": 291.7,
-   "flow": 258.1
+   "maxShadowPrice": 104.21189,
+   "intervalsBinding": 9,
+   "bindingNow": true,
+   "limit": 214.9,
+   "flow": 144.2
+  },
+  {
+   "name": "BLESSI_PAVLOV1_1",
+   "contingency": "SLANARR8",
+   "from": "BLESSING",
+   "to": "PAVLOV",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 145.88124,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 156.1,
+   "flow": 143.0
   }
  ]
 }
