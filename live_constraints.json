@@ -1,6 +1,6 @@
 {
- "fetchedUTC": "2026-10-18T21:21:42.844653Z",
- "latestSCED": "2026-10-18T15:55:18",
+ "fetchedUTC": "2026-10-18T23:23:24.420100Z",
+ "latestSCED": "2026-10-18T17:55:17",
  "intervalsInWindow": 12,
  "constraints": [
   {
@@ -9,51 +9,12 @@
    "from": "SNDSW",
    "to": "SNDSW",
    "kv": 345.0,
-   "shadowPrice": 197.34032,
-   "maxShadowPrice": 259.25107,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 738.8,
-   "flow": 738.8
-  },
-  {
-   "name": "BALLINGE_FMRL",
-   "contingency": "SFTCGAR8",
-   "from": "BALLINGE",
-   "to": "BALLINGE",
-   "kv": 1.0,
-   "shadowPrice": 53.96485,
-   "maxShadowPrice": 56.43107,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 60.3,
-   "flow": 60.3
-  },
-  {
-   "name": "FURHMAN_VANDB_1",
-   "contingency": "SFURMOU8",
-   "from": "FURHMAN",
-   "to": "VANBLTSS",
-   "kv": 138.0,
    "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
+   "maxShadowPrice": 356.07614,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 171.5,
-   "flow": 48.5
-  },
-  {
-   "name": "PNHNDL",
-   "contingency": "BASE CASE",
-   "from": "",
-   "to": "",
-   "kv": 0.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 3,
-   "bindingNow": true,
-   "limit": 3986.1,
-   "flow": 3290.5
+   "limit": 742.4,
+   "flow": 627.8
   },
   {
    "name": "BLESSING_1382",
@@ -63,10 +24,36 @@
    "kv": 345.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 8,
+   "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 425.2,
-   "flow": 387.4
+   "limit": 425.4,
+   "flow": 370.0
+  },
+  {
+   "name": "PNHNDL",
+   "contingency": "BASE CASE",
+   "from": "",
+   "to": "",
+   "kv": 0.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 5.45906,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 3986.1,
+   "flow": 3534.4
+  },
+  {
+   "name": "BALLINGE_FMRL",
+   "contingency": "SFTCGAR8",
+   "from": "BALLINGE",
+   "to": "BALLINGE",
+   "kv": 1.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 68.58241,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 61.3,
+   "flow": 38.4
   }
  ]
 }
