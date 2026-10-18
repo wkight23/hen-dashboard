@@ -1,6 +1,6 @@
 {
- "fetchedUTC": "2026-10-18T09:38:22.645070Z",
- "latestSCED": "2026-10-18T03:55:19",
+ "fetchedUTC": "2026-10-18T13:32:13.080223Z",
+ "latestSCED": "2026-10-18T07:55:18",
  "intervalsInWindow": 12,
  "constraints": [
   {
@@ -9,25 +9,12 @@
    "from": "SCRCV",
    "to": "KNAPP",
    "kv": 138.0,
-   "shadowPrice": 804.23352,
-   "maxShadowPrice": 993.9292,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 177.42419,
    "intervalsBinding": 12,
    "bindingNow": true,
    "limit": 251.0,
-   "flow": 251.0
-  },
-  {
-   "name": "LPLMK_LPLNE_1",
-   "contingency": "SBWDDBM5",
-   "from": "LPLMK",
-   "to": "LPLNE",
-   "kv": 115.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 217.7,
-   "flow": 194.5
+   "flow": 238.9
   }
  ]
 }
