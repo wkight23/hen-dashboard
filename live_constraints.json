@@ -1,6 +1,6 @@
 {
- "fetchedUTC": "2026-10-18T18:59:57.903813Z",
- "latestSCED": "2026-10-18T12:55:17",
+ "fetchedUTC": "2026-10-18T21:21:42.844653Z",
+ "latestSCED": "2026-10-18T15:55:18",
  "intervalsInWindow": 12,
  "constraints": [
   {
@@ -9,12 +9,12 @@
    "from": "SNDSW",
    "to": "SNDSW",
    "kv": 345.0,
-   "shadowPrice": 141.94125,
-   "maxShadowPrice": 141.94125,
+   "shadowPrice": 197.34032,
+   "maxShadowPrice": 259.25107,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 738.4,
-   "flow": 738.4
+   "limit": 738.8,
+   "flow": 738.8
   },
   {
    "name": "BALLINGE_FMRL",
@@ -22,51 +22,25 @@
    "from": "BALLINGE",
    "to": "BALLINGE",
    "kv": 1.0,
-   "shadowPrice": 54.61084,
-   "maxShadowPrice": 55.93265,
+   "shadowPrice": 53.96485,
+   "maxShadowPrice": 56.43107,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 60.1,
-   "flow": 60.1
+   "limit": 60.3,
+   "flow": 60.3
   },
   {
-   "name": "BLESSING_1382",
-   "contingency": "SANGSTA5",
-   "from": "BLESSING",
-   "to": "BLESSING",
-   "kv": 345.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 425.2,
-   "flow": 343.7
-  },
-  {
-   "name": "1295__A",
-   "contingency": "DTMETMP8",
-   "from": "TMPCR",
-   "to": "TMPSW",
+   "name": "FURHMAN_VANDB_1",
+   "contingency": "SFURMOU8",
+   "from": "FURHMAN",
+   "to": "VANBLTSS",
    "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 534.4,
-   "flow": 499.5
-  },
-  {
-   "name": "UVALDE_W_BATE1_1",
-   "contingency": "DRAZSA89",
-   "from": "UVALDE",
-   "to": "W_BATESV",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 121.7,
-   "flow": 68.3
+   "limit": 171.5,
+   "flow": 48.5
   },
   {
    "name": "PNHNDL",
@@ -76,23 +50,23 @@
    "kv": 0.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 12,
+   "intervalsBinding": 3,
    "bindingNow": true,
-   "limit": 4171.5,
-   "flow": 4003.0
+   "limit": 3986.1,
+   "flow": 3290.5
   },
   {
-   "name": "ESCOND_GANSO1_1",
-   "contingency": "SBRAPIN8",
-   "from": "GANSO",
-   "to": "ESCONDID",
-   "kv": 138.0,
+   "name": "BLESSING_1382",
+   "contingency": "SANGSTA5",
+   "from": "BLESSING",
+   "to": "BLESSING",
+   "kv": 345.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 5,
-   "bindingNow": false,
-   "limit": 122.0,
-   "flow": 4.6
+   "intervalsBinding": 8,
+   "bindingNow": true,
+   "limit": 425.2,
+   "flow": 387.4
   }
  ]
 }
