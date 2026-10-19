@@ -1,6 +1,6 @@
 {
- "fetchedUTC": "2026-10-19T06:30:05.408218Z",
- "latestSCED": "2026-10-19T00:55:17",
+ "fetchedUTC": "2026-10-19T13:50:17.359419Z",
+ "latestSCED": "2026-10-19T07:55:18",
  "intervalsInWindow": 12,
  "constraints": [
   {
@@ -9,12 +9,12 @@
    "from": "SCRCV",
    "to": "KNAPP",
    "kv": 138.0,
-   "shadowPrice": 215.33167,
-   "maxShadowPrice": 252.53636,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 242.3,
-   "flow": 242.3
+   "limit": 246.9,
+   "flow": 220.4
   },
   {
    "name": "BLESSING_1382",
@@ -22,12 +22,12 @@
    "from": "BLESSING",
    "to": "BLESSING",
    "kv": 345.0,
-   "shadowPrice": 11.6198,
-   "maxShadowPrice": 25.22478,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 423.3,
-   "flow": 423.3
+   "limit": 424.1,
+   "flow": 382.6
   }
  ]
 }
