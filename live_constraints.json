@@ -1,46 +1,33 @@
 {
- "fetchedUTC": "2026-10-20T01:41:23.510541Z",
- "latestSCED": "2026-10-19T19:55:27",
+ "fetchedUTC": "2026-10-20T06:37:23.924350Z",
+ "latestSCED": "2026-10-20T00:55:18",
  "intervalsInWindow": 12,
  "constraints": [
+  {
+   "name": "SN_STR26_A",
+   "contingency": "DWLFHLJ5",
+   "from": "SN",
+   "to": "STR",
+   "kv": 138.0,
+   "shadowPrice": 10.58696,
+   "maxShadowPrice": 12.98699,
+   "intervalsBinding": 4,
+   "bindingNow": true,
+   "limit": 291.7,
+   "flow": 291.7
+  },
   {
    "name": "6437__F",
    "contingency": "DMTSCOS5",
    "from": "SCRCV",
    "to": "KNAPP",
    "kv": 138.0,
-   "shadowPrice": 65.97104,
-   "maxShadowPrice": 271.88364,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 228.8,
-   "flow": 228.8
-  },
-  {
-   "name": "BLESSING_1382",
-   "contingency": "DSTPSTA5",
-   "from": "BLESSING",
-   "to": "BLESSING",
-   "kv": 345.0,
-   "shadowPrice": 2.32939,
-   "maxShadowPrice": 29.86037,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 424.3,
-   "flow": 424.3
-  },
-  {
-   "name": "BCVPSA03_A",
-   "contingency": "SSCJFS8",
-   "from": "PSA",
-   "to": "BCV",
-   "kv": 138.0,
    "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
+   "maxShadowPrice": 65.62054,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 475.1,
-   "flow": 380.9
+   "limit": 238.4,
+   "flow": 206.1
   },
   {
    "name": "LPLMK_LPLNE_1",
@@ -49,37 +36,24 @@
    "to": "LPLNE",
    "kv": 115.0,
    "shadowPrice": 0.0,
-   "maxShadowPrice": 471.4119,
+   "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 217.6,
-   "flow": 210.2
+   "limit": 217.7,
+   "flow": 177.4
   },
   {
-   "name": "SOLSTICE_PST1",
-   "contingency": "STARLEO8",
-   "from": "SOLSTICE",
-   "to": "SOLSTICE",
-   "kv": 138.0,
+   "name": "BLESSING_1382",
+   "contingency": "DSTPSTA5",
+   "from": "BLESSING",
+   "to": "BLESSING",
+   "kv": 345.0,
    "shadowPrice": 0.0,
-   "maxShadowPrice": 25.75473,
-   "intervalsBinding": 9,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 204.9,
-   "flow": 201.1
-  },
-  {
-   "name": "SLKSW_AX1L",
-   "contingency": "SRVRSLK5",
-   "from": "SLKSW",
-   "to": "SLKSW",
-   "kv": 1.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 568.27399,
-   "intervalsBinding": 7,
-   "bindingNow": false,
-   "limit": 745.8,
-   "flow": 465.7
+   "limit": 424.6,
+   "flow": 387.6
   }
  ]
 }
