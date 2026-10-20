@@ -1,46 +1,46 @@
 {
- "fetchedUTC": "2026-10-20T06:37:23.924350Z",
- "latestSCED": "2026-10-20T00:55:18",
- "intervalsInWindow": 12,
+ "fetchedUTC": "2026-10-20T12:07:34.619760Z",
+ "latestSCED": "2026-10-20T05:55:18",
+ "intervalsInWindow": 10,
  "constraints": [
+  {
+   "name": "CONCHO_HARI1_A",
+   "contingency": "SOAKNIC8",
+   "from": "CONCHO",
+   "to": "HARI",
+   "kv": 69.0,
+   "shadowPrice": 2386.88403,
+   "maxShadowPrice": 2386.88403,
+   "intervalsBinding": 2,
+   "bindingNow": true,
+   "limit": 28.5,
+   "flow": 28.5
+  },
+  {
+   "name": "BCVPSA03_A",
+   "contingency": "DGBY_KG5",
+   "from": "PSA",
+   "to": "BCV",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 58.61772,
+   "intervalsBinding": 10,
+   "bindingNow": true,
+   "limit": 477.6,
+   "flow": 469.5
+  },
   {
    "name": "SN_STR26_A",
    "contingency": "DWLFHLJ5",
    "from": "SN",
    "to": "STR",
    "kv": 138.0,
-   "shadowPrice": 10.58696,
-   "maxShadowPrice": 12.98699,
-   "intervalsBinding": 4,
-   "bindingNow": true,
-   "limit": 291.7,
-   "flow": 291.7
-  },
-  {
-   "name": "6437__F",
-   "contingency": "DMTSCOS5",
-   "from": "SCRCV",
-   "to": "KNAPP",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 65.62054,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 238.4,
-   "flow": 206.1
-  },
-  {
-   "name": "LPLMK_LPLNE_1",
-   "contingency": "SBWDDBM5",
-   "from": "LPLMK",
-   "to": "LPLNE",
-   "kv": 115.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 12,
+   "intervalsBinding": 10,
    "bindingNow": true,
-   "limit": 217.7,
-   "flow": 177.4
+   "limit": 291.6,
+   "flow": 204.3
   },
   {
    "name": "BLESSING_1382",
@@ -50,10 +50,36 @@
    "kv": 345.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 12,
+   "intervalsBinding": 10,
    "bindingNow": true,
-   "limit": 424.6,
-   "flow": 387.6
+   "limit": 424.7,
+   "flow": 408.2
+  },
+  {
+   "name": "6437__F",
+   "contingency": "DMTSCOS5",
+   "from": "SCRCV",
+   "to": "KNAPP",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 10,
+   "bindingNow": true,
+   "limit": 243.1,
+   "flow": 186.1
+  },
+  {
+   "name": "LPLMK_LPLNE_1",
+   "contingency": "SBWDDBM5",
+   "from": "LPLMK",
+   "to": "LPLNE",
+   "kv": 115.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 10,
+   "bindingNow": true,
+   "limit": 217.7,
+   "flow": 152.3
   }
  ]
 }
