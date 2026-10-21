@@ -1,6 +1,6 @@
 {
- "fetchedUTC": "2026-10-21T20:41:38.177269Z",
- "latestSCED": "2026-10-21T14:55:19",
+ "fetchedUTC": "2026-10-21T23:38:34.005981Z",
+ "latestSCED": "2026-10-21T17:55:19",
  "intervalsInWindow": 12,
  "constraints": [
   {
@@ -9,38 +9,12 @@
    "from": "BLESSING",
    "to": "PAVLOV",
    "kv": 138.0,
-   "shadowPrice": 1495.90491,
-   "maxShadowPrice": 1495.90491,
+   "shadowPrice": 344.56995,
+   "maxShadowPrice": 1125.1073,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 156.2,
-   "flow": 156.2
-  },
-  {
-   "name": "SNDSW_MR1H",
-   "contingency": "MSNDWCR5",
-   "from": "SNDSW",
-   "to": "SNDSW",
-   "kv": 345.0,
-   "shadowPrice": 276.59195,
-   "maxShadowPrice": 291.45541,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 731.2,
-   "flow": 731.2
-  },
-  {
-   "name": "1295__A",
-   "contingency": "DTMETMP8",
-   "from": "TMPCR",
-   "to": "TMPSW",
-   "kv": 138.0,
-   "shadowPrice": 22.28839,
-   "maxShadowPrice": 32.48265,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 522.1,
-   "flow": 522.1
+   "limit": 155.3,
+   "flow": 155.3
   },
   {
    "name": "1545__A",
@@ -48,25 +22,25 @@
    "from": "FLTSW",
    "to": "PRSSW",
    "kv": 138.0,
-   "shadowPrice": 19.59464,
-   "maxShadowPrice": 21.39784,
-   "intervalsBinding": 10,
-   "bindingNow": true,
-   "limit": 243.3,
-   "flow": 243.3
-  },
-  {
-   "name": "LAN_CT_PAVLOV1_1",
-   "contingency": "DWLFHLJ5",
-   "from": "PAVLOV",
-   "to": "LAN_CTY",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
+   "shadowPrice": 57.62031,
+   "maxShadowPrice": 57.62031,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 152.2,
-   "flow": 139.8
+   "limit": 244.4,
+   "flow": 244.4
+  },
+  {
+   "name": "BIGTRE_V_DUPS1_1",
+   "contingency": "SVI2V_D8",
+   "from": "V_DUPSW",
+   "to": "BIGTRE",
+   "kv": 138.0,
+   "shadowPrice": 27.31459,
+   "maxShadowPrice": 30.90329,
+   "intervalsBinding": 3,
+   "bindingNow": true,
+   "limit": 156.1,
+   "flow": 156.1
   },
   {
    "name": "BCVPSA03_A",
@@ -78,34 +52,47 @@
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 477.5,
-   "flow": 439.7
+   "limit": 477.7,
+   "flow": 472.6
   },
   {
-   "name": "SN_STR26_A",
+   "name": "LAN_CT_PAVLOV1_1",
    "contingency": "DWPWFWP5",
-   "from": "SN",
-   "to": "STR",
+   "from": "PAVLOV",
+   "to": "LAN_CTY",
    "kv": 138.0,
    "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
+   "maxShadowPrice": 832.12878,
+   "intervalsBinding": 6,
+   "bindingNow": true,
+   "limit": 150.4,
+   "flow": 149.6
+  },
+  {
+   "name": "1295__A",
+   "contingency": "DTMETMP8",
+   "from": "TMPCR",
+   "to": "TMPSW",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 438.15305,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 289.5,
-   "flow": 160.5
+   "limit": 519.6,
+   "flow": 488.1
   },
   {
-   "name": "1745__A",
-   "contingency": "XPRS58",
-   "from": "BUROW",
-   "to": "RYSSW",
-   "kv": 138.0,
+   "name": "SNDSW_MR1H",
+   "contingency": "MSNDWCR5",
+   "from": "SNDSW",
+   "to": "SNDSW",
+   "kv": 345.0,
    "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 9,
+   "maxShadowPrice": 216.85466,
+   "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 380.4,
-   "flow": 340.8
+   "limit": 741.7,
+   "flow": 566.5
   },
   {
    "name": "BALLINGE_FMRL",
@@ -115,23 +102,36 @@
    "kv": 1.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 61.2,
-   "flow": 55.1
+   "intervalsBinding": 8,
+   "bindingNow": false,
+   "limit": 61.6,
+   "flow": 45.5
   },
   {
-   "name": "BLESSING_1382",
-   "contingency": "SANGSTA5",
-   "from": "BLESSING",
-   "to": "BLESSING",
-   "kv": 345.0,
+   "name": "1745__A",
+   "contingency": "XPRS58",
+   "from": "BUROW",
+   "to": "RYSSW",
+   "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 424.5,
-   "flow": 349.7
+   "intervalsBinding": 8,
+   "bindingNow": false,
+   "limit": 406.7,
+   "flow": 143.8
+  },
+  {
+   "name": "LAN_CT_PAVLOV1_1",
+   "contingency": "DWLFHLJ5",
+   "from": "PAVLOV",
+   "to": "LAN_CTY",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 7,
+   "bindingNow": false,
+   "limit": 151.3,
+   "flow": 138.9
   }
  ]
 }
