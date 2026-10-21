@@ -1,6 +1,6 @@
 {
- "fetchedUTC": "2026-10-21T17:17:44.104134Z",
- "latestSCED": "2026-10-21T11:55:17",
+ "fetchedUTC": "2026-10-21T20:41:38.177269Z",
+ "latestSCED": "2026-10-21T14:55:19",
  "intervalsInWindow": 12,
  "constraints": [
   {
@@ -9,12 +9,12 @@
    "from": "BLESSING",
    "to": "PAVLOV",
    "kv": 138.0,
-   "shadowPrice": 710.58606,
-   "maxShadowPrice": 762.49713,
+   "shadowPrice": 1495.90491,
+   "maxShadowPrice": 1495.90491,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 156.0,
-   "flow": 156.0
+   "limit": 156.2,
+   "flow": 156.2
   },
   {
    "name": "SNDSW_MR1H",
@@ -22,64 +22,12 @@
    "from": "SNDSW",
    "to": "SNDSW",
    "kv": 345.0,
-   "shadowPrice": 211.47781,
-   "maxShadowPrice": 246.40639,
+   "shadowPrice": 276.59195,
+   "maxShadowPrice": 291.45541,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 738.2,
-   "flow": 738.2
-  },
-  {
-   "name": "ASHERT_CATARI1_1",
-   "contingency": "MLOFOAV5",
-   "from": "ASHERTON",
-   "to": "CATARINA",
-   "kv": 138.0,
-   "shadowPrice": 68.91962,
-   "maxShadowPrice": 68.91962,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 148.5,
-   "flow": 148.5
-  },
-  {
-   "name": "N_TO_H",
-   "contingency": "BASE CASE",
-   "from": "",
-   "to": "",
-   "kv": 0.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 5171.2,
-   "flow": 4176.3
-  },
-  {
-   "name": "BCVPSA03_A",
-   "contingency": "DGBY_KG5",
-   "from": "PSA",
-   "to": "BCV",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 477.8,
-   "flow": 451.1
-  },
-  {
-   "name": "BLESSING_1382",
-   "contingency": "SANGSTA5",
-   "from": "BLESSING",
-   "to": "BLESSING",
-   "kv": 345.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 5.09253,
-   "intervalsBinding": 3,
-   "bindingNow": true,
-   "limit": 423.2,
-   "flow": 412.6
+   "limit": 731.2,
+   "flow": 731.2
   },
   {
    "name": "1295__A",
@@ -87,12 +35,25 @@
    "from": "TMPCR",
    "to": "TMPSW",
    "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
+   "shadowPrice": 22.28839,
+   "maxShadowPrice": 32.48265,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 529.0,
-   "flow": 522.7
+   "limit": 522.1,
+   "flow": 522.1
+  },
+  {
+   "name": "1545__A",
+   "contingency": "SPRSTCO8",
+   "from": "FLTSW",
+   "to": "PRSSW",
+   "kv": 138.0,
+   "shadowPrice": 19.59464,
+   "maxShadowPrice": 21.39784,
+   "intervalsBinding": 10,
+   "bindingNow": true,
+   "limit": 243.3,
+   "flow": 243.3
   },
   {
    "name": "LAN_CT_PAVLOV1_1",
@@ -104,8 +65,21 @@
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 151.9,
-   "flow": 143.1
+   "limit": 152.2,
+   "flow": 139.8
+  },
+  {
+   "name": "BCVPSA03_A",
+   "contingency": "DGBY_KG5",
+   "from": "PSA",
+   "to": "BCV",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 477.5,
+   "flow": 439.7
   },
   {
    "name": "SN_STR26_A",
@@ -117,21 +91,21 @@
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 290.3,
-   "flow": 259.5
+   "limit": 289.5,
+   "flow": 160.5
   },
   {
-   "name": "CATARI_PILONC1_1",
-   "contingency": "MLOFOAV5",
-   "from": "CATARINA",
-   "to": "PILONCIL",
+   "name": "1745__A",
+   "contingency": "XPRS58",
+   "from": "BUROW",
+   "to": "RYSSW",
    "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 1,
+   "intervalsBinding": 9,
    "bindingNow": true,
-   "limit": 146.0,
-   "flow": 142.9
+   "limit": 380.4,
+   "flow": 340.8
   },
   {
    "name": "BALLINGE_FMRL",
@@ -143,34 +117,21 @@
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 61.0,
-   "flow": 57.0
+   "limit": 61.2,
+   "flow": 55.1
   },
   {
-   "name": "6437__F",
-   "contingency": "DMTSCOS5",
-   "from": "SCRCV",
-   "to": "KNAPP",
-   "kv": 138.0,
+   "name": "BLESSING_1382",
+   "contingency": "SANGSTA5",
+   "from": "BLESSING",
+   "to": "BLESSING",
+   "kv": 345.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 3,
-   "bindingNow": false,
-   "limit": 215.0,
-   "flow": 177.1
-  },
-  {
-   "name": "LAN_CT_PAVLOV1_1",
-   "contingency": "SLANARR8",
-   "from": "PAVLOV",
-   "to": "LAN_CTY",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 2,
-   "bindingNow": false,
-   "limit": 151.2,
-   "flow": 139.4
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 424.5,
+   "flow": 349.7
   }
  ]
 }
