@@ -1,46 +1,33 @@
 {
- "fetchedUTC": "2026-10-22T06:40:10.735219Z",
- "latestSCED": "2026-10-22T00:55:19",
+ "fetchedUTC": "2026-10-22T12:25:27.637711Z",
+ "latestSCED": "2026-10-22T06:55:18",
  "intervalsInWindow": 12,
  "constraints": [
+  {
+   "name": "BIGTRE_V_DUPS1_1",
+   "contingency": "SFORJOS8",
+   "from": "V_DUPSW",
+   "to": "BIGTRE",
+   "kv": 138.0,
+   "shadowPrice": 1137.8396,
+   "maxShadowPrice": 3177.03345,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 156.0,
+   "flow": 156.0
+  },
   {
    "name": "BLESSING_1382",
    "contingency": "DSTPSTA5",
    "from": "BLESSING",
    "to": "BLESSING",
    "kv": 345.0,
-   "shadowPrice": 153.33914,
-   "maxShadowPrice": 271.30862,
+   "shadowPrice": 892.30573,
+   "maxShadowPrice": 1428.73779,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 422.7,
-   "flow": 422.7
-  },
-  {
-   "name": "6437__F",
-   "contingency": "DMTSCOS5",
-   "from": "SCRCV",
-   "to": "KNAPP",
-   "kv": 138.0,
-   "shadowPrice": 97.95789,
-   "maxShadowPrice": 97.95789,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 233.2,
-   "flow": 233.2
-  },
-  {
-   "name": "SN_STR26_A",
-   "contingency": "DWEBLMU8",
-   "from": "SN",
-   "to": "STR",
-   "kv": 138.0,
-   "shadowPrice": 8.96927,
-   "maxShadowPrice": 30.80128,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 291.9,
-   "flow": 291.9
+   "limit": 423.0,
+   "flow": 423.0
   },
   {
    "name": "BCVPSA03_A",
@@ -52,34 +39,34 @@
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 477.4,
-   "flow": 472.9
+   "limit": 477.6,
+   "flow": 467.0
   },
   {
-   "name": "BIGTRE_V_DUPS1_1",
-   "contingency": "SFORJOS8",
-   "from": "V_DUPSW",
-   "to": "BIGTRE",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 1.74204,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 156.1,
-   "flow": 153.4
-  },
-  {
-   "name": "1545__A",
-   "contingency": "SPRSTCO8",
-   "from": "FLTSW",
-   "to": "PRSSW",
+   "name": "6437__F",
+   "contingency": "DMTSCOS5",
+   "from": "SCRCV",
+   "to": "KNAPP",
    "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 264.6,
-   "flow": 220.1
+   "limit": 238.0,
+   "flow": 215.2
+  },
+  {
+   "name": "HEC_NEDIN2_1",
+   "contingency": "SDUKNED8",
+   "from": "HEC",
+   "to": "NEDIN",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 332.6,
+   "flow": 308.0
   }
  ]
 }
