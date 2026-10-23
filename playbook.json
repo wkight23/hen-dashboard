@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-23T16:06:49.767788Z",
+ "generated": "2026-10-23T16:15:29.783483Z",
  "source": "HEN_NOC_Congestion_Playbook.xlsx",
  "disclaimer": [
   "\u26a1  HEN Real-Time Congestion Playbook",
@@ -32,7 +32,9 @@
    "otherNodes": "Hamilton (+6.8%)\nFort Duncan (+4.4%)",
    "holdStrategy": "Willing to sit on high pricing HE20-24.",
    "notes": "Watch to see if there is a hard cut off at HE4. Switches over to LAKENASW-SAMATHIS",
-   "aliases": [],
+   "aliases": [
+    "HARGRO_TWINBU1_1"
+   ],
    "siteSF": {
     "Russek": 0.31665,
     "Hamilton": 0.0679,
@@ -81,7 +83,9 @@
    "otherNodes": "Russek (+3.2%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "FORTMA_YELWJC1_1"
+   ],
    "siteSF": {
     "Russek": 0.032,
     "Junction": 0.5,
@@ -129,7 +133,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "MW overload is around 200MW. Once we get close to this # line starts to bind. There's typically a lot of line outages in the region when we see this congestion pop up, so once you see it pop up, look into the line outages that stack up",
-   "aliases": [],
+   "aliases": [
+    "TREADW_YELWJC1_1"
+   ],
    "siteSF": {
     "Catarina": 0.015,
     "Holcomb": 0.015,
@@ -177,7 +183,9 @@
    "otherNodes": "Judkins (-71.8%)\nSaddleback (-71.6%)\nRussek (-66.0%)\nOlney (-55.8%)",
    "holdStrategy": "",
    "notes": "During the peak months, I think we need 45+GW of renewables online for this congestion to pop up. Especially when load reached 85GW+.",
-   "aliases": [],
+   "aliases": [
+    "WESTEX"
+   ],
    "siteSF": {
     "Russek": -0.66,
     "Catarina": 0.07514,
@@ -234,7 +242,9 @@
    "otherNodes": "Saddleback (+20.4%)\nRussek (+7.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "6965__A"
+   ],
    "siteSF": {
     "Russek": 0.07,
     "Catarina": -0.02,
@@ -291,7 +301,9 @@
    "otherNodes": "Val Verde (-19.6%)\nHolcomb (-13.8%)\nCatarina (-8.6%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "E_PASP"
+   ],
    "siteSF": {
     "Catarina": -0.08556,
     "Holcomb": -0.13778,
@@ -339,7 +351,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "When far west solar gen is ramping offline and South wind gen is ramping up, its common to see this congestion. Also need a decently high load from the west.",
-   "aliases": [],
+   "aliases": [
+    "PALOUS_WOLFCA1_1"
+   ],
    "siteSF": {
     "Russek": 0.30569
    },
@@ -384,7 +398,9 @@
    "otherNodes": "Catarina (-26.5%)\nFort Duncan (-13.0%)\nHamilton (-9.4%)\nVal Verde (+7.6%)",
    "holdStrategy": "really just important to track the wind. If South gen stays below 500MW and coastal is also below 500MW during middle of day",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "NLARSW_PILONC1_1"
+   ],
    "siteSF": {
     "Catarina": -0.26481,
     "Holcomb": 0.23807,
@@ -433,7 +449,9 @@
    "otherNodes": "Fort Duncan (+12.0%)\nHolcomb (-9.0%)\nHamilton (+8.6%)\nVal Verde (-6.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "NLARSW_PILONC1_1"
+   ],
    "siteSF": {
     "Catarina": 0.26,
     "Holcomb": -0.09,
@@ -482,7 +500,9 @@
    "otherNodes": "Saddleback (+27.0%)\nRussek (+10.0%)\nCisco (-8.0%)\nOlney (-7.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "6945__A"
+   ],
    "siteSF": {
     "Russek": 0.1,
     "Judkins": 0.3,
@@ -533,7 +553,9 @@
    "otherNodes": "",
    "holdStrategy": "Marginal offer line",
    "notes": "6630_A_LN outage impacts this line (per Enverus). Strong solar production, 90+ DFW Temps and good west wind production cause congestion here. Deplete before HE20",
-   "aliases": [],
+   "aliases": [
+    "6830__B"
+   ],
    "siteSF": {
     "Olney": 0.78682
    },
@@ -578,7 +600,9 @@
    "otherNodes": "Val Verde (-11.3%)\nHolcomb (-9.5%)\nCatarina (-8.5%)\nFort Duncan (-7.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "STPWAP39_1"
+   ],
    "siteSF": {
     "Catarina": -0.085,
     "Holcomb": -0.09462,
@@ -628,7 +652,9 @@
    "otherNodes": "Fort Duncan (-26.1%)\nCatarina (-9.4%)\nRussek (+5.0%)\nHolcomb (-4.4%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "ESCOND_GANSO1_1"
+   ],
    "siteSF": {
     "Russek": 0.05,
     "Catarina": -0.094,
@@ -724,7 +750,9 @@
    "otherNodes": "Junction (-50.0%)",
    "holdStrategy": "",
    "notes": "Driven by West wind with demand in the east.",
-   "aliases": [],
+   "aliases": [
+    "FORTMA_YELWJC1_1"
+   ],
    "siteSF": {
     "Junction": -0.5
    },
@@ -769,7 +797,9 @@
    "otherNodes": "Catarina (-73.2%)\nHolcomb (-9.0%)\nVal Verde (-5.1%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "ASHERT_CATARI1_1"
+   ],
    "siteSF": {
     "Catarina": -0.732,
     "Holcomb": -0.09013,
@@ -817,7 +847,9 @@
    "otherNodes": "Holcomb (+17.2%)\nFort Duncan (-11.6%)\nHamilton (-9.0%)",
    "holdStrategy": "If west wind is dying in the down ramp, you may continue to see this congestion with low coastal winds",
    "notes": "If this shows up during the down ramp, it's typically caused by a dying west wind.",
-   "aliases": [],
+   "aliases": [
+    "ASHERT_CATARI1_1"
+   ],
    "siteSF": {
     "Catarina": 0.76982,
     "Holcomb": 0.17245,
@@ -865,7 +897,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "6635__G"
+   ],
    "siteSF": {
     "Cisco": 0.17348
    },
@@ -910,7 +944,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "Strong wind generation from panhandle during day time",
-   "aliases": [],
+   "aliases": [
+    "LPLMK_LPLNE_1"
+   ],
    "siteSF": {
     "Russek": 0.01044,
     "Hamilton": 0.00574,
@@ -958,7 +994,9 @@
    "otherNodes": "Fort Duncan (-6.4%)\nHamilton (-6.0%)\nCatarina (-5.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "HON_DEVI_1"
+   ],
    "siteSF": {
     "Catarina": -0.05,
     "Hamilton": -0.06,
@@ -1005,7 +1043,9 @@
    "otherNodes": "Saddleback (+13.7%)\nRussek (+9.0%)\nOlney (-6.0%)\nDiboll (-4.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "I_FW_N"
+   ],
    "siteSF": {
     "Russek": 0.09,
     "Judkins": 0.1566,
@@ -1054,7 +1094,9 @@
    "otherNodes": "Fort Duncan (+21.0%)\nCatarina (+9.0%)\nRussek (-7.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "CARVER_TINSLE1_1"
+   ],
    "siteSF": {
     "Russek": -0.07,
     "Catarina": 0.09,
@@ -1102,7 +1144,9 @@
    "otherNodes": "Fort Duncan (-9.8%)\nCatarina (-9.2%)\nHamilton (-8.8%)\nHolcomb (-5.3%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "BIG_FO_PLEASA1_1"
+   ],
    "siteSF": {
     "Catarina": -0.092,
     "Holcomb": -0.0534,
@@ -1150,7 +1194,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "KATEMC_MASN1_1"
+   ],
    "siteSF": {
     "Junction": 0.251
    },
@@ -1195,7 +1241,9 @@
    "otherNodes": "Russek (-5.0%)\nJudkins (-4.8%)\nSaddleback (-4.8%)\nCisco (-4.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "630__B"
+   ],
    "siteSF": {
     "Russek": -0.05,
     "Judkins": -0.048,
@@ -1243,7 +1291,9 @@
    "otherNodes": "Holcomb (-5.6%)\nVal Verde (-5.6%)\nCatarina (-5.3%)\nOlney (+5.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "35055__A"
+   ],
    "siteSF": {
     "Catarina": -0.053,
     "Holcomb": -0.056,
@@ -1294,7 +1344,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "Driven by West wind with demand in the east.",
-   "aliases": [],
+   "aliases": [
+    "MADDUX_TREADW1_1"
+   ],
    "siteSF": {
     "Junction": 0.39252
    },
@@ -1339,7 +1391,10 @@
    "otherNodes": "Saddleback (+23.4%)\nRussek (+11.1%)\nCisco (-5.2%)\nOlney (-5.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "6056__B",
+    "6960__A"
+   ],
    "siteSF": {
     "Russek": 0.11076,
     "Hamilton": 0.0458,
@@ -1390,7 +1445,9 @@
    "otherNodes": "Fort Duncan (+14.3%)\nRussek (-5.0%)\nCatarina (+5.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "HAMILT_MAXWEL1_1"
+   ],
    "siteSF": {
     "Russek": -0.05,
     "Catarina": 0.05,
@@ -1485,7 +1542,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "ATSO_SONR1_1"
+   ],
    "siteSF": {
     "Russek": 0.05,
     "Hamilton": 0.014
@@ -1531,7 +1590,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "Localized wind and solar production creates tight gradients that have been making this common in lower wind conditions",
-   "aliases": [],
+   "aliases": [
+    "LAKENA_SAMATH1_1"
+   ],
    "siteSF": {
     "Russek": 0.07252
    },
@@ -1576,7 +1637,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "BRUNI_69_1"
+   ],
    "siteSF": {
     "Catarina": 0.01044,
     "Fort Duncan": 0.01044
@@ -1622,7 +1685,9 @@
    "otherNodes": "Saddleback (+4.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "16050__B"
+   ],
    "siteSF": {
     "Judkins": 0.04,
     "Saddleback": 0.04
@@ -1668,7 +1733,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "587__A"
+   ],
    "siteSF": {
     "Diboll": 0.01469
    },
@@ -1713,7 +1780,9 @@
    "otherNodes": "Hamilton (+9.2%)\nFort Duncan (+5.7%)",
    "holdStrategy": "If this is the only binding line on Russek, discharge before solar falls offline. We'll take $100+ MCC here.",
    "notes": "High WTX demand (9.6GW is a good threshold) with low WTX wind gives highest shadow pricing",
-   "aliases": [],
+   "aliases": [
+    "CROSSO_NORTMC1_1"
+   ],
    "siteSF": {
     "Russek": 0.34171,
     "Hamilton": 0.09187,
@@ -1762,7 +1831,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "HAINE__LA_PAL1_1"
+   ],
    "siteSF": {
     "Holcomb": 0.01138,
     "Val Verde": 0.018556
@@ -1808,7 +1879,9 @@
    "otherNodes": "",
    "holdStrategy": "A lot of this congestion is really driven by outages and load in Houston. Lines tend to go in and out of outage around here which makes it very difficult",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "GN_PZ_08_A"
+   ],
    "siteSF": {
     "Mainland": 0.18322
    },
@@ -1853,7 +1926,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "BURNS_HEIDLBRG_1"
+   ],
    "siteSF": {
     "Val Verde": 0.15343
    },
@@ -1898,7 +1973,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "BR_HOC09_A"
+   ],
    "siteSF": {
     "Mainland": 0.09515
    },
@@ -1943,7 +2020,9 @@
    "otherNodes": "Olney (-5.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "BOW_FMR1"
+   ],
    "siteSF": {
     "Olney": -0.05
    },
@@ -1988,7 +2067,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "651__B"
+   ],
    "siteSF": {
     "Cisco": 0.05
    },
@@ -2033,7 +2114,9 @@
    "otherNodes": "Hamilton (-20.5%)\nFort Duncan (-8.9%)\nCatarina (-8.1%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "READIN_UVALDE1_1"
+   ],
    "siteSF": {
     "Catarina": -0.08093,
     "Hamilton": -0.20464,
@@ -2080,7 +2163,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "SANTAR_WOLFCA1_1"
+   ],
    "siteSF": {
     "Russek": 0.31739
    },
@@ -2170,7 +2255,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "DEL_MA_LAREDO1_1"
+   ],
    "siteSF": {
     "Holcomb": 0.06
    },
@@ -2215,7 +2302,9 @@
    "otherNodes": "Val Verde (-9.2%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "COLETO_VICTOR2_1"
+   ],
    "siteSF": {
     "Val Verde": -0.0917
    },
@@ -2260,7 +2349,10 @@
    "otherNodes": "Olney (-3.4%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "381__A",
+    "400__A"
+   ],
    "siteSF": {
     "Diboll": 0.05227,
     "Olney": -0.03425
@@ -2306,7 +2398,9 @@
    "otherNodes": "Catarina (+21.8%)\nHamilton (+7.0%)\nFort Duncan (+7.0%)\nVal Verde (-7.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "LARDVN_LOBO2_1"
+   ],
    "siteSF": {
     "Catarina": 0.21816,
     "Holcomb": 0.32386,
@@ -2355,7 +2449,9 @@
    "otherNodes": "Val Verde (+11.0%)\nCatarina (+10.0%)\nFort Duncan (+9.0%)\nDiboll (-7.4%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "421__A"
+   ],
    "siteSF": {
     "Catarina": 0.1,
     "Holcomb": 0.11,
@@ -2409,7 +2505,9 @@
    "otherNodes": "Catarina (+17.9%)\nVal Verde (-7.9%)\nHamilton (+6.2%)",
    "holdStrategy": "",
    "notes": "the absence of binding intervals for this exact line in the past 90 days is consistent with a conductor upgrade that began construction in 2024 on this specific segment (congestion may be dead)",
-   "aliases": [],
+   "aliases": [
+    "LARDVN_LASCRU1_1"
+   ],
    "siteSF": {
     "Russek": 0.01,
     "Catarina": 0.17885,
@@ -2607,7 +2705,9 @@
    "otherNodes": "Hamilton (+12.6%)\nCatarina (-5.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "WCR_CARI_1"
+   ],
    "siteSF": {
     "Catarina": -0.05,
     "Hamilton": 0.126,
@@ -2629,7 +2729,9 @@
    "otherNodes": "Mainland (-10.0%)\nOlney (+8.3%)\nCisco (+6.8%)\nHolcomb (-5.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "40__A"
+   ],
    "siteSF": {
     "Russek": 0.04,
     "Catarina": -0.04,
@@ -2658,7 +2760,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "ABNTHW_SERDEV1_1"
+   ],
    "siteSF": {
     "Cisco": 0.13947
    },
@@ -2702,7 +2806,9 @@
    "otherNodes": "Hamilton (-56.0%)\nCatarina (+7.2%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "HAMILT_MAVERI1_1"
+   ],
    "siteSF": {
     "Catarina": 0.072,
     "Hamilton": -0.56,
@@ -2747,7 +2853,9 @@
    "otherNodes": "Holcomb (-9.8%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "CATARI_PILONC1_1"
+   ],
    "siteSF": {
     "Catarina": 0.337,
     "Holcomb": -0.098
@@ -2768,7 +2876,9 @@
    "otherNodes": "Hamilton (+27.5%)\nCatarina (-15.0%)\nHolcomb (-6.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "UVALDE_W_BATE1_1"
+   ],
    "siteSF": {
     "Catarina": -0.14975,
     "Holcomb": -0.06,
@@ -2791,7 +2901,9 @@
    "otherNodes": "Val Verde (-98.2%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "VALEXP"
+   ],
    "siteSF": {
     "Val Verde": -0.98239
    },
@@ -2811,7 +2923,9 @@
    "otherNodes": "Val Verde (-10.0%)\nHolcomb (-9.6%)\nCatarina (-9.1%)\nFort Duncan (-7.7%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "MDOPHR99_A"
+   ],
    "siteSF": {
     "Catarina": -0.091,
     "Holcomb": -0.096,
@@ -2860,7 +2974,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "6840__B"
+   ],
    "siteSF": {
     "Olney": 0.476
    },
@@ -2880,7 +2996,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "MIDW_OZONA1_1"
+   ],
    "siteSF": {
     "Russek": 0.06
    },
@@ -2900,7 +3018,9 @@
    "otherNodes": "Holcomb (-10.0%)\nVal Verde (-9.9%)\nCatarina (-9.3%)\nOlney (+8.1%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "300__A"
+   ],
    "siteSF": {
     "Catarina": -0.0932,
     "Holcomb": -0.0997,
@@ -2929,7 +3049,10 @@
    "otherNodes": "Cisco (-84.0%)\nDiboll (-10.0%)\nOlney (-8.0%)\nJudkins (-7.7%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "THWZEN71_A",
+    "THWZEN98_A"
+   ],
    "siteSF": {
     "Russek": -0.072,
     "Junction": -0.053,
@@ -2956,7 +3079,9 @@
    "otherNodes": "Val Verde (-8.2%)\nHolcomb (-7.7%)\nCatarina (-7.2%)\nFort Duncan (-6.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "DOWOAS18_A"
+   ],
    "siteSF": {
     "Catarina": -0.0722,
     "Holcomb": -0.0768,
@@ -2982,7 +3107,9 @@
    "otherNodes": "Fort Duncan (-25.8%)\nCatarina (-8.9%)\nRussek (+5.3%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "HAMILT_MAVERI1_1"
+   ],
    "siteSF": {
     "Russek": 0.05256,
     "Catarina": -0.08936,
@@ -3035,7 +3162,9 @@
    "otherNodes": "Catarina (-9.2%)\nHolcomb (-4.4%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "GANSO_MAVERI1_1"
+   ],
    "siteSF": {
     "Catarina": -0.09232,
     "Holcomb": -0.04424,
@@ -3057,7 +3186,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "BURNS_RIOHONDO_1"
+   ],
    "siteSF": {
     "Val Verde": 0.1976
    },
@@ -3077,7 +3208,9 @@
    "otherNodes": "Junction (-33.6%)\nHamilton (-11.7%)\nFort Duncan (-7.4%)\nRussek (-7.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "MADDUX_SAPOWE1_1"
+   ],
    "siteSF": {
     "Russek": -0.0695,
     "Hamilton": -0.11666,
@@ -3120,7 +3253,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "6513__A"
+   ],
    "siteSF": {
     "Saddleback": 0.08
    },
@@ -3163,7 +3298,9 @@
    "otherNodes": "Junction (-15.7%)\nSaddleback (-14.5%)\nRussek (-13.8%)\nJudkins (-13.2%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "656T656_1"
+   ],
    "siteSF": {
     "Russek": -0.13825,
     "Catarina": 0.07977,
@@ -3189,7 +3326,9 @@
    "otherNodes": "Fort Duncan (-18.2%)\nHamilton (-15.5%)\nCatarina (-6.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "2585_1"
+   ],
    "siteSF": {
     "Catarina": -0.06,
     "Hamilton": -0.15515,
@@ -3211,7 +3350,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "138_FLT_FXT_1"
+   ],
    "siteSF": {
     "Judkins": 0.016,
     "Saddleback": 0.31332
@@ -3232,7 +3373,9 @@
    "otherNodes": "Olney (-6.8%)\nCisco (-6.6%)\nJudkins (-6.4%)\nSaddleback (-6.2%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "109__A"
+   ],
    "siteSF": {
     "Russek": -0.0582,
     "Hamilton": -0.039,
@@ -3280,7 +3423,9 @@
    "otherNodes": "Holcomb (+6.5%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "I_KALO"
+   ],
    "siteSF": {
     "Holcomb": 0.065,
     "Val Verde": 0.25691
@@ -3301,7 +3446,9 @@
    "otherNodes": "Holcomb (+4.1%) Val Verde (6.3%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "BLESSING_1382"
+   ],
    "siteSF": {
     "Holcomb": 0.041,
     "Val Verde": 0.063
@@ -3322,7 +3469,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "SANA_FMR1"
+   ],
    "siteSF": {
     "Cisco": 0.04
    },
@@ -3370,7 +3519,9 @@
    "otherNodes": "Cisco (-4.5%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "6635__G"
+   ],
    "siteSF": {
     "Cisco": -0.045,
     "Olney": 0.053
@@ -3416,7 +3567,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "HEXT_YELWJC1_1"
+   ],
    "siteSF": {
     "Junction": 0.059
    },
@@ -3436,7 +3589,9 @@
    "otherNodes": "",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "CRD_CRD2"
+   ],
    "siteSF": {
     "Cisco": 0.06
    },
@@ -3479,7 +3634,9 @@
    "otherNodes": "Junction (-8.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "583T583_1"
+   ],
    "siteSF": {
     "Junction": -0.08
    },
@@ -3519,7 +3676,9 @@
    "otherNodes": "Saddleback (+3.8%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "CRTVLE_EINSTEN_1"
+   ],
    "siteSF": {
     "Judkins": 0.04849,
     "Saddleback": 0.03842
@@ -3540,7 +3699,9 @@
    "otherNodes": "None significant (<2%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "POT_PEAR_1"
+   ],
    "siteSF": {
     "Catarina": -0.01753,
     "Holcomb": -0.01336,
@@ -3562,7 +3723,9 @@
    "otherNodes": "Olney (+4.0%)\nCisco (+3.0%)",
    "holdStrategy": "",
    "notes": "",
-   "aliases": [],
+   "aliases": [
+    "6275__D"
+   ],
    "siteSF": {
     "Cisco": 0.03,
     "Olney": 0.04
@@ -3601,7 +3764,9 @@
    "otherNodes": "",
    "holdStrategy": "Hold if south wind is increasing. Rip before solar falls out. Hold charge room if we're expecting congestion",
    "notes": "Also need DEVINE-BIGFOOT in outage for this congestion. Window can be from 2pm-7pm. Best thresehold I have is 800MW of south wind and 14GW of south central weatherzone load.",
-   "aliases": [],
+   "aliases": [
+    "POT_OAKS_1"
+   ],
    "siteSF": {},
    "hourly": null
   },
@@ -3637,7 +3802,9 @@
    "otherNodes": "",
    "holdStrategy": "Rip Falfurrias when it pops up",
    "notes": "Main drivers with the outage for this congestion is seeing south wind go below 300MW during the solar window.",
-   "aliases": [],
+   "aliases": [
+    "SND_ORAN_1"
+   ],
    "siteSF": {},
    "hourly": null
   }
