@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-23T14:23:29.846071Z",
+ "generated": "2026-10-23T15:58:36.347892Z",
  "source": "HEN_NOC_Congestion_Playbook.xlsx",
  "disclaimer": [
   "\u26a1  HEN Real-Time Congestion Playbook",
@@ -3606,7 +3606,7 @@
    "hourly": null
   },
   {
-   "line": "ORNGROV-ORNGROC",
+   "line": "ORNGROV-ORNGROV",
    "priority": "New",
    "season": "Summer",
    "peakHE": "HE16-19",
