@@ -1,0 +1,25 @@
+name: Build crosswalk
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "How many days back to scan"
+        default: "180"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install requests openpyxl
+      - run: python tools/build_crosswalk.py --days "${{ github.event.inputs.days || '180' }}"
+        env:
+          ERCOT_USERNAME: ${{ secrets.ERCOT_USERNAME }}
+          ERCOT_PASSWORD: ${{ secrets.ERCOT_PASSWORD }}
+          ERCOT_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_SUBKEY }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: crosswalk
+          path: crosswalk.xlsx
