@@ -83,6 +83,23 @@ for row in ll.iter_rows(min_row=4, values_only=True):
         "hourly": hg.get(key),
     })
 
+# --- Aliases sheet: col A = ERCOT constraint name, col B = playbook line ---
+alias_ws = next((w for w in wb.worksheets if "alias" in w.title.lower()), None)
+if alias_ws:
+    def k(x): return re.sub(r"[^A-Z0-9]", "", str(x).upper().replace("KV", ""))
+    by_key = {k(l["line"]): l for l in lines}
+    added = 0
+    for row in alias_ws.iter_rows(min_row=2, values_only=True):
+        ercot, target = clean(row[0]), clean(row[1]) if len(row) > 1 else ""
+        if not ercot or not target: continue
+        for t in (x.strip() for x in target.split(",")):
+            line = by_key.get(k(t))
+            if line:
+                line["aliases"].append(ercot); added += 1
+            else:
+                print(f"WARNING: alias target not found in Line Lookup: {t!r} (for {ercot})")
+    print(f"Loaded {added} aliases from sheet '{alias_ws.title}'")
+
 # --- Disclaimer text ---
 disc = [clean(r[1]) for r in sheet("Disclaimer").iter_rows(values_only=True) if clean(r[1])]
 
