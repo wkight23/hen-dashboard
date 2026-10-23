@@ -1,7 +1,7 @@
 {
- "fetchedUTC": "2026-10-23T16:18:59.500725Z",
+ "fetchedUTC": "2026-10-23T17:04:36.206622Z",
  "latestSCED": "2026-10-23T10:55:19",
- "intervalsInWindow": 12,
+ "intervalsInWindow": 11,
  "constraints": [
   {
    "name": "THWZEN98_A",
@@ -11,7 +11,7 @@
    "kv": 345.0,
    "shadowPrice": 59.4192,
    "maxShadowPrice": 59.4192,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 1266.3,
    "flow": 1266.3
@@ -37,7 +37,7 @@
    "kv": 345.0,
    "shadowPrice": 45.34187,
    "maxShadowPrice": 76.93517,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 738.4,
    "flow": 738.4
@@ -63,7 +63,7 @@
    "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 383.7,
    "flow": 170.1
@@ -76,7 +76,7 @@
    "kv": 345.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 424.4,
    "flow": 348.8
