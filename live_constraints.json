@@ -1,33 +1,20 @@
 {
- "fetchedUTC": "2026-10-24T06:25:56.779202Z",
- "latestSCED": "2026-10-24T00:55:20",
+ "fetchedUTC": "2026-10-24T11:23:07.583780Z",
+ "latestSCED": "2026-10-24T05:55:17",
  "intervalsInWindow": 12,
  "constraints": [
   {
-   "name": "ATSO_SONR1_1",
-   "contingency": "SCARFRI8",
-   "from": "SONR",
-   "to": "ATSO",
-   "kv": 69.0,
-   "shadowPrice": 107.11324,
-   "maxShadowPrice": 151.09958,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 37.2,
-   "flow": 37.2
-  },
-  {
-   "name": "TREADW_YELWJC1_1",
-   "contingency": "DBIGKEN5",
-   "from": "TREADWEL",
-   "to": "YELWJCKT",
+   "name": "BCVPSA03_A",
+   "contingency": "DKG_NB_5",
+   "from": "PSA",
+   "to": "BCV",
    "kv": 138.0,
-   "shadowPrice": 54.18528,
-   "maxShadowPrice": 54.18528,
+   "shadowPrice": 20.23475,
+   "maxShadowPrice": 25.45383,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 209.0,
-   "flow": 209.0
+   "limit": 477.8,
+   "flow": 477.8
   },
   {
    "name": "THWZEN98_A",
@@ -35,25 +22,12 @@
    "from": "ZEN",
    "to": "THW",
    "kv": 345.0,
-   "shadowPrice": 26.56622,
-   "maxShadowPrice": 39.42982,
+   "shadowPrice": 3.67356,
+   "maxShadowPrice": 11.06929,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 1287.7,
-   "flow": 1287.7
-  },
-  {
-   "name": "BCVPSA03_A",
-   "contingency": "DGBY_KG5",
-   "from": "PSA",
-   "to": "BCV",
-   "kv": 138.0,
-   "shadowPrice": 16.31723,
-   "maxShadowPrice": 29.34704,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 478.0,
-   "flow": 478.0
+   "limit": 1286.6,
+   "flow": 1286.6
   },
   {
    "name": "SPUR_69_1",
@@ -61,90 +35,12 @@
    "from": "SPUR",
    "to": "SPUR",
    "kv": 138.0,
-   "shadowPrice": 9.77386,
-   "maxShadowPrice": 9.86994,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 52.5,
-   "flow": 52.5
-  },
-  {
-   "name": "BLESSI_PAVLOV1_1",
-   "contingency": "SLANARR8",
-   "from": "BLESSING",
-   "to": "PAVLOV",
-   "kv": 138.0,
-   "shadowPrice": 1.98488,
-   "maxShadowPrice": 129.98735,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 154.9,
-   "flow": 154.9
-  },
-  {
-   "name": "587__A",
-   "contingency": "DDHMLWS5",
-   "from": "ARGYL",
-   "to": "LWSVH",
-   "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 216.1,
-   "flow": 207.9
-  },
-  {
-   "name": "WESTEX",
-   "contingency": "BASE CASE",
-   "from": "",
-   "to": "",
-   "kv": 0.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 9537.0,
-   "flow": 9070.7
-  },
-  {
-   "name": "BLESSI_PAVLOV1_1",
-   "contingency": "DHJWFCK5",
-   "from": "BLESSING",
-   "to": "PAVLOV",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 155.8,
-   "flow": 144.3
-  },
-  {
-   "name": "TMPSW_MR1H",
-   "contingency": "DSALHUT5",
-   "from": "TMPSW",
-   "to": "TMPSW",
-   "kv": 345.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 732.1,
-   "flow": 700.0
-  },
-  {
-   "name": "KLNSW_MR1H",
-   "contingency": "DSALKLN5",
-   "from": "KLNSW",
-   "to": "KLNSW",
-   "kv": 345.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 69.75744,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 745.3,
-   "flow": 730.5
+   "limit": 53.3,
+   "flow": 37.0
   },
   {
    "name": "BLESSING_1382",
@@ -156,8 +52,8 @@
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 423.6,
-   "flow": 391.4
+   "limit": 423.1,
+   "flow": 415.7
   }
  ]
 }
