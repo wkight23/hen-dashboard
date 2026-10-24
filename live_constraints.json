@@ -1,33 +1,33 @@
 {
- "fetchedUTC": "2026-10-24T11:23:07.583780Z",
- "latestSCED": "2026-10-24T05:55:17",
+ "fetchedUTC": "2026-10-24T14:41:11.716388Z",
+ "latestSCED": "2026-10-24T08:55:18",
  "intervalsInWindow": 12,
  "constraints": [
-  {
-   "name": "BCVPSA03_A",
-   "contingency": "DKG_NB_5",
-   "from": "PSA",
-   "to": "BCV",
-   "kv": 138.0,
-   "shadowPrice": 20.23475,
-   "maxShadowPrice": 25.45383,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 477.8,
-   "flow": 477.8
-  },
   {
    "name": "THWZEN98_A",
    "contingency": "DZEN_OB5",
    "from": "ZEN",
    "to": "THW",
    "kv": 345.0,
-   "shadowPrice": 3.67356,
-   "maxShadowPrice": 11.06929,
+   "shadowPrice": 19.78563,
+   "maxShadowPrice": 19.78563,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 1286.6,
-   "flow": 1286.6
+   "limit": 1289.7,
+   "flow": 1289.7
+  },
+  {
+   "name": "BLESSING_1382",
+   "contingency": "SANGSTA5",
+   "from": "BLESSING",
+   "to": "BLESSING",
+   "kv": 345.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 2,
+   "bindingNow": true,
+   "limit": 423.6,
+   "flow": 423.3
   },
   {
    "name": "SPUR_69_1",
@@ -36,11 +36,50 @@
    "to": "SPUR",
    "kv": 138.0,
    "shadowPrice": 0.0,
+   "maxShadowPrice": 9.17179,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 52.7,
+   "flow": 51.8
+  },
+  {
+   "name": "SN_STR26_A",
+   "contingency": "DWPWFWP5",
+   "from": "SN",
+   "to": "STR",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 53.3,
-   "flow": 37.0
+   "limit": 291.0,
+   "flow": 178.5
+  },
+  {
+   "name": "BLESSI_PAVLOV1_1",
+   "contingency": "DWPWFCK5",
+   "from": "BLESSING",
+   "to": "PAVLOV",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 155.8,
+   "flow": 138.0
+  },
+  {
+   "name": "BCVPSA03_A",
+   "contingency": "DGBY_KG5",
+   "from": "PSA",
+   "to": "BCV",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 42.81401,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 477.6,
+   "flow": 476.3
   },
   {
    "name": "BLESSING_1382",
@@ -50,10 +89,23 @@
    "kv": 345.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 423.1,
-   "flow": 415.7
+   "intervalsBinding": 10,
+   "bindingNow": false,
+   "limit": 423.7,
+   "flow": 400.4
+  },
+  {
+   "name": "BCVPSA03_A",
+   "contingency": "DKG_NB_5",
+   "from": "PSA",
+   "to": "BCV",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 1,
+   "bindingNow": false,
+   "limit": 477.9,
+   "flow": 455.6
   }
  ]
 }
