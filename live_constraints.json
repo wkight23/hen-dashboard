@@ -1,6 +1,6 @@
 {
- "fetchedUTC": "2026-10-25T08:45:12.239384Z",
- "latestSCED": "2026-10-25T02:55:18",
+ "fetchedUTC": "2026-10-25T13:23:02.316941Z",
+ "latestSCED": "2026-10-25T07:55:18",
  "intervalsInWindow": 12,
  "constraints": [
   {
@@ -9,38 +9,12 @@
    "from": "BLESSING",
    "to": "PAVLOV",
    "kv": 138.0,
-   "shadowPrice": 105.91611,
-   "maxShadowPrice": 527.8017,
+   "shadowPrice": 200.77823,
+   "maxShadowPrice": 200.77823,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 155.9,
-   "flow": 155.9
-  },
-  {
-   "name": "BRUNI_69_1",
-   "contingency": "SLAQLOB8",
-   "from": "BRUNI",
-   "to": "BRUNI",
-   "kv": 138.0,
-   "shadowPrice": 88.34345,
-   "maxShadowPrice": 98.07175,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 35.7,
-   "flow": 35.7
-  },
-  {
-   "name": "THWZEN98_A",
-   "contingency": "DZEN_OB5",
-   "from": "ZEN",
-   "to": "THW",
-   "kv": 345.0,
-   "shadowPrice": 14.45764,
-   "maxShadowPrice": 19.32962,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 1280.6,
-   "flow": 1280.6
+   "limit": 155.3,
+   "flow": 155.3
   },
   {
    "name": "SPUR_69_1",
@@ -48,12 +22,25 @@
    "from": "SPUR",
    "to": "SPUR",
    "kv": 138.0,
-   "shadowPrice": 12.73766,
-   "maxShadowPrice": 14.66934,
+   "shadowPrice": 22.5759,
+   "maxShadowPrice": 22.91805,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 52.3,
-   "flow": 52.3
+   "limit": 52.6,
+   "flow": 52.6
+  },
+  {
+   "name": "BCVPSA03_A",
+   "contingency": "DKG_NB_5",
+   "from": "PSA",
+   "to": "BCV",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 477.8,
+   "flow": 443.5
   },
   {
    "name": "SN_STR26_A",
@@ -61,25 +48,12 @@
    "from": "SN",
    "to": "STR",
    "kv": 138.0,
-   "shadowPrice": 5.29567,
-   "maxShadowPrice": 12.03459,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 291.7,
-   "flow": 291.7
-  },
-  {
-   "name": "LAN_CT_PAVLOV1_1",
-   "contingency": "SLANARR8",
-   "from": "PAVLOV",
-   "to": "LAN_CTY",
-   "kv": 138.0,
    "shadowPrice": 0.0,
-   "maxShadowPrice": 115.15695,
+   "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 152.4,
-   "flow": 151.6
+   "limit": 291.5,
+   "flow": 256.4
   },
   {
    "name": "BLESSI_PAVLOV1_1",
@@ -91,21 +65,34 @@
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 155.6,
-   "flow": 136.8
+   "limit": 156.0,
+   "flow": 140.7
   },
   {
-   "name": "NLARSW_PILONC1_1",
-   "contingency": "DFOAVLO5",
-   "from": "NLARSW",
-   "to": "PILONCIL",
-   "kv": 138.0,
+   "name": "THWZEN98_A",
+   "contingency": "DZEN_OB5",
+   "from": "ZEN",
+   "to": "THW",
+   "kv": 345.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 4,
-   "bindingNow": false,
-   "limit": 145.6,
-   "flow": 114.7
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 1297.3,
+   "flow": 1028.1
+  },
+  {
+   "name": "LAN_CT_PAVLOV1_1",
+   "contingency": "SLANARR8",
+   "from": "PAVLOV",
+   "to": "LAN_CTY",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 80.90812,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 153.6,
+   "flow": 150.7
   },
   {
    "name": "ATSO_SONR1_1",
@@ -115,10 +102,23 @@
    "kv": 69.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 4,
-   "bindingNow": false,
-   "limit": 37.8,
-   "flow": 20.7
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 37.1,
+   "flow": 34.9
+  },
+  {
+   "name": "BRUNI_69_1",
+   "contingency": "SLAQLOB8",
+   "from": "BRUNI",
+   "to": "BRUNI",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 36.2,
+   "flow": 21.7
   }
  ]
 }
