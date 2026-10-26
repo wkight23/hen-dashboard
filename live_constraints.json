@@ -1,20 +1,20 @@
 {
- "fetchedUTC": "2026-10-26T00:04:36.208961Z",
- "latestSCED": "2026-10-25T17:55:17",
- "intervalsInWindow": 11,
+ "fetchedUTC": "2026-10-26T04:35:33.964831Z",
+ "latestSCED": "2026-10-25T22:55:16",
+ "intervalsInWindow": 12,
  "constraints": [
   {
-   "name": "LAN_CT_PAVLOV1_1",
-   "contingency": "DWPWFWP5",
-   "from": "PAVLOV",
-   "to": "LAN_CTY",
+   "name": "SPUR_69_1",
+   "contingency": "SSPUASP8",
+   "from": "SPUR",
+   "to": "SPUR",
    "kv": 138.0,
-   "shadowPrice": 404.77124,
-   "maxShadowPrice": 443.44702,
-   "intervalsBinding": 5,
-   "bindingNow": false,
-   "limit": 151.4,
-   "flow": 151.4
+   "shadowPrice": 19.17719,
+   "maxShadowPrice": 22.27104,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 52.5,
+   "flow": 52.5
   },
   {
    "name": "BLESSI_PAVLOV1_1",
@@ -22,38 +22,12 @@
    "from": "BLESSING",
    "to": "PAVLOV",
    "kv": 138.0,
-   "shadowPrice": 267.80164,
-   "maxShadowPrice": 382.53781,
-   "intervalsBinding": 6,
-   "bindingNow": true,
-   "limit": 154.8,
-   "flow": 154.8
-  },
-  {
-   "name": "BLESSI_PAVLOV1_1",
-   "contingency": "DWPWFWP5",
-   "from": "BLESSING",
-   "to": "PAVLOV",
-   "kv": 138.0,
-   "shadowPrice": 81.96523,
-   "maxShadowPrice": 363.92749,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
    "intervalsBinding": 11,
-   "bindingNow": true,
-   "limit": 155.6,
-   "flow": 155.6
-  },
-  {
-   "name": "SPUR_69_1",
-   "contingency": "SSPUASP8",
-   "from": "SPUR",
-   "to": "SPUR",
-   "kv": 138.0,
-   "shadowPrice": 28.1287,
-   "maxShadowPrice": 30.42219,
-   "intervalsBinding": 11,
-   "bindingNow": true,
-   "limit": 52.5,
-   "flow": 52.5
+   "bindingNow": false,
+   "limit": 155.7,
+   "flow": 142.9
   }
  ]
 }
