@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-23T16:15:29.783483Z",
+ "generated": "2026-10-26T15:39:10.973326Z",
  "source": "HEN_NOC_Congestion_Playbook.xlsx",
  "disclaimer": [
   "\u26a1  HEN Real-Time Congestion Playbook",
@@ -3805,6 +3805,24 @@
    "aliases": [
     "SND_ORAN_1"
    ],
+   "siteSF": {},
+   "hourly": null
+  },
+  {
+   "line": "SLKSW 345KV AX2H",
+   "priority": "New",
+   "season": "Outage",
+   "peakHE": "Wind Driven",
+   "trigger": "Main driver for this congestion is to have high outages within the region and a STRONG panhandle wind generation",
+   "primaryNode": "Cedarvale (42%) Sandle (39%) Coyote (35%)",
+   "primarySF": 0.42,
+   "mcc500": 210.0,
+   "mcc1000": 420.0,
+   "mcc2000": 840.0,
+   "otherNodes": "Faulkner (35%), Rattle (30%), Lonestar (30%), Saddle (30%), Sandlake (30%",
+   "holdStrategy": "Panhandle wind should tell you how shadow pricing will move",
+   "notes": "Splits the WTX and Far WTX in half almost. Junction, Russek, Garden, Cherry and Gomez don't really have shift factors on this line",
+   "aliases": [],
    "siteSF": {},
    "hourly": null
   }
