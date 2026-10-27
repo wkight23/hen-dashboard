@@ -1,7 +1,7 @@
 {
- "fetchedUTC": "2026-10-27T15:30:06.134725Z",
+ "fetchedUTC": "2026-10-27T16:02:11.985805Z",
  "latestSCED": "2026-10-27T09:55:19",
- "intervalsInWindow": 12,
+ "intervalsInWindow": 11,
  "constraints": [
   {
    "name": "SLKSW_AX2H",
@@ -11,7 +11,7 @@
    "kv": 345.0,
    "shadowPrice": 294.3822,
    "maxShadowPrice": 329.44772,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 724.8,
    "flow": 724.8
@@ -102,7 +102,7 @@
    "kv": 345.0,
    "shadowPrice": 3.25286,
    "maxShadowPrice": 87.03112,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 422.2,
    "flow": 422.2
@@ -154,7 +154,7 @@
    "kv": 0.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 23.01657,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
    "limit": 707.2,
    "flow": 689.4
@@ -180,7 +180,7 @@
    "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 11,
+   "intervalsBinding": 10,
    "bindingNow": false,
    "limit": 55.4,
    "flow": 16.8
