@@ -1,125 +1,8 @@
 {
- "fetchedUTC": "2026-10-30T20:12:15.623985Z",
- "latestSCED": "2026-10-30T14:55:16",
+ "fetchedUTC": "2026-10-30T23:46:04.885497Z",
+ "latestSCED": "2026-10-30T17:55:19",
  "intervalsInWindow": 12,
  "constraints": [
-  {
-   "name": "AZTECA_HEC1_1",
-   "contingency": "DMCOPHA8",
-   "from": "HEC",
-   "to": "AZTECA",
-   "kv": 138.0,
-   "shadowPrice": 20.85731,
-   "maxShadowPrice": 37.92157,
-   "intervalsBinding": 2,
-   "bindingNow": true,
-   "limit": 385.2,
-   "flow": 385.2
-  },
-  {
-   "name": "BIGTRE_V_DUPS1_1",
-   "contingency": "SFORJOS8",
-   "from": "V_DUPSW",
-   "to": "BIGTRE",
-   "kv": 138.0,
-   "shadowPrice": 9.01679,
-   "maxShadowPrice": 203.29408,
-   "intervalsBinding": 11,
-   "bindingNow": true,
-   "limit": 157.0,
-   "flow": 157.0
-  },
-  {
-   "name": "BLESSING_1382",
-   "contingency": "DSTPSTA5",
-   "from": "BLESSING",
-   "to": "BLESSING",
-   "kv": 345.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 423.6,
-   "flow": 407.4
-  },
-  {
-   "name": "BLESSING_1382",
-   "contingency": "SANGSTA5",
-   "from": "BLESSING",
-   "to": "BLESSING",
-   "kv": 345.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 152.43326,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 423.9,
-   "flow": 398.9
-  },
-  {
-   "name": "GN_PZ_08_A",
-   "contingency": "SMDOOAS5",
-   "from": "GN",
-   "to": "PZ",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 225.23352,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 386.9,
-   "flow": 365.0
-  },
-  {
-   "name": "1545__A",
-   "contingency": "SPRSTCO8",
-   "from": "FLTSW",
-   "to": "PRSSW",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 12.43024,
-   "intervalsBinding": 6,
-   "bindingNow": true,
-   "limit": 254.8,
-   "flow": 248.1
-  },
-  {
-   "name": "BLESSING_1382",
-   "contingency": "SSTACHA5",
-   "from": "BLESSING",
-   "to": "BLESSING",
-   "kv": 345.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 424.1,
-   "flow": 395.2
-  },
-  {
-   "name": "BELCNTY_XFMR",
-   "contingency": "DSNDBGR5",
-   "from": "BELCNTY",
-   "to": "BELCNTY",
-   "kv": 69.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 10,
-   "bindingNow": false,
-   "limit": 74.7,
-   "flow": 56.4
-  },
-  {
-   "name": "BIGTRE_V_DUPS1_1",
-   "contingency": "SLOLFOR8",
-   "from": "V_DUPSW",
-   "to": "BIGTRE",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 1,
-   "bindingNow": false,
-   "limit": 156.5,
-   "flow": 150.3
-  },
   {
    "name": "EASTEX",
    "contingency": "BASE CASE",
@@ -128,10 +11,10 @@
    "kv": 0.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 10,
-   "bindingNow": false,
-   "limit": 2493.2,
-   "flow": 1828.6
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 2625.7,
+   "flow": 2487.7
   }
  ]
 }
