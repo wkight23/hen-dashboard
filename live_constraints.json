@@ -1,72 +1,33 @@
 {
- "fetchedUTC": "2026-10-30T09:05:34.356315Z",
- "latestSCED": "2026-10-30T02:55:18",
- "intervalsInWindow": 10,
+ "fetchedUTC": "2026-10-30T15:50:46.402340Z",
+ "latestSCED": "2026-10-30T09:55:17",
+ "intervalsInWindow": 12,
  "constraints": [
   {
-   "name": "G138_15_1",
-   "contingency": "SWCOWCO8",
-   "from": "ANGLETON",
-   "to": "WCOLLOCL",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 10,
-   "bindingNow": true,
-   "limit": 209.5,
-   "flow": 97.9
-  },
-  {
-   "name": "NLARSW_PILONC1_1",
-   "contingency": "DFOAVLO5",
-   "from": "NLARSW",
-   "to": "PILONCIL",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 10,
-   "bindingNow": true,
-   "limit": 145.3,
-   "flow": 93.9
-  },
-  {
-   "name": "LAN_CT_PAVLOV1_1",
-   "contingency": "SLANARR8",
-   "from": "PAVLOV",
-   "to": "LAN_CTY",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 10,
-   "bindingNow": true,
-   "limit": 153.4,
-   "flow": 128.9
-  },
-  {
-   "name": "BRUNI_69_1",
-   "contingency": "SLAQLOB8",
-   "from": "BRUNI",
-   "to": "BRUNI",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 10,
-   "bindingNow": true,
-   "limit": 36.1,
-   "flow": 23.5
-  },
-  {
-   "name": "BLESSI_PAVLOV1_1",
-   "contingency": "SLANARR8",
+   "name": "BLESSING_1382",
+   "contingency": "DSTPSTA5",
    "from": "BLESSING",
-   "to": "PAVLOV",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 10,
+   "to": "BLESSING",
+   "kv": 345.0,
+   "shadowPrice": 53.75178,
+   "maxShadowPrice": 59.60998,
+   "intervalsBinding": 4,
    "bindingNow": true,
-   "limit": 156.2,
-   "flow": 132.3
+   "limit": 423.6,
+   "flow": 423.6
+  },
+  {
+   "name": "ATSO_SONR1_1",
+   "contingency": "SCARFRI8",
+   "from": "SONR",
+   "to": "ATSO",
+   "kv": 69.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 134.92888,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 36.0,
+   "flow": 34.9
   },
   {
    "name": "GN_PZ_08_A",
@@ -75,11 +36,11 @@
    "to": "PZ",
    "kv": 138.0,
    "shadowPrice": 0.0,
-   "maxShadowPrice": 71.54131,
-   "intervalsBinding": 10,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 6,
    "bindingNow": true,
-   "limit": 386.7,
-   "flow": 384.9
+   "limit": 386.8,
+   "flow": 378.7
   }
  ]
 }
