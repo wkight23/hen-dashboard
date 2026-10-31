@@ -1,20 +1,85 @@
 {
- "fetchedUTC": "2026-10-31T02:46:14.102982Z",
- "latestSCED": "2026-10-30T20:55:20",
+ "fetchedUTC": "2026-10-31T08:56:19.169075Z",
+ "latestSCED": "2026-10-31T02:55:19",
  "intervalsInWindow": 12,
  "constraints": [
+  {
+   "name": "LENSW_PUTN2_1",
+   "contingency": "DLNCSWE5",
+   "from": "LENSW",
+   "to": "PUTN",
+   "kv": 138.0,
+   "shadowPrice": 1620.99927,
+   "maxShadowPrice": 1620.99927,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 85.7,
+   "flow": 85.7
+  },
+  {
+   "name": "6437__F",
+   "contingency": "DMTSCOS5",
+   "from": "SCRCV",
+   "to": "KNAPP",
+   "kv": 138.0,
+   "shadowPrice": 1127.86755,
+   "maxShadowPrice": 1546.26062,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 242.0,
+   "flow": 242.0
+  },
+  {
+   "name": "LAKENA_SAMATH1_1",
+   "contingency": "SLGDSAP8",
+   "from": "LAKENASW",
+   "to": "SAMATHIS",
+   "kv": 69.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 37.8,
+   "flow": 32.9
+  },
+  {
+   "name": "GN_PZ_08_A",
+   "contingency": "SMDOOAS5",
+   "from": "GN",
+   "to": "PZ",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 386.8,
+   "flow": 370.3
+  },
+  {
+   "name": "CEDRHI_SILT1_1",
+   "contingency": "DMGSBTR5",
+   "from": "CEDRHILL",
+   "to": "SILT",
+   "kv": 69.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 29.9,
+   "flow": 28.1
+  },
   {
    "name": "6945__A",
    "contingency": "SRGRMGS5",
    "from": "MGSES",
    "to": "CATSW",
    "kv": 345.0,
-   "shadowPrice": 9.82604,
-   "maxShadowPrice": 9.82604,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 1410.9,
-   "flow": 1410.9
+   "limit": 1411.3,
+   "flow": 1317.5
   },
   {
    "name": "SGVSW_MR2H",
@@ -26,47 +91,8 @@
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 747.1,
-   "flow": 733.7
-  },
-  {
-   "name": "TEN_CRD1_1",
-   "contingency": "SKENGDV8",
-   "from": "TEN",
-   "to": "CRD",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 272.6,
-   "flow": 267.3
-  },
-  {
-   "name": "CKT_948_1",
-   "contingency": "SBERONI8",
-   "from": "ONION",
-   "to": "PILOT",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 479.7,
-   "flow": 360.6
-  },
-  {
-   "name": "ATSO_SONR1_1",
-   "contingency": "SCARFRI8",
-   "from": "SONR",
-   "to": "ATSO",
-   "kv": 69.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 105.80154,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 36.8,
-   "flow": 34.4
+   "limit": 747.9,
+   "flow": 658.8
   }
  ]
 }
