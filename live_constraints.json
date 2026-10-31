@@ -1,20 +1,72 @@
 {
- "fetchedUTC": "2026-10-30T23:46:04.885497Z",
- "latestSCED": "2026-10-30T17:55:19",
+ "fetchedUTC": "2026-10-31T02:46:14.102982Z",
+ "latestSCED": "2026-10-30T20:55:20",
  "intervalsInWindow": 12,
  "constraints": [
   {
-   "name": "EASTEX",
-   "contingency": "BASE CASE",
-   "from": "",
-   "to": "",
-   "kv": 0.0,
+   "name": "6945__A",
+   "contingency": "SRGRMGS5",
+   "from": "MGSES",
+   "to": "CATSW",
+   "kv": 345.0,
+   "shadowPrice": 9.82604,
+   "maxShadowPrice": 9.82604,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 1410.9,
+   "flow": 1410.9
+  },
+  {
+   "name": "SGVSW_MR2H",
+   "contingency": "DWTRTRC5",
+   "from": "SGVSW",
+   "to": "SGVSW",
+   "kv": 345.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 2625.7,
-   "flow": 2487.7
+   "limit": 747.1,
+   "flow": 733.7
+  },
+  {
+   "name": "TEN_CRD1_1",
+   "contingency": "SKENGDV8",
+   "from": "TEN",
+   "to": "CRD",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 272.6,
+   "flow": 267.3
+  },
+  {
+   "name": "CKT_948_1",
+   "contingency": "SBERONI8",
+   "from": "ONION",
+   "to": "PILOT",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 479.7,
+   "flow": 360.6
+  },
+  {
+   "name": "ATSO_SONR1_1",
+   "contingency": "SCARFRI8",
+   "from": "SONR",
+   "to": "ATSO",
+   "kv": 69.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 105.80154,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 36.8,
+   "flow": 34.4
   }
  ]
 }
