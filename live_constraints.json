@@ -1,6 +1,98 @@
 {
- "fetchedUTC": "2026-10-31T22:26:35.787632Z",
- "latestSCED": null,
- "intervalsInWindow": 0,
- "constraints": []
+ "fetchedUTC": "2026-11-01T01:20:01.738335Z",
+ "latestSCED": "2026-10-31T18:55:21",
+ "intervalsInWindow": 8,
+ "constraints": [
+  {
+   "name": "6437__F",
+   "contingency": "DMTSCOS5",
+   "from": "SCRCV",
+   "to": "KNAPP",
+   "kv": 138.0,
+   "shadowPrice": 932.26898,
+   "maxShadowPrice": 956.10571,
+   "intervalsBinding": 8,
+   "bindingNow": true,
+   "limit": 235.8,
+   "flow": 235.8
+  },
+  {
+   "name": "SGVSW_MR2H",
+   "contingency": "DWTRTRC5",
+   "from": "SGVSW",
+   "to": "SGVSW",
+   "kv": 345.0,
+   "shadowPrice": 152.39951,
+   "maxShadowPrice": 159.62991,
+   "intervalsBinding": 8,
+   "bindingNow": true,
+   "limit": 745.5,
+   "flow": 745.5
+  },
+  {
+   "name": "610__B",
+   "contingency": "DTMETMP8",
+   "from": "TMPSW",
+   "to": "TMPSE",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 11.4662,
+   "intervalsBinding": 8,
+   "bindingNow": true,
+   "limit": 355.3,
+   "flow": 339.5
+  },
+  {
+   "name": "CKT_948_1",
+   "contingency": "SBERONI8",
+   "from": "ONION",
+   "to": "PILOT",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 8,
+   "bindingNow": true,
+   "limit": 479.8,
+   "flow": 464.4
+  },
+  {
+   "name": "940__A",
+   "contingency": "SPEBTRU8",
+   "from": "ENWSW",
+   "to": "TMPTN",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 8,
+   "bindingNow": true,
+   "limit": 250.3,
+   "flow": 237.5
+  },
+  {
+   "name": "EASTEX",
+   "contingency": "BASE CASE",
+   "from": "",
+   "to": "",
+   "kv": 0.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 8,
+   "bindingNow": true,
+   "limit": 91999.1,
+   "flow": 2472.3
+  },
+  {
+   "name": "GN_PZ_08_A",
+   "contingency": "SMDOOAS5",
+   "from": "GN",
+   "to": "PZ",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 1,
+   "bindingNow": false,
+   "limit": 384.9,
+   "flow": 287.2
+  }
+ ]
 }
