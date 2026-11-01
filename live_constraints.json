@@ -1,7 +1,7 @@
 {
- "fetchedUTC": "2026-11-01T01:20:01.738335Z",
- "latestSCED": "2026-10-31T18:55:21",
- "intervalsInWindow": 8,
+ "fetchedUTC": "2026-11-01T07:39:37.584589Z",
+ "latestSCED": "2026-10-31T23:55:20",
+ "intervalsInWindow": 4,
  "constraints": [
   {
    "name": "6437__F",
@@ -9,12 +9,12 @@
    "from": "SCRCV",
    "to": "KNAPP",
    "kv": 138.0,
-   "shadowPrice": 932.26898,
-   "maxShadowPrice": 956.10571,
-   "intervalsBinding": 8,
+   "shadowPrice": 510.52603,
+   "maxShadowPrice": 646.62994,
+   "intervalsBinding": 4,
    "bindingNow": true,
-   "limit": 235.8,
-   "flow": 235.8
+   "limit": 237.4,
+   "flow": 237.4
   },
   {
    "name": "SGVSW_MR2H",
@@ -22,12 +22,12 @@
    "from": "SGVSW",
    "to": "SGVSW",
    "kv": 345.0,
-   "shadowPrice": 152.39951,
-   "maxShadowPrice": 159.62991,
-   "intervalsBinding": 8,
+   "shadowPrice": 5.74723,
+   "maxShadowPrice": 38.64285,
+   "intervalsBinding": 4,
    "bindingNow": true,
-   "limit": 745.5,
-   "flow": 745.5
+   "limit": 746.4,
+   "flow": 746.4
   },
   {
    "name": "610__B",
@@ -36,11 +36,24 @@
    "to": "TMPSE",
    "kv": 138.0,
    "shadowPrice": 0.0,
-   "maxShadowPrice": 11.4662,
-   "intervalsBinding": 8,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 4,
    "bindingNow": true,
-   "limit": 355.3,
-   "flow": 339.5
+   "limit": 359.9,
+   "flow": 284.3
+  },
+  {
+   "name": "LPLMK_LPLNE_1",
+   "contingency": "SBWDDBM5",
+   "from": "LPLMK",
+   "to": "LPLNE",
+   "kv": 115.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 4,
+   "bindingNow": true,
+   "limit": 217.3,
+   "flow": 201.5
   },
   {
    "name": "CKT_948_1",
@@ -50,10 +63,10 @@
    "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 8,
+   "intervalsBinding": 4,
    "bindingNow": true,
-   "limit": 479.8,
-   "flow": 464.4
+   "limit": 479.1,
+   "flow": 453.7
   },
   {
    "name": "940__A",
@@ -63,36 +76,10 @@
    "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 8,
+   "intervalsBinding": 4,
    "bindingNow": true,
-   "limit": 250.3,
-   "flow": 237.5
-  },
-  {
-   "name": "EASTEX",
-   "contingency": "BASE CASE",
-   "from": "",
-   "to": "",
-   "kv": 0.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 8,
-   "bindingNow": true,
-   "limit": 91999.1,
-   "flow": 2472.3
-  },
-  {
-   "name": "GN_PZ_08_A",
-   "contingency": "SMDOOAS5",
-   "from": "GN",
-   "to": "PZ",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 1,
-   "bindingNow": false,
-   "limit": 384.9,
-   "flow": 287.2
+   "limit": 258.5,
+   "flow": 212.0
   }
  ]
 }
