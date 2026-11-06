@@ -1,72 +1,33 @@
 {
- "fetchedUTC": "2026-11-06T02:37:39.288589Z",
- "latestSCED": "2026-11-05T19:55:20",
+ "fetchedUTC": "2026-11-06T09:50:08.382347Z",
+ "latestSCED": "2026-11-06T02:55:17",
  "intervalsInWindow": 12,
  "constraints": [
   {
-   "name": "6635__G",
-   "contingency": "DPAIMUR8",
-   "from": "MRVLY",
-   "to": "ESTLD",
+   "name": "CEDRHI_SILT1_1",
+   "contingency": "DMGSBTR5",
+   "from": "CEDRHILL",
+   "to": "SILT",
    "kv": 69.0,
-   "shadowPrice": 653.99786,
-   "maxShadowPrice": 653.99786,
+   "shadowPrice": 936.07629,
+   "maxShadowPrice": 995.70813,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 30.9,
-   "flow": 30.9
+   "limit": 29.8,
+   "flow": 29.8
   },
   {
-   "name": "KLNSW_MR1H",
-   "contingency": "DSALHUT5",
-   "from": "KLNSW",
-   "to": "KLNSW",
-   "kv": 345.0,
-   "shadowPrice": 127.43769,
-   "maxShadowPrice": 128.22314,
-   "intervalsBinding": 12,
+   "name": "ATSO_SONR1_1",
+   "contingency": "SCARFRI8",
+   "from": "SONR",
+   "to": "ATSO",
+   "kv": 69.0,
+   "shadowPrice": 155.55118,
+   "maxShadowPrice": 165.60187,
+   "intervalsBinding": 9,
    "bindingNow": true,
-   "limit": 739.5,
-   "flow": 739.5
-  },
-  {
-   "name": "SNDSW_MR1H",
-   "contingency": "MSNDWCR5",
-   "from": "SNDSW",
-   "to": "SNDSW",
-   "kv": 345.0,
-   "shadowPrice": 34.11791,
-   "maxShadowPrice": 86.57452,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 741.6,
-   "flow": 741.6
-  },
-  {
-   "name": "HECKER_RESNIK1_1",
-   "contingency": "SANGNAI5",
-   "from": "HECKER",
-   "to": "RESNIK",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 272.0,
-   "flow": 230.2
-  },
-  {
-   "name": "BI_WAP50_A",
-   "contingency": "DWAP_JN5",
-   "from": "WAP",
-   "to": "BI",
-   "kv": 345.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 1304.6,
-   "flow": 1247.1
+   "limit": 36.9,
+   "flow": 36.9
   },
   {
    "name": "GN_PZ_08_A",
@@ -74,12 +35,38 @@
    "from": "GN",
    "to": "PZ",
    "kv": 138.0,
+   "shadowPrice": 124.64761,
+   "maxShadowPrice": 149.44014,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 386.8,
+   "flow": 386.8
+  },
+  {
+   "name": "SPUR_69_1",
+   "contingency": "SSPUASP8",
+   "from": "SPUR",
+   "to": "SPUR",
+   "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 386.6,
-   "flow": 323.0
+   "limit": 52.5,
+   "flow": 48.8
+  },
+  {
+   "name": "BLESSING_1382",
+   "contingency": "DSTPSTA5",
+   "from": "BLESSING",
+   "to": "BLESSING",
+   "kv": 345.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 426.0,
+   "flow": 398.5
   },
   {
    "name": "EASTEX",
@@ -91,8 +78,21 @@
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 2149.6,
-   "flow": 2136.1
+   "limit": 2225.5,
+   "flow": 1545.4
+  },
+  {
+   "name": "HARGRO_TWINBU1_1",
+   "contingency": "DBAKCED5",
+   "from": "TWINBU",
+   "to": "HARGROVE",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 148.7,
+   "flow": 135.8
   },
   {
    "name": "BCVPSA03_A",
@@ -105,33 +105,20 @@
    "intervalsBinding": 12,
    "bindingNow": true,
    "limit": 478.0,
-   "flow": 458.1
+   "flow": 473.2
   },
   {
-   "name": "6635__G",
-   "contingency": "XGRS58",
-   "from": "MRVLY",
-   "to": "ESTLD",
-   "kv": 69.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 423.41092,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 30.7,
-   "flow": 30.3
-  },
-  {
-   "name": "SPUR_69_1",
-   "contingency": "SSPUASP8",
-   "from": "SPUR",
-   "to": "SPUR",
-   "kv": 138.0,
+   "name": "SNDSW_MR1H",
+   "contingency": "MSNDWCR5",
+   "from": "SNDSW",
+   "to": "SNDSW",
+   "kv": 345.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 1,
+   "intervalsBinding": 4,
    "bindingNow": false,
-   "limit": 54.2,
-   "flow": 26.9
+   "limit": 746.9,
+   "flow": 532.9
   }
  ]
 }
