@@ -1,6 +1,6 @@
 {
- "fetchedUTC": "2026-11-10T02:42:57.214454Z",
- "latestSCED": "2026-11-09T19:55:20",
+ "fetchedUTC": "2026-11-10T10:27:37.380952Z",
+ "latestSCED": "2026-11-10T03:55:22",
  "intervalsInWindow": 12,
  "constraints": [
   {
@@ -9,77 +9,12 @@
    "from": "MGSES",
    "to": "CATSW",
    "kv": 345.0,
-   "shadowPrice": 292.9162,
-   "maxShadowPrice": 347.3468,
+   "shadowPrice": 340.71194,
+   "maxShadowPrice": 395.83081,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 1410.7,
-   "flow": 1410.7
-  },
-  {
-   "name": "SGVSW_MR2H",
-   "contingency": "DWTRTRC5",
-   "from": "SGVSW",
-   "to": "SGVSW",
-   "kv": 345.0,
-   "shadowPrice": 114.36645,
-   "maxShadowPrice": 155.85385,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 745.5,
-   "flow": 745.5
-  },
-  {
-   "name": "NLARSW_PILONC1_1",
-   "contingency": "DFOAVLO5",
-   "from": "NLARSW",
-   "to": "PILONCIL",
-   "kv": 138.0,
-   "shadowPrice": 73.72121,
-   "maxShadowPrice": 100.01839,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 150.1,
-   "flow": 150.1
-  },
-  {
-   "name": "589T589_1",
-   "contingency": "SWRDYN8",
-   "from": "EL_CAMPO",
-   "to": "RICEBI",
-   "kv": 138.0,
-   "shadowPrice": 56.92117,
-   "maxShadowPrice": 67.59637,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 216.6,
-   "flow": 216.6
-  },
-  {
-   "name": "300__A",
-   "contingency": "DSALKLN5",
-   "from": "TMPSW",
-   "to": "TMPCR",
-   "kv": 345.0,
-   "shadowPrice": 10.71888,
-   "maxShadowPrice": 47.34384,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 1313.5,
-   "flow": 1313.5
-  },
-  {
-   "name": "BI_WAP50_A",
-   "contingency": "DWAP_JN5",
-   "from": "WAP",
-   "to": "BI",
-   "kv": 345.0,
-   "shadowPrice": 8.2474,
-   "maxShadowPrice": 11.58785,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 1309.6,
-   "flow": 1309.6
+   "limit": 1435.0,
+   "flow": 1435.0
   },
   {
    "name": "LAN_CT_PAVLOV1_1",
@@ -87,12 +22,12 @@
    "from": "LAN_CTY",
    "to": "PAVLOV",
    "kv": 138.0,
-   "shadowPrice": 3.85493,
-   "maxShadowPrice": 13.23127,
+   "shadowPrice": 29.36357,
+   "maxShadowPrice": 94.6463,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 154.9,
-   "flow": 154.9
+   "limit": 154.0,
+   "flow": 154.0
   },
   {
    "name": "PHARR_YOUNG1_1",
@@ -100,12 +35,25 @@
    "from": "PHARR",
    "to": "YOUNG",
    "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 9.74348,
+   "shadowPrice": 5.77212,
+   "maxShadowPrice": 8.28842,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 302.8,
-   "flow": 276.7
+   "limit": 302.2,
+   "flow": 302.2
+  },
+  {
+   "name": "GN_PZ_08_A",
+   "contingency": "SMDOOAS5",
+   "from": "GN",
+   "to": "PZ",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 386.9,
+   "flow": 289.8
   },
   {
    "name": "I_DUPP_I_DUPS1_1",
@@ -117,21 +65,47 @@
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 192.9,
-   "flow": 165.5
+   "limit": 192.8,
+   "flow": 158.1
   },
   {
-   "name": "ESCOND_GANSO1_1",
-   "contingency": "SBRAPIN8",
-   "from": "ESCONDID",
-   "to": "GANSO",
+   "name": "138_FWP_MNL_1",
+   "contingency": "SALVTNN8",
+   "from": "FRWYPARK",
+   "to": "MAINLAND",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0.42398,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 382.3,
+   "flow": 110.8
+  },
+  {
+   "name": "589T589_1",
+   "contingency": "SWRDYN8",
+   "from": "EL_CAMPO",
+   "to": "RICEBI",
    "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 118.2,
-   "flow": 102.4
+   "limit": 215.1,
+   "flow": 210.8
+  },
+  {
+   "name": "138_ALV_NAL_1",
+   "contingency": "SFRWMAI8",
+   "from": "TNNALVIN",
+   "to": "ALVIN",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 405.1,
+   "flow": 107.4
   }
  ]
 }
