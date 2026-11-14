@@ -1,59 +1,46 @@
 {
- "fetchedUTC": "2026-11-14T20:05:17.320497Z",
- "latestSCED": "2026-11-14T12:55:16",
- "intervalsInWindow": 11,
+ "fetchedUTC": "2026-11-14T23:50:53.994859Z",
+ "latestSCED": "2026-11-14T16:55:16",
+ "intervalsInWindow": 12,
  "constraints": [
   {
-   "name": "SNDSW_MR1H",
-   "contingency": "MSNDWCR5",
-   "from": "SNDSW",
-   "to": "SNDSW",
-   "kv": 345.0,
-   "shadowPrice": 19.95077,
-   "maxShadowPrice": 66.22855,
-   "intervalsBinding": 11,
-   "bindingNow": true,
-   "limit": 741.1,
-   "flow": 741.1
-  },
-  {
-   "name": "2585_1",
-   "contingency": "DRAZSA89",
-   "from": "DOWNIES",
-   "to": "MOORE",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 49.53159,
-   "intervalsBinding": 11,
-   "bindingNow": true,
-   "limit": 119.5,
-   "flow": 70.4
-  },
-  {
-   "name": "BLESSING_1382",
-   "contingency": "DELNHST5",
-   "from": "BLESSING",
-   "to": "BLESSING",
+   "name": "NEVILL_NORTMC_1",
+   "contingency": "DBAKSOL5",
+   "from": "NEVILLSW",
+   "to": "NORTMC",
    "kv": 345.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 11,
+   "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 426.0,
-   "flow": 410.6
+   "limit": 1739.6,
+   "flow": 1287.6
   },
   {
-   "name": "UVALDE",
-   "contingency": "BASE CASE",
-   "from": "",
-   "to": "",
-   "kv": 0.0,
+   "name": "TREADW_YELWJC1_1",
+   "contingency": "DBIGKEN5",
+   "from": "TREADWEL",
+   "to": "YELWJCKT",
+   "kv": 138.0,
    "shadowPrice": 0.0,
-   "maxShadowPrice": 11.80001,
-   "intervalsBinding": 11,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 275.4,
-   "flow": 127.2
+   "limit": 210.1,
+   "flow": 150.5
+  },
+  {
+   "name": "138_MIV_CDV_1",
+   "contingency": "DSLKRVR5",
+   "from": "CEDRVALE",
+   "to": "MIVIDA",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 242.0,
+   "flow": 209.7
   },
   {
    "name": "BI_WAP50_A",
@@ -63,23 +50,10 @@
    "kv": 345.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 11,
+   "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 1305.8,
-   "flow": 1252.9
-  },
-  {
-   "name": "NEVILL_NORTMC_1",
-   "contingency": "DBAKSOL5",
-   "from": "NEVILLSW",
-   "to": "NORTMC",
-   "kv": 345.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 11,
-   "bindingNow": true,
-   "limit": 1740.0,
-   "flow": 1716.7
+   "limit": 1306.7,
+   "flow": 1111.1
   },
   {
    "name": "GN_PZ_08_A",
@@ -89,36 +63,23 @@
    "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 11,
+   "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 386.1,
-   "flow": 364.9
+   "limit": 386.6,
+   "flow": 335.1
   },
   {
-   "name": "TREADW_YELWJC1_1",
-   "contingency": "SBIGOR45",
-   "from": "TREADWEL",
-   "to": "YELWJCKT",
-   "kv": 138.0,
+   "name": "NELRIO",
+   "contingency": "BASE CASE",
+   "from": "",
+   "to": "",
+   "kv": 0.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 8,
-   "bindingNow": false,
-   "limit": 210.1,
-   "flow": 178.4
-  },
-  {
-   "name": "UVALDE_W_BATE1_1",
-   "contingency": "DRAZSA89",
-   "from": "UVALDE",
-   "to": "W_BATESV",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 7,
-   "bindingNow": false,
-   "limit": 121.2,
-   "flow": 70.7
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 867.0,
+   "flow": 616.8
   }
  ]
 }
