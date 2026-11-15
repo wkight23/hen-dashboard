@@ -1,59 +1,20 @@
 {
- "fetchedUTC": "2026-11-15T17:28:41.161190Z",
- "latestSCED": "2026-11-15T10:55:16",
+ "fetchedUTC": "2026-11-15T21:59:38.067219Z",
+ "latestSCED": "2026-11-15T14:55:16",
  "intervalsInWindow": 12,
  "constraints": [
-  {
-   "name": "GN_PZ_08_A",
-   "contingency": "SMDOOAS5",
-   "from": "GN",
-   "to": "PZ",
-   "kv": 138.0,
-   "shadowPrice": 103.94765,
-   "maxShadowPrice": 103.94765,
-   "intervalsBinding": 8,
-   "bindingNow": true,
-   "limit": 386.6,
-   "flow": 386.6
-  },
-  {
-   "name": "BLESSING_1382",
-   "contingency": "DELNHST5",
-   "from": "BLESSING",
-   "to": "BLESSING",
-   "kv": 345.0,
-   "shadowPrice": 67.62618,
-   "maxShadowPrice": 81.65974,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 424.7,
-   "flow": 424.7
-  },
-  {
-   "name": "BI_WAP50_A",
-   "contingency": "DWAP_JN5",
-   "from": "WAP",
-   "to": "BI",
-   "kv": 345.0,
-   "shadowPrice": 25.20387,
-   "maxShadowPrice": 62.52719,
-   "intervalsBinding": 6,
-   "bindingNow": true,
-   "limit": 1313.2,
-   "flow": 1313.2
-  },
   {
    "name": "EASTEX",
    "contingency": "BASE CASE",
    "from": "",
    "to": "",
    "kv": 0.0,
-   "shadowPrice": 8.68013,
-   "maxShadowPrice": 13.45374,
+   "shadowPrice": 12.50579,
+   "maxShadowPrice": 22.21853,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 2291.0,
-   "flow": 2291.0
+   "limit": 2285.9,
+   "flow": 2285.9
   },
   {
    "name": "941__C",
@@ -62,11 +23,63 @@
    "to": "ENSSO",
    "kv": 138.0,
    "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
+   "maxShadowPrice": 7.76735,
    "intervalsBinding": 12,
    "bindingNow": true,
    "limit": 267.1,
-   "flow": 256.5
+   "flow": 256.3
+  },
+  {
+   "name": "BI_WAP50_A",
+   "contingency": "DWAP_JN5",
+   "from": "WAP",
+   "to": "BI",
+   "kv": 345.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 1306.4,
+   "flow": 1263.8
+  },
+  {
+   "name": "BLESSING_1382",
+   "contingency": "DELNHST5",
+   "from": "BLESSING",
+   "to": "BLESSING",
+   "kv": 345.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 424.6,
+   "flow": 379.2
+  },
+  {
+   "name": "138_PYT_SNS_1",
+   "contingency": "SCEDPEC8",
+   "from": "PYOTE",
+   "to": "SNDSTONE",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 2,
+   "bindingNow": false,
+   "limit": 400.0,
+   "flow": 289.6
+  },
+  {
+   "name": "138_CV2_PCM_1",
+   "contingency": "SSNDPYO8",
+   "from": "CEDRVALE",
+   "to": "PECOS",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 2,
+   "bindingNow": false,
+   "limit": 421.7,
+   "flow": 289.6
   }
  ]
 }
