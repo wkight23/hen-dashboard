@@ -1,33 +1,59 @@
 {
- "fetchedUTC": "2026-11-14T23:50:53.994859Z",
- "latestSCED": "2026-11-14T16:55:16",
+ "fetchedUTC": "2026-11-15T03:12:28.496949Z",
+ "latestSCED": "2026-11-14T20:55:16",
  "intervalsInWindow": 12,
  "constraints": [
   {
-   "name": "NEVILL_NORTMC_1",
-   "contingency": "DBAKSOL5",
-   "from": "NEVILLSW",
-   "to": "NORTMC",
-   "kv": 345.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
+   "name": "NLARSW_PILONC1_1",
+   "contingency": "DFOAVLO5",
+   "from": "NLARSW",
+   "to": "PILONCIL",
+   "kv": 138.0,
+   "shadowPrice": 112.95783,
+   "maxShadowPrice": 164.0574,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 1739.6,
-   "flow": 1287.6
+   "limit": 146.1,
+   "flow": 146.1
   },
   {
-   "name": "TREADW_YELWJC1_1",
-   "contingency": "DBIGKEN5",
-   "from": "TREADWEL",
-   "to": "YELWJCKT",
+   "name": "ATSO_SONR1_1",
+   "contingency": "SCARFRI8",
+   "from": "SONR",
+   "to": "ATSO",
+   "kv": 69.0,
+   "shadowPrice": 83.87807,
+   "maxShadowPrice": 85.83006,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 37.2,
+   "flow": 37.2
+  },
+  {
+   "name": "BCVPSA03_A",
+   "contingency": "DKG_NB_5",
+   "from": "PSA",
+   "to": "BCV",
    "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 210.1,
-   "flow": 150.5
+   "limit": 477.1,
+   "flow": 465.1
+  },
+  {
+   "name": "300__A",
+   "contingency": "DSALHUT5",
+   "from": "TMPCR",
+   "to": "TMPSW",
+   "kv": 345.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 2.5116,
+   "intervalsBinding": 8,
+   "bindingNow": true,
+   "limit": 1352.7,
+   "flow": 1326.4
   },
   {
    "name": "138_MIV_CDV_1",
@@ -40,20 +66,7 @@
    "intervalsBinding": 12,
    "bindingNow": true,
    "limit": 242.0,
-   "flow": 209.7
-  },
-  {
-   "name": "BI_WAP50_A",
-   "contingency": "DWAP_JN5",
-   "from": "WAP",
-   "to": "BI",
-   "kv": 345.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 1306.7,
-   "flow": 1111.1
+   "flow": 226.7
   },
   {
    "name": "GN_PZ_08_A",
@@ -66,7 +79,20 @@
    "intervalsBinding": 12,
    "bindingNow": true,
    "limit": 386.6,
-   "flow": 335.1
+   "flow": 307.2
+  },
+  {
+   "name": "BI_WAP50_A",
+   "contingency": "DWAP_JN5",
+   "from": "WAP",
+   "to": "BI",
+   "kv": 345.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 1309.8,
+   "flow": 1019.5
   },
   {
    "name": "NELRIO",
@@ -79,7 +105,7 @@
    "intervalsBinding": 12,
    "bindingNow": true,
    "limit": 867.0,
-   "flow": 616.8
+   "flow": 642.7
   }
  ]
 }
