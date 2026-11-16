@@ -1,6 +1,6 @@
 {
- "fetchedUTC": "2026-11-16T01:42:57.889689Z",
- "latestSCED": "2026-11-15T18:55:17",
+ "fetchedUTC": "2026-11-16T08:36:42.809310Z",
+ "latestSCED": "2026-11-16T01:55:20",
  "intervalsInWindow": 12,
  "constraints": [
   {
@@ -9,12 +9,51 @@
    "from": "NLARSW",
    "to": "PILONCIL",
    "kv": 138.0,
-   "shadowPrice": 320.11349,
-   "maxShadowPrice": 362.85522,
+   "shadowPrice": 403.03864,
+   "maxShadowPrice": 403.03864,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 145.4,
-   "flow": 145.4
+   "limit": 148.2,
+   "flow": 148.2
+  },
+  {
+   "name": "ESCOND_GANSO1_1",
+   "contingency": "SBRAPIN8",
+   "from": "ESCONDID",
+   "to": "GANSO",
+   "kv": 138.0,
+   "shadowPrice": 359.80786,
+   "maxShadowPrice": 359.80786,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 115.0,
+   "flow": 115.0
+  },
+  {
+   "name": "ESCOND_GANSO1_1",
+   "contingency": "SBRAHAM8",
+   "from": "ESCONDID",
+   "to": "GANSO",
+   "kv": 138.0,
+   "shadowPrice": 151.98039,
+   "maxShadowPrice": 151.98039,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 117.4,
+   "flow": 117.4
+  },
+  {
+   "name": "6945__A",
+   "contingency": "SRGRMGS5",
+   "from": "MGSES",
+   "to": "CATSW",
+   "kv": 345.0,
+   "shadowPrice": 139.15337,
+   "maxShadowPrice": 139.15337,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 1460.7,
+   "flow": 1460.7
   },
   {
    "name": "EASTEX",
@@ -27,46 +66,20 @@
    "intervalsBinding": 12,
    "bindingNow": true,
    "limit": 85999.1,
-   "flow": 2297.2
+   "flow": 2395.3
   },
   {
-   "name": "138_MIV_CDV_1",
-   "contingency": "DSLKRVR5",
-   "from": "CEDRVALE",
-   "to": "MIVIDA",
-   "kv": 138.0,
+   "name": "LAKENA_SAMATH1_1",
+   "contingency": "DBAKCED5",
+   "from": "LAKENASW",
+   "to": "SAMATHIS",
+   "kv": 69.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 242.0,
-   "flow": 220.0
-  },
-  {
-   "name": "941__C",
-   "contingency": "SENWSHK8",
-   "from": "ENWSW",
-   "to": "ENSSO",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 1.22235,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 267.2,
-   "flow": 255.8
-  },
-  {
-   "name": "BI_WAP50_A",
-   "contingency": "DWAP_JN5",
-   "from": "WAP",
-   "to": "BI",
-   "kv": 345.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 1307.6,
-   "flow": 1190.6
+   "limit": 38.0,
+   "flow": 36.5
   },
   {
    "name": "NELRIO",
@@ -79,7 +92,20 @@
    "intervalsBinding": 12,
    "bindingNow": true,
    "limit": 867.0,
-   "flow": 689.3
+   "flow": 776.7
+  },
+  {
+   "name": "941__C",
+   "contingency": "SENWSHK8",
+   "from": "ENWSW",
+   "to": "ENSSO",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 266.9,
+   "flow": 257.4
   }
  ]
 }
