@@ -1,20 +1,46 @@
 {
- "fetchedUTC": "2026-11-15T21:59:38.067219Z",
- "latestSCED": "2026-11-15T14:55:16",
+ "fetchedUTC": "2026-11-16T01:42:57.889689Z",
+ "latestSCED": "2026-11-15T18:55:17",
  "intervalsInWindow": 12,
  "constraints": [
+  {
+   "name": "NLARSW_PILONC1_1",
+   "contingency": "DFOAVLO5",
+   "from": "NLARSW",
+   "to": "PILONCIL",
+   "kv": 138.0,
+   "shadowPrice": 320.11349,
+   "maxShadowPrice": 362.85522,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 145.4,
+   "flow": 145.4
+  },
   {
    "name": "EASTEX",
    "contingency": "BASE CASE",
    "from": "",
    "to": "",
    "kv": 0.0,
-   "shadowPrice": 12.50579,
-   "maxShadowPrice": 22.21853,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 2285.9,
-   "flow": 2285.9
+   "limit": 85999.1,
+   "flow": 2297.2
+  },
+  {
+   "name": "138_MIV_CDV_1",
+   "contingency": "DSLKRVR5",
+   "from": "CEDRVALE",
+   "to": "MIVIDA",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 242.0,
+   "flow": 220.0
   },
   {
    "name": "941__C",
@@ -23,11 +49,11 @@
    "to": "ENSSO",
    "kv": 138.0,
    "shadowPrice": 0.0,
-   "maxShadowPrice": 7.76735,
+   "maxShadowPrice": 1.22235,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 267.1,
-   "flow": 256.3
+   "limit": 267.2,
+   "flow": 255.8
   },
   {
    "name": "BI_WAP50_A",
@@ -39,47 +65,21 @@
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 1306.4,
-   "flow": 1263.8
+   "limit": 1307.6,
+   "flow": 1190.6
   },
   {
-   "name": "BLESSING_1382",
-   "contingency": "DELNHST5",
-   "from": "BLESSING",
-   "to": "BLESSING",
-   "kv": 345.0,
+   "name": "NELRIO",
+   "contingency": "BASE CASE",
+   "from": "",
+   "to": "",
+   "kv": 0.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 424.6,
-   "flow": 379.2
-  },
-  {
-   "name": "138_PYT_SNS_1",
-   "contingency": "SCEDPEC8",
-   "from": "PYOTE",
-   "to": "SNDSTONE",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 2,
-   "bindingNow": false,
-   "limit": 400.0,
-   "flow": 289.6
-  },
-  {
-   "name": "138_CV2_PCM_1",
-   "contingency": "SSNDPYO8",
-   "from": "CEDRVALE",
-   "to": "PECOS",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 2,
-   "bindingNow": false,
-   "limit": 421.7,
-   "flow": 289.6
+   "limit": 867.0,
+   "flow": 689.3
   }
  ]
 }
