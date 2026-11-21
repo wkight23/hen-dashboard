@@ -1,72 +1,33 @@
 {
- "fetchedUTC": "2026-11-21T08:49:42.269748Z",
- "latestSCED": "2026-11-21T01:55:18",
+ "fetchedUTC": "2026-11-21T16:26:12.710544Z",
+ "latestSCED": "2026-11-21T09:55:18",
  "intervalsInWindow": 12,
  "constraints": [
   {
-   "name": "35020__B",
-   "contingency": "SBOMJC25",
-   "from": "GRVSW",
-   "to": "GRSES",
-   "kv": 345.0,
-   "shadowPrice": 43.68921,
-   "maxShadowPrice": 67.75645,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 1323.8,
-   "flow": 1323.8
-  },
-  {
-   "name": "TREADW_YELWJC1_1",
-   "contingency": "DBUCRGP5",
-   "from": "TREADWEL",
-   "to": "YELWJCKT",
+   "name": "138_MIV_CDV_1",
+   "contingency": "DSLKRVR5",
+   "from": "CEDRVALE",
+   "to": "MIVIDA",
    "kv": 138.0,
-   "shadowPrice": 41.15396,
-   "maxShadowPrice": 70.73645,
+   "shadowPrice": 582.80853,
+   "maxShadowPrice": 696.5686,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 207.6,
-   "flow": 207.6
+   "limit": 241.8,
+   "flow": 241.8
   },
   {
-   "name": "BCVPSA03_A",
-   "contingency": "DKG_NB_5",
-   "from": "PSA",
-   "to": "BCV",
-   "kv": 138.0,
-   "shadowPrice": 27.24049,
-   "maxShadowPrice": 32.37394,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 478.0,
-   "flow": 478.0
-  },
-  {
-   "name": "ATSO_SONR1_1",
-   "contingency": "SCARFRI8",
-   "from": "SONR",
-   "to": "ATSO",
-   "kv": 69.0,
-   "shadowPrice": 25.57422,
-   "maxShadowPrice": 25.57422,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 37.7,
-   "flow": 37.7
-  },
-  {
-   "name": "300__A",
-   "contingency": "DSALKLN5",
-   "from": "TMPCR",
-   "to": "TMPSW",
+   "name": "MATWAP39_A",
+   "contingency": "DWPWFWP5",
+   "from": "MAT",
+   "to": "WAP",
    "kv": 345.0,
-   "shadowPrice": 0.99908,
-   "maxShadowPrice": 3.65523,
-   "intervalsBinding": 12,
+   "shadowPrice": 11.35736,
+   "maxShadowPrice": 14.76509,
+   "intervalsBinding": 11,
    "bindingNow": true,
-   "limit": 1309.8,
-   "flow": 1309.8
+   "limit": 1192.2,
+   "flow": 1192.2
   },
   {
    "name": "WESTEX",
@@ -79,33 +40,20 @@
    "intervalsBinding": 12,
    "bindingNow": true,
    "limit": 9030.6,
-   "flow": 8335.9
+   "flow": 6386.8
   },
   {
-   "name": "138_MIV_CDV_1",
-   "contingency": "DSLKRVR5",
-   "from": "CEDRVALE",
-   "to": "MIVIDA",
+   "name": "138_WIC_STG_1",
+   "contingency": "SCEDPEC8",
+   "from": "WICKETT",
+   "to": "STAGHORN",
    "kv": 138.0,
    "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
+   "maxShadowPrice": 29.84241,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 241.6,
-   "flow": 230.3
-  },
-  {
-   "name": "SNDSW_MR1H",
-   "contingency": "MSNDWCR5",
-   "from": "SNDSW",
-   "to": "SNDSW",
-   "kv": 345.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 744.6,
-   "flow": 689.3
+   "limit": 398.5,
+   "flow": 235.3
   },
   {
    "name": "GN_PZ_08_A",
@@ -118,20 +66,46 @@
    "intervalsBinding": 12,
    "bindingNow": true,
    "limit": 387.0,
-   "flow": 369.4
+   "flow": 379.4
   },
   {
-   "name": "LCSES_MR1L",
-   "contingency": "SFBRTHS5",
-   "from": "LCSES",
-   "to": "LCSES",
-   "kv": 1.0,
+   "name": "BLESSING_1382",
+   "contingency": "DSTPSTA5",
+   "from": "BLESSING",
+   "to": "BLESSING",
+   "kv": 345.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 559.2,
-   "flow": 520.3
+   "limit": 426.7,
+   "flow": 340.4
+  },
+  {
+   "name": "BCVPSA03_A",
+   "contingency": "DKG_NB_5",
+   "from": "PSA",
+   "to": "BCV",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 478.0,
+   "flow": 433.8
+  },
+  {
+   "name": "NEVILL_NORTMC_1",
+   "contingency": "DBAKSOL5",
+   "from": "NEVILLSW",
+   "to": "NORTMC",
+   "kv": 345.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 3.5892,
+   "intervalsBinding": 8,
+   "bindingNow": true,
+   "limit": 1739.5,
+   "flow": 1644.9
   },
   {
    "name": "BCVPSA03_A",
@@ -144,7 +118,20 @@
    "intervalsBinding": 12,
    "bindingNow": true,
    "limit": 478.0,
-   "flow": 461.9
+   "flow": 426.0
+  },
+  {
+   "name": "ATSO_SONR1_1",
+   "contingency": "SCARFRI8",
+   "from": "SONR",
+   "to": "ATSO",
+   "kv": 69.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 2,
+   "bindingNow": false,
+   "limit": 37.6,
+   "flow": 20.7
   }
  ]
 }
