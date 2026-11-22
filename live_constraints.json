@@ -1,20 +1,20 @@
 {
- "fetchedUTC": "2026-11-22T01:40:11.746236Z",
- "latestSCED": "2026-11-21T18:55:21",
+ "fetchedUTC": "2026-11-22T08:49:44.146722Z",
+ "latestSCED": "2026-11-22T01:55:19",
  "intervalsInWindow": 12,
  "constraints": [
   {
-   "name": "E1_R2_1",
-   "contingency": "DCALBEC8",
-   "from": "R2",
-   "to": "E1",
+   "name": "6215__A",
+   "contingency": "MSCOTK45",
+   "from": "BCKSW",
+   "to": "CGRSW",
    "kv": 138.0,
-   "shadowPrice": 9.80124,
-   "maxShadowPrice": 42.75202,
-   "intervalsBinding": 6,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 270.6,
-   "flow": 270.6
+   "limit": 240.0,
+   "flow": 211.5
   },
   {
    "name": "6945__A",
@@ -22,12 +22,12 @@
    "from": "MGSES",
    "to": "CATSW",
    "kv": 345.0,
-   "shadowPrice": 6.28432,
-   "maxShadowPrice": 125.38599,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 1362.2,
-   "flow": 1362.2
+   "limit": 1437.1,
+   "flow": 1327.5
   },
   {
    "name": "KOCH_UP_69A1",
@@ -36,37 +36,24 @@
    "to": "KOCH_UP",
    "kv": 138.0,
    "shadowPrice": 0.0,
-   "maxShadowPrice": 2353.78076,
+   "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 69.9,
-   "flow": 68.9
+   "limit": 70.0,
+   "flow": 55.4
   },
   {
-   "name": "NLARSW_PILONC1_1",
-   "contingency": "DFOAVLO5",
-   "from": "NLARSW",
-   "to": "PILONCIL",
+   "name": "BRUNI_69_1",
+   "contingency": "SLAQLOB8",
+   "from": "BRUNI",
+   "to": "BRUNI",
    "kv": 138.0,
    "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 9,
+   "maxShadowPrice": 29.68676,
+   "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 145.7,
-   "flow": 135.2
-  },
-  {
-   "name": "G138_8A_1",
-   "contingency": "SMDOPHR5",
-   "from": "HDNLAKES",
-   "to": "PHR",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 7,
-   "bindingNow": false,
-   "limit": 383.2,
-   "flow": 138.4
+   "limit": 36.0,
+   "flow": 24.1
   }
  ]
 }
