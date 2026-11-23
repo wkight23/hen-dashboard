@@ -1,20 +1,46 @@
 {
- "fetchedUTC": "2026-11-23T02:36:16.710158Z",
- "latestSCED": "2026-11-22T19:55:20",
+ "fetchedUTC": "2026-11-23T11:13:01.953395Z",
+ "latestSCED": "2026-11-23T04:55:17",
  "intervalsInWindow": 12,
  "constraints": [
+  {
+   "name": "NLARSW_PILONC1_1",
+   "contingency": "DFOAVLO5",
+   "from": "NLARSW",
+   "to": "PILONCIL",
+   "kv": 138.0,
+   "shadowPrice": 310.72522,
+   "maxShadowPrice": 327.54605,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 151.0,
+   "flow": 151.0
+  },
   {
    "name": "ATSO_SONR1_1",
    "contingency": "SCARFRI8",
    "from": "SONR",
    "to": "ATSO",
    "kv": 69.0,
-   "shadowPrice": 36.535,
-   "maxShadowPrice": 105.2145,
+   "shadowPrice": 55.33846,
+   "maxShadowPrice": 89.77232,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 37.5,
-   "flow": 37.5
+   "limit": 37.4,
+   "flow": 37.4
+  },
+  {
+   "name": "VALEXP",
+   "contingency": "BASE CASE",
+   "from": "",
+   "to": "",
+   "kv": 0.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 1092.3,
+   "flow": 1052.1
   },
   {
    "name": "GN_PZ_08_A",
@@ -27,46 +53,33 @@
    "intervalsBinding": 12,
    "bindingNow": true,
    "limit": 387.0,
-   "flow": 332.3
+   "flow": 287.0
   },
   {
-   "name": "6945__A",
-   "contingency": "SRGRMGS5",
-   "from": "MGSES",
-   "to": "CATSW",
-   "kv": 345.0,
+   "name": "BRUNI_69_1",
+   "contingency": "SLAQLOB8",
+   "from": "BRUNI",
+   "to": "BRUNI",
+   "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 1462.3,
-   "flow": 1215.1
+   "limit": 35.8,
+   "flow": 31.4
   },
   {
-   "name": "6215__A",
-   "contingency": "MTKWMGS5",
-   "from": "BCKSW",
-   "to": "CGRSW",
-   "kv": 138.0,
+   "name": "NELRIO",
+   "contingency": "BASE CASE",
+   "from": "",
+   "to": "",
+   "kv": 0.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 7,
-   "bindingNow": false,
-   "limit": 241.3,
-   "flow": 155.7
-  },
-  {
-   "name": "BCVPSA03_A",
-   "contingency": "SMDOOAS5",
-   "from": "PSA",
-   "to": "BCV",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 7,
-   "bindingNow": false,
-   "limit": 478.0,
-   "flow": 390.3
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 877.2,
+   "flow": 706.1
   }
  ]
 }
