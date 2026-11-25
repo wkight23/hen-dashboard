@@ -1,6 +1,6 @@
 {
- "fetchedUTC": "2026-11-24T17:59:44.401045Z",
- "latestSCED": "2026-11-24T10:55:17",
+ "fetchedUTC": "2026-11-25T02:07:49.339138Z",
+ "latestSCED": "2026-11-24T19:55:19",
  "intervalsInWindow": 12,
  "constraints": [
   {
@@ -9,38 +9,64 @@
    "from": "BRUNI",
    "to": "BRUNI",
    "kv": 138.0,
-   "shadowPrice": 1237.83838,
-   "maxShadowPrice": 1237.83838,
+   "shadowPrice": 2442.23877,
+   "maxShadowPrice": 2460.68188,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 35.9,
-   "flow": 35.9
+   "limit": 36.0,
+   "flow": 36.0
   },
   {
-   "name": "NELRIO",
-   "contingency": "BASE CASE",
-   "from": "",
-   "to": "",
-   "kv": 0.0,
-   "shadowPrice": 15.85908,
-   "maxShadowPrice": 18.74979,
+   "name": "ESCOND_GANSO1_1",
+   "contingency": "SBRAPIN8",
+   "from": "ESCONDID",
+   "to": "GANSO",
+   "kv": 138.0,
+   "shadowPrice": 343.63565,
+   "maxShadowPrice": 343.65472,
+   "intervalsBinding": 6,
+   "bindingNow": true,
+   "limit": 117.2,
+   "flow": 117.2
+  },
+  {
+   "name": "SGVSW_MR2H",
+   "contingency": "DWTRTRC5",
+   "from": "SGVSW",
+   "to": "SGVSW",
+   "kv": 345.0,
+   "shadowPrice": 240.677,
+   "maxShadowPrice": 268.46957,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 867.0,
-   "flow": 867.0
+   "limit": 744.4,
+   "flow": 744.4
   },
   {
-   "name": "E_PATA",
-   "contingency": "BASE CASE",
-   "from": "",
-   "to": "",
-   "kv": 0.0,
+   "name": "941__C",
+   "contingency": "SENWSHK8",
+   "from": "ENWSW",
+   "to": "ENSSO",
+   "kv": 138.0,
+   "shadowPrice": 21.45327,
+   "maxShadowPrice": 22.52803,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 267.5,
+   "flow": 267.5
+  },
+  {
+   "name": "E1_R2_1",
+   "contingency": "DCALBEC8",
+   "from": "R2",
+   "to": "E1",
+   "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 4,
+   "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 741.2,
-   "flow": 595.5
+   "limit": 272.7,
+   "flow": 254.5
   },
   {
    "name": "NLARSW_PILONC1_1",
@@ -49,24 +75,24 @@
    "to": "PILONCIL",
    "kv": 138.0,
    "shadowPrice": 0.0,
-   "maxShadowPrice": 156.38954,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 149.6,
-   "flow": 149.6
-  },
-  {
-   "name": "SGVSW_MR2H",
-   "contingency": "DWTRTRC5",
-   "from": "SGVSW",
-   "to": "SGVSW",
-   "kv": 345.0,
-   "shadowPrice": 0.0,
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 744.2,
-   "flow": 696.1
+   "limit": 151.4,
+   "flow": 150.6
+  },
+  {
+   "name": "ESCOND_GANSO1_1",
+   "contingency": "SBRAHAM8",
+   "from": "ESCONDID",
+   "to": "GANSO",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 406.74887,
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 117.1,
+   "flow": 116.2
   },
   {
    "name": "6945__A",
@@ -78,60 +104,8 @@
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 1423.8,
-   "flow": 1088.4
-  },
-  {
-   "name": "COLLE_JUPIT_1",
-   "contingency": "SWALNAA8",
-   "from": "COLLEGE",
-   "to": "JUPITER",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 271.3,
-   "flow": 266.2
-  },
-  {
-   "name": "VALEXP",
-   "contingency": "BASE CASE",
-   "from": "",
-   "to": "",
-   "kv": 0.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 1092.3,
-   "flow": 1034.3
-  },
-  {
-   "name": "ESCOND_GANSO1_1",
-   "contingency": "SBRAHAM8",
-   "from": "ESCONDID",
-   "to": "GANSO",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 33.47182,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 117.4,
-   "flow": 110.3
-  },
-  {
-   "name": "LAKENA_SAMATH1_1",
-   "contingency": "DBAKCED5",
-   "from": "LAKENASW",
-   "to": "SAMATHIS",
-   "kv": 69.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 3,
-   "bindingNow": false,
-   "limit": 38.0,
-   "flow": 25.7
+   "limit": 1484.2,
+   "flow": 1477.5
   }
  ]
 }
