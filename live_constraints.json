@@ -1,46 +1,33 @@
 {
- "fetchedUTC": "2026-11-26T02:59:11.400948Z",
- "latestSCED": "2026-11-25T19:55:20",
- "intervalsInWindow": 12,
+ "fetchedUTC": "2026-11-26T12:04:06.784883Z",
+ "latestSCED": "2026-11-26T04:55:18",
+ "intervalsInWindow": 11,
  "constraints": [
+  {
+   "name": "LAKENA_SAMATH1_1",
+   "contingency": "SLGDSAP8",
+   "from": "LAKENASW",
+   "to": "SAMATHIS",
+   "kv": 69.0,
+   "shadowPrice": 682.14868,
+   "maxShadowPrice": 682.14868,
+   "intervalsBinding": 1,
+   "bindingNow": true,
+   "limit": 37.9,
+   "flow": 37.9
+  },
   {
    "name": "6945__A",
    "contingency": "SRGRMGS5",
    "from": "MGSES",
    "to": "CATSW",
    "kv": 345.0,
-   "shadowPrice": 241.35252,
-   "maxShadowPrice": 241.35252,
-   "intervalsBinding": 12,
+   "shadowPrice": 25.38589,
+   "maxShadowPrice": 89.67894,
+   "intervalsBinding": 11,
    "bindingNow": true,
-   "limit": 1460.2,
-   "flow": 1460.2
-  },
-  {
-   "name": "E1_R2_1",
-   "contingency": "DCALBEC8",
-   "from": "R2",
-   "to": "E1",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 272.0,
-   "flow": 230.2
-  },
-  {
-   "name": "941__C",
-   "contingency": "SENWSHK8",
-   "from": "ENWSW",
-   "to": "ENSSO",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 267.1,
-   "flow": 249.4
+   "limit": 1506.9,
+   "flow": 1506.9
   },
   {
    "name": "RAYBURN_69_2",
@@ -50,10 +37,36 @@
    "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 12,
+   "intervalsBinding": 11,
    "bindingNow": true,
-   "limit": 82.0,
-   "flow": 71.9
+   "limit": 81.5,
+   "flow": 68.5
+  },
+  {
+   "name": "941__C",
+   "contingency": "SENWSHK8",
+   "from": "ENWSW",
+   "to": "ENSSO",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 11,
+   "bindingNow": true,
+   "limit": 267.1,
+   "flow": 250.0
+  },
+  {
+   "name": "BCVPSA03_A",
+   "contingency": "DDNKPSA8",
+   "from": "PSA",
+   "to": "BCV",
+   "kv": 138.0,
+   "shadowPrice": 0.0,
+   "maxShadowPrice": 0,
+   "intervalsBinding": 11,
+   "bindingNow": true,
+   "limit": 478.0,
+   "flow": 461.2
   }
  ]
 }
