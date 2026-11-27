@@ -1,59 +1,20 @@
 {
- "fetchedUTC": "2026-11-27T03:41:24.945451Z",
- "latestSCED": "2026-11-26T20:55:19",
+ "fetchedUTC": "2026-11-27T13:07:51.633654Z",
+ "latestSCED": "2026-11-27T06:55:18",
  "intervalsInWindow": 12,
  "constraints": [
   {
-   "name": "6945__A",
-   "contingency": "SRGRMGS5",
-   "from": "MGSES",
-   "to": "CATSW",
-   "kv": 345.0,
-   "shadowPrice": 12.36296,
-   "maxShadowPrice": 45.11082,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 1462.0,
-   "flow": 1462.0
-  },
-  {
-   "name": "COLLE_JUPIT_1",
-   "contingency": "SWALNAA8",
-   "from": "COLLEGE",
-   "to": "JUPITER",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 271.9,
-   "flow": 255.3
-  },
-  {
-   "name": "941__C",
-   "contingency": "SENWSHK8",
-   "from": "ENWSW",
-   "to": "ENSSO",
-   "kv": 138.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 261.4,
-   "flow": 249.7
-  },
-  {
-   "name": "HEARTL_KATEMC1_1",
-   "contingency": "DYELHE89",
-   "from": "KATEMCY",
-   "to": "HEARTLAN",
+   "name": "ATSO_SONR1_1",
+   "contingency": "SCARFRI8",
+   "from": "SONR",
+   "to": "ATSO",
    "kv": 69.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 5,
-   "bindingNow": false,
-   "limit": 58.3,
-   "flow": 38.8
+   "intervalsBinding": 12,
+   "bindingNow": true,
+   "limit": 37.6,
+   "flow": 28.1
   }
  ]
 }
