@@ -1,46 +1,33 @@
 {
- "fetchedUTC": "2026-11-26T12:04:06.784883Z",
- "latestSCED": "2026-11-26T04:55:18",
- "intervalsInWindow": 11,
+ "fetchedUTC": "2026-11-27T03:41:24.945451Z",
+ "latestSCED": "2026-11-26T20:55:19",
+ "intervalsInWindow": 12,
  "constraints": [
-  {
-   "name": "LAKENA_SAMATH1_1",
-   "contingency": "SLGDSAP8",
-   "from": "LAKENASW",
-   "to": "SAMATHIS",
-   "kv": 69.0,
-   "shadowPrice": 682.14868,
-   "maxShadowPrice": 682.14868,
-   "intervalsBinding": 1,
-   "bindingNow": true,
-   "limit": 37.9,
-   "flow": 37.9
-  },
   {
    "name": "6945__A",
    "contingency": "SRGRMGS5",
    "from": "MGSES",
    "to": "CATSW",
    "kv": 345.0,
-   "shadowPrice": 25.38589,
-   "maxShadowPrice": 89.67894,
-   "intervalsBinding": 11,
+   "shadowPrice": 12.36296,
+   "maxShadowPrice": 45.11082,
+   "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 1506.9,
-   "flow": 1506.9
+   "limit": 1462.0,
+   "flow": 1462.0
   },
   {
-   "name": "RAYBURN_69_2",
-   "contingency": "SFURVAN8",
-   "from": "RAYBURN",
-   "to": "RAYBURN",
+   "name": "COLLE_JUPIT_1",
+   "contingency": "SWALNAA8",
+   "from": "COLLEGE",
+   "to": "JUPITER",
    "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 11,
+   "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 81.5,
-   "flow": 68.5
+   "limit": 271.9,
+   "flow": 255.3
   },
   {
    "name": "941__C",
@@ -50,23 +37,23 @@
    "kv": 138.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 11,
+   "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 267.1,
-   "flow": 250.0
+   "limit": 261.4,
+   "flow": 249.7
   },
   {
-   "name": "BCVPSA03_A",
-   "contingency": "DDNKPSA8",
-   "from": "PSA",
-   "to": "BCV",
-   "kv": 138.0,
+   "name": "HEARTL_KATEMC1_1",
+   "contingency": "DYELHE89",
+   "from": "KATEMCY",
+   "to": "HEARTLAN",
+   "kv": 69.0,
    "shadowPrice": 0.0,
    "maxShadowPrice": 0,
-   "intervalsBinding": 11,
-   "bindingNow": true,
-   "limit": 478.0,
-   "flow": 461.2
+   "intervalsBinding": 5,
+   "bindingNow": false,
+   "limit": 58.3,
+   "flow": 38.8
   }
  ]
 }
