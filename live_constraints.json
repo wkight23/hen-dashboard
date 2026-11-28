@@ -1,6 +1,6 @@
 {
- "fetchedUTC": "2026-11-28T03:41:05.451412Z",
- "latestSCED": "2026-11-27T20:55:18",
+ "fetchedUTC": "2026-11-28T12:22:54.134879Z",
+ "latestSCED": "2026-11-28T05:55:17",
  "intervalsInWindow": 12,
  "constraints": [
   {
@@ -9,51 +9,12 @@
    "from": "SONR",
    "to": "ATSO",
    "kv": 69.0,
-   "shadowPrice": 72.8297,
-   "maxShadowPrice": 80.15964,
+   "shadowPrice": 77.36417,
+   "maxShadowPrice": 79.96435,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 37.5,
-   "flow": 37.5
-  },
-  {
-   "name": "TREADW_YELWJC1_1",
-   "contingency": "DBIGKEN5",
-   "from": "TREADWEL",
-   "to": "YELWJCKT",
-   "kv": 138.0,
-   "shadowPrice": 37.93638,
-   "maxShadowPrice": 41.06146,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 209.8,
-   "flow": 209.8
-  },
-  {
-   "name": "300__A",
-   "contingency": "DSALKLN5",
-   "from": "TMPCR",
-   "to": "TMPSW",
-   "kv": 345.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 1331.3,
-   "flow": 1303.0
-  },
-  {
-   "name": "BLESSING_1382",
-   "contingency": "DSTPSTA5",
-   "from": "BLESSING",
-   "to": "BLESSING",
-   "kv": 345.0,
-   "shadowPrice": 0.0,
-   "maxShadowPrice": 0,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 424.4,
-   "flow": 358.9
+   "limit": 37.7,
+   "flow": 37.7
   },
   {
    "name": "138_MIV_CDV_1",
@@ -62,24 +23,11 @@
    "to": "MIVIDA",
    "kv": 138.0,
    "shadowPrice": 0.0,
-   "maxShadowPrice": 17.3337,
-   "intervalsBinding": 12,
-   "bindingNow": true,
-   "limit": 241.9,
-   "flow": 229.5
-  },
-  {
-   "name": "SNDSW_MR1H",
-   "contingency": "MSNDWCR5",
-   "from": "SNDSW",
-   "to": "SNDSW",
-   "kv": 345.0,
-   "shadowPrice": 0.0,
    "maxShadowPrice": 0,
    "intervalsBinding": 12,
    "bindingNow": true,
-   "limit": 746.5,
-   "flow": 635.6
+   "limit": 241.9,
+   "flow": 235.7
   }
  ]
 }
